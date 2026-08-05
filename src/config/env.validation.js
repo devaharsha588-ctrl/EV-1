@@ -10,6 +10,7 @@ const placeholderValues = new Set([
   'replace_with_database_password',
   'replace_with_openai_api_key',
   'replace_with_grok_api_key',
+  'replace_with_openrouter_api_key',
   'replace_with_smtp_user',
   'replace_with_smtp_password'
 ]);
@@ -45,10 +46,12 @@ const validateEnv = ({ strict = env.isProduction } = {}) => {
   assertLongSecret('JWT_REFRESH_SECRET', env.jwt.refreshSecret, strict ? errors : warnings);
   assertLongSecret('COOKIE_SECRET', env.cookieSecret, strict ? errors : warnings);
 
-  if (!['openai', 'grok'].includes(env.ai.provider)) errors.push('AI_PROVIDER must be openai or grok');
+  if (!['openai', 'grok', 'openrouter'].includes(env.ai.provider)) errors.push('AI_PROVIDER must be openai, grok, or openrouter');
   if (strict && env.ai.provider === 'openai' && isMissing(env.ai.openaiApiKey)) errors.push('OPENAI_API_KEY is required when AI_PROVIDER=openai');
   if (strict && env.ai.provider === 'grok' && isMissing(env.ai.grokApiKey)) errors.push('GROK_API_KEY is required when AI_PROVIDER=grok');
   if (env.ai.provider === 'grok' && isMissing(env.ai.grokBaseUrl)) errors.push('GROK_BASE_URL is required when AI_PROVIDER=grok');
+  if (strict && env.ai.provider === 'openrouter' && isMissing(env.ai.openrouterApiKey)) errors.push('OPENROUTER_API_KEY is required when AI_PROVIDER=openrouter');
+  if (env.ai.provider === 'openrouter' && isMissing(env.ai.openrouterBaseUrl)) errors.push('OPENROUTER_BASE_URL is required when AI_PROVIDER=openrouter');
   if (strict) {
     if (isMissing(env.smtp.host)) errors.push('SMTP_HOST is required in production');
     if (!Number.isInteger(env.smtp.port) || env.smtp.port <= 0) errors.push('SMTP_PORT must be a positive integer');

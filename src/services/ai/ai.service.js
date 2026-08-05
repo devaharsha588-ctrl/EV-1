@@ -1,15 +1,15 @@
 const openaiClient = require('./openai.client');
 const grokClient = require('./grok.client');
+const openrouterClient = require('./openrouter.client');
 const env = require('../../config/env');
 const logger = require('../../utils/logger');
 const AppError = require('../../utils/AppError');
 
 const clients = {
   openai: { client: openaiClient, model: process.env.OPENAI_MODEL || 'gpt-4o-mini' },
-  grok: { client: grokClient, model: process.env.GROK_MODEL || 'grok-4' }
+  grok: { client: grokClient, model: process.env.GROK_MODEL || 'grok-4' },
+  openrouter: { client: openrouterClient, model: process.env.OPENROUTER_MODEL || 'anthropic/claude-3-opus' }
 };
-
-const otherProvider = (provider) => (provider === 'openai' ? 'grok' : 'openai');
 
 const callProvider = async (provider, prompt, options = {}) => {
   const entry = clients[provider];
@@ -36,18 +36,28 @@ const callProvider = async (provider, prompt, options = {}) => {
 };
 
 const generateCompletion = async (prompt, options = {}) => {
+  const availableProviders = Object.keys(clients).filter((p) => Boolean(clients[p].client));
+  if (availableProviders.length === 0) {
+    throw new AppError('No AI provider is configured. Set OPENAI_API_KEY, GROK_API_KEY, or OPENROUTER_API_KEY in .env.', 503);
+  }
+
   const preferred = options.provider || env.ai.provider || 'openai';
-  if (!clients.openai.client && !clients.grok.client) {
-    throw new AppError('No AI provider is configured. Set OPENAI_API_KEY or GROK_API_KEY in .env.', 503);
+  const order = [preferred, ...availableProviders.filter((p) => p !== preferred)];
+
+  let lastError;
+  for (const provider of order) {
+    if (!clients[provider]?.client) continue;
+    try {
+      if (provider !== preferred) {
+        logger.warn('AI provider failed, attempting fallback', { preferred, fallback: provider, message: lastError?.message });
+      }
+      return await callProvider(provider, prompt, options);
+    } catch (error) {
+      lastError = error;
+    }
   }
-  try {
-    return await callProvider(preferred, prompt, options);
-  } catch (error) {
-    const fallback = otherProvider(preferred);
-    if (!clients[fallback]?.client) throw error;
-    logger.warn('AI provider failed, attempting fallback', { preferred, fallback, message: error.message });
-    return callProvider(fallback, prompt, options);
-  }
+
+  throw lastError;
 };
 
 module.exports = { generateCompletion };

@@ -22,7 +22,9 @@ const env = {
     provider: process.env.AI_PROVIDER || 'openai',
     openaiApiKey: process.env.OPENAI_API_KEY,
     grokApiKey: process.env.GROK_API_KEY,
-    grokBaseUrl: process.env.GROK_BASE_URL || 'https://api.x.ai/v1'
+    grokBaseUrl: process.env.GROK_BASE_URL || 'https://api.x.ai/v1',
+    openrouterApiKey: process.env.OPENROUTER_API_KEY,
+    openrouterBaseUrl: process.env.OPENROUTER_BASE_URL || 'https://openrouter.ai/api/v1'
   },
   smtp: {
     host: process.env.SMTP_HOST,
