@@ -1,4 +1,23 @@
+const fs = require('fs');
+const path = require('path');
+const os = require('os');
+
 require('dotenv').config();
+
+// Load external credentials securely from user profile directory outside project codebase
+const secureConfigPath = path.join(os.homedir(), '.ev-ai-secrets', 'credentials.json');
+if (fs.existsSync(secureConfigPath)) {
+  try {
+    const secureConfig = JSON.parse(fs.readFileSync(secureConfigPath, 'utf8'));
+    Object.keys(secureConfig).forEach((key) => {
+      if (secureConfig[key]) {
+        process.env[key] = secureConfig[key];
+      }
+    });
+  } catch (err) {
+    // Keep fallback environment settings if file read error occurs
+  }
+}
 
 const env = {
   port: Number(process.env.PORT || 5000),
