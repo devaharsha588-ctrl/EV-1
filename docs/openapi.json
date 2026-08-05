@@ -1,0 +1,74 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "EV AI Backend API",
+    "version": "1.0.0",
+    "description": "Versioned JSON REST API for EV AI (Evolution Vector)."
+  },
+  "servers": [
+    { "url": "http://localhost:5000/api/v1" }
+  ],
+  "components": {
+    "securitySchemes": {
+      "bearerAuth": { "type": "http", "scheme": "bearer", "bearerFormat": "JWT" }
+    },
+    "schemas": {
+      "Success": {
+        "type": "object",
+        "properties": {
+          "success": { "type": "boolean", "example": true },
+          "message": { "type": "string" },
+          "data": { "type": "object" }
+        }
+      },
+      "Error": {
+        "type": "object",
+        "properties": {
+          "success": { "type": "boolean", "example": false },
+          "message": { "type": "string" },
+          "errors": { "type": "array", "items": {} }
+        }
+      }
+    }
+  },
+  "paths": {
+    "/auth/register": { "post": { "summary": "Register user", "responses": { "201": { "description": "Registered" } } } },
+    "/auth/login": { "post": { "summary": "Login user", "responses": { "200": { "description": "Logged in" } } } },
+    "/auth/logout": { "post": { "summary": "Logout user", "responses": { "200": { "description": "Logged out" } } } },
+    "/auth/refresh": { "post": { "summary": "Refresh tokens", "responses": { "200": { "description": "Token refreshed" } } } },
+    "/auth/forgot-password": { "post": { "summary": "Request password reset", "responses": { "200": { "description": "Reset email flow started" } } } },
+    "/auth/reset-password": { "post": { "summary": "Reset password", "responses": { "200": { "description": "Password reset" } } } },
+    "/auth/me": { "get": { "security": [{ "bearerAuth": [] }], "summary": "Current auth user", "responses": { "200": { "description": "Current user" } } } },
+    "/auth/change-password": { "put": { "security": [{ "bearerAuth": [] }], "summary": "Change password", "responses": { "200": { "description": "Password changed" } } } },
+    "/users/me": { "get": { "security": [{ "bearerAuth": [] }], "summary": "Fetch user", "responses": { "200": { "description": "User fetched" } } }, "put": { "security": [{ "bearerAuth": [] }], "summary": "Update user", "responses": { "200": { "description": "User updated" } } } },
+    "/profile/onboarding": { "post": { "security": [{ "bearerAuth": [] }], "summary": "Complete onboarding", "responses": { "201": { "description": "Onboarded" } } } },
+    "/profile": { "get": { "security": [{ "bearerAuth": [] }], "summary": "Get profile", "responses": { "200": { "description": "Profile" } } }, "put": { "security": [{ "bearerAuth": [] }], "summary": "Update profile", "responses": { "200": { "description": "Profile updated" } } } },
+    "/dashboard": { "get": { "security": [{ "bearerAuth": [] }], "summary": "Dashboard", "responses": { "200": { "description": "Dashboard" } } } },
+    "/ai/status": { "get": { "security": [{ "bearerAuth": [] }], "summary": "AI provider status", "responses": { "200": { "description": "Status" } } } },
+    "/ai/generate": { "post": { "security": [{ "bearerAuth": [] }], "summary": "Generate AI completion", "responses": { "200": { "description": "Completion" } } } },
+    "/chat": { "post": { "security": [{ "bearerAuth": [] }], "summary": "Send chat message", "responses": { "201": { "description": "AI chat response" } } } },
+    "/chat/history": { "get": { "security": [{ "bearerAuth": [] }], "summary": "Chat history", "responses": { "200": { "description": "History" } } } },
+    "/recommendations": { "get": { "security": [{ "bearerAuth": [] }], "summary": "List recommendations", "responses": { "200": { "description": "Recommendations" } } } },
+    "/recommendations/regenerate": { "post": { "security": [{ "bearerAuth": [] }], "summary": "Regenerate recommendations", "responses": { "201": { "description": "Recommendations regenerated" } } } },
+    "/resume/analyze": { "post": { "security": [{ "bearerAuth": [] }], "summary": "Analyze resume upload", "responses": { "201": { "description": "Analysis" } } } },
+    "/resume/history": { "get": { "security": [{ "bearerAuth": [] }], "summary": "Resume history", "responses": { "200": { "description": "History" } } } },
+    "/github/analyze": { "post": { "security": [{ "bearerAuth": [] }], "summary": "Analyze GitHub profile", "responses": { "201": { "description": "Analysis" } } } },
+    "/github/history": { "get": { "security": [{ "bearerAuth": [] }], "summary": "GitHub history", "responses": { "200": { "description": "History" } } } },
+    "/tasks": { "get": { "security": [{ "bearerAuth": [] }], "summary": "List tasks", "responses": { "200": { "description": "Tasks" } } }, "post": { "security": [{ "bearerAuth": [] }], "summary": "Create task", "responses": { "201": { "description": "Created" } } } },
+    "/tasks/{id}/complete": { "put": { "security": [{ "bearerAuth": [] }], "summary": "Complete task", "responses": { "200": { "description": "Completed" } } } },
+    "/tasks/{id}": { "delete": { "security": [{ "bearerAuth": [] }], "summary": "Delete task", "responses": { "200": { "description": "Deleted" } } } },
+    "/feedback/like/{recommendationId}": { "post": { "security": [{ "bearerAuth": [] }], "summary": "Like recommendation", "responses": { "201": { "description": "Recorded" } } } },
+    "/feedback/dislike/{recommendationId}": { "post": { "security": [{ "bearerAuth": [] }], "summary": "Dislike recommendation", "responses": { "201": { "description": "Recorded" } } } },
+    "/feedback/rate-ai-response": { "post": { "security": [{ "bearerAuth": [] }], "summary": "Rate AI response", "responses": { "201": { "description": "Recorded" } } } },
+    "/feedback": { "post": { "security": [{ "bearerAuth": [] }], "summary": "Create feedback", "responses": { "201": { "description": "Recorded" } } } },
+    "/analytics/weekly-progress": { "get": { "security": [{ "bearerAuth": [] }], "summary": "Weekly progress", "responses": { "200": { "description": "Progress" } } } },
+    "/analytics/monthly-progress": { "get": { "security": [{ "bearerAuth": [] }], "summary": "Monthly progress", "responses": { "200": { "description": "Progress" } } } },
+    "/analytics/learning-hours": { "get": { "security": [{ "bearerAuth": [] }], "summary": "Learning hours", "responses": { "200": { "description": "Hours" } } } },
+    "/analytics/skills-growth": { "get": { "security": [{ "bearerAuth": [] }], "summary": "Skills growth", "responses": { "200": { "description": "Skills" } } } },
+    "/analytics/roadmap-completion": { "get": { "security": [{ "bearerAuth": [] }], "summary": "Roadmap completion", "responses": { "200": { "description": "Completion" } } } },
+    "/analytics/category-distribution": { "get": { "security": [{ "bearerAuth": [] }], "summary": "Category distribution", "responses": { "200": { "description": "Distribution" } } } },
+    "/notifications": { "get": { "security": [{ "bearerAuth": [] }], "summary": "Notifications", "responses": { "200": { "description": "Notifications" } } } },
+    "/notifications/{id}/read": { "put": { "security": [{ "bearerAuth": [] }], "summary": "Mark notification read", "responses": { "200": { "description": "Read" } } } },
+    "/achievements": { "get": { "security": [{ "bearerAuth": [] }], "summary": "Achievements", "responses": { "200": { "description": "Achievements" } } } }
+  }
+}
