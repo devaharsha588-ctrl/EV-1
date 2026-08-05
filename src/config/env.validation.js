@@ -12,7 +12,9 @@ const placeholderValues = new Set([
   'replace_with_grok_api_key',
   'replace_with_openrouter_api_key',
   'replace_with_smtp_user',
-  'replace_with_smtp_password'
+  'replace_with_smtp_password',
+  'replace_with_supabase_url',
+  'replace_with_supabase_anon_key'
 ]);
 
 const isMissing = (value) => value === undefined || value === null || value === '';

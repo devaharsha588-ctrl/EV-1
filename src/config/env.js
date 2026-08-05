@@ -34,6 +34,10 @@ const env = {
     from: process.env.SMTP_FROM,
     testTo: process.env.SMTP_TEST_TO
   },
+  supabase: {
+    url: process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL,
+    anonKey: process.env.SUPABASE_ANON_KEY || process.env.VITE_SUPABASE_ANON_KEY
+  },
   isProduction: process.env.NODE_ENV === 'production'
 };
 
