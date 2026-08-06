@@ -9,6 +9,7 @@ import {
   HelpCircle,
   Code2,
   Lock,
+  RotateCcw,
 } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
@@ -67,6 +68,7 @@ export default function DashboardPage() {
   const [promptText, setPromptText] = useState("")
   const [messages, setMessages] = useState<Message[]>([])
   const [isTyping, setIsTyping] = useState(false)
+  const messagesContainerRef = useRef<HTMLDivElement>(null)
 
   const displayName = profile?.nickname || profile?.name || "Learner"
   const userInitials = displayName
@@ -82,8 +84,6 @@ export default function DashboardPage() {
     else if (hour < 18) setGreeting("Good afternoon")
     else setGreeting("Good evening")
   }, [])
-
-  const messagesContainerRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     if (messagesContainerRef.current) {
@@ -137,6 +137,10 @@ export default function DashboardPage() {
     } finally {
       setIsTyping(false)
     }
+  }
+
+  const handleEndChat = () => {
+    setMessages([])
   }
 
   // Staggered Entrance Variants
@@ -202,50 +206,96 @@ export default function DashboardPage() {
     },
   }
 
+  const isChatActive = messages.length > 0
+
   return (
     <motion.div
       initial="hidden"
       animate="visible"
       variants={containerVariants}
-      className="w-full max-w-5xl mx-auto py-10 px-4 sm:px-6 flex flex-col items-center min-h-[calc(100vh-64px)] overflow-hidden"
+      className="w-full max-w-5xl mx-auto py-8 px-4 sm:px-6 flex flex-col items-center min-h-[calc(100vh-64px)] overflow-hidden"
     >
 
-      {/* ── Hero Greeting ──────────────────────────────── */}
-      <div className="w-full flex flex-col items-center text-center mt-4 mb-8">
-        {/* EV AI Badge */}
-        <motion.div variants={badgeVariants} className="mb-5">
+      {/* ── Hero Greeting (Hides smoothly when chatting) ── */}
+      <AnimatePresence mode="wait">
+        {!isChatActive && (
           <motion.div
-            whileHover={{ scale: 1.08, rotate: 2 }}
-            whileTap={{ scale: 0.95 }}
-            className="w-12 h-12 bg-black rounded-[4px] flex items-center justify-center mx-auto mb-3.5 shadow-lg cursor-pointer relative"
+            key="hero-greeting-section"
+            initial={{ opacity: 0, height: 0, scale: 0.95 }}
+            animate={{ opacity: 1, height: "auto", scale: 1 }}
+            exit={{ opacity: 0, height: 0, scale: 0.95 }}
+            transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
+            className="w-full flex flex-col items-center text-center mt-2 mb-6 overflow-hidden"
           >
-            <span className="text-white font-mono text-[13px] font-bold tracking-widest">EV</span>
-            <span className="absolute -top-1 -right-1 size-2.5 bg-[#3B82F6] rounded-full ring-2 ring-white animate-pulse" />
+            {/* EV AI Badge */}
+            <motion.div variants={badgeVariants} className="mb-4">
+              <motion.div
+                whileHover={{ scale: 1.08, rotate: 2 }}
+                whileTap={{ scale: 0.95 }}
+                className="w-12 h-12 bg-black rounded-[4px] flex items-center justify-center mx-auto mb-3 shadow-lg cursor-pointer relative"
+              >
+                <span className="text-white font-mono text-[13px] font-bold tracking-widest">EV</span>
+                <span className="absolute -top-1 -right-1 size-2.5 bg-[#3B82F6] rounded-full ring-2 ring-white animate-pulse" />
+              </motion.div>
+              <span className="label-mono text-[#526E7A] tracking-[0.22em] text-[10px]">AI CAREER NAVIGATOR</span>
+            </motion.div>
+
+            {/* Greeting Headline */}
+            <motion.h1
+              variants={textFadeUpVariants}
+              className="text-[36px] sm:text-[46px] font-light tracking-tighter text-[#000000] mb-2 leading-tight"
+            >
+              {greeting},{" "}
+              <span className="font-semibold bg-gradient-to-r from-black via-[#1a1a1a] to-[#3B82F6] bg-clip-text text-transparent">{displayName}</span>
+            </motion.h1>
+
+            {/* Subheadline */}
+            <motion.p
+              variants={textFadeUpVariants}
+              className="text-[15px] text-[#526E7A] mb-0 font-normal"
+            >
+              How can I empower your learning journey today?
+            </motion.p>
           </motion.div>
-          <span className="label-mono text-[#526E7A] tracking-[0.22em] text-[10px]">AI CAREER NAVIGATOR</span>
-        </motion.div>
+        )}
+      </AnimatePresence>
 
-        {/* Greeting Headline */}
-        <motion.h1
-          variants={textFadeUpVariants}
-          className="text-[36px] sm:text-[46px] font-light tracking-tighter text-[#000000] mb-2 leading-tight"
+      {/* ── Active Conversation Top Bar & Clear Button ── */}
+      <AnimatePresence>
+        {isChatActive && (
+          <motion.div
+            initial={{ opacity: 0, y: -10, height: 0 }}
+            animate={{ opacity: 1, y: 0, height: "auto" }}
+            exit={{ opacity: 0, y: -10, height: 0 }}
+            transition={{ duration: 0.3 }}
+            className="w-full flex items-center justify-between bg-white border border-black/[0.08] rounded-[4px] px-4 py-2.5 mb-4 shadow-sm"
+          >
+            <div className="flex items-center gap-2">
+              <div className="w-5 h-5 bg-black rounded-[3px] flex items-center justify-center">
+                <span className="text-white font-mono text-[8px] font-bold">EV</span>
+              </div>
+              <span className="label-mono text-black text-[11px] font-bold">ACTIVE CONVERSATION</span>
+            </div>
+
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={handleEndChat}
+              className="h-7 text-xs font-mono text-[#526E7A] hover:text-black border-black/10 hover:bg-black/[0.04] flex items-center gap-1.5 rounded-[3px]"
+            >
+              <RotateCcw className="size-3" />
+              New Chat
+            </Button>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* ── Conversation Messages Container ────────────── */}
+      {isChatActive && (
+        <div
+          ref={messagesContainerRef}
+          className="w-full space-y-4 mb-6 overflow-y-auto max-h-[500px] scrollbar-thin p-1 flex-1"
         >
-          {greeting},{" "}
-          <span className="font-semibold bg-gradient-to-r from-black via-[#1a1a1a] to-[#3B82F6] bg-clip-text text-transparent">{displayName}</span>
-        </motion.h1>
-
-        {/* Subheadline */}
-        <motion.p
-          variants={textFadeUpVariants}
-          className="text-[15px] text-[#526E7A] mb-0 font-normal"
-        >
-          How can I empower your learning journey today?
-        </motion.p>
-      </div>
-
-      {/* ── Conversation Messages ───────────────────────── */}
-      {messages.length > 0 && (
-        <div ref={messagesContainerRef} className="w-full space-y-4 mb-8 overflow-y-auto max-h-[420px] scrollbar-thin p-1">
           <AnimatePresence>
             {messages.map((m) => (
               <motion.div
@@ -339,7 +389,7 @@ export default function DashboardPage() {
       {/* ── Quick Action Chips ───────────────────────────── */}
       <motion.div
         variants={chipsContainerVariants}
-        className="flex flex-wrap items-center justify-center gap-2.5 w-full mb-10"
+        className="flex flex-wrap items-center justify-center gap-2.5 w-full mb-8"
       >
         {QUICK_ACTIONS.map((chip) => {
           const Icon = chip.icon
@@ -362,7 +412,7 @@ export default function DashboardPage() {
       {/* ── Footer Microcopy ────────────────────────────── */}
       <motion.div
         variants={textFadeUpVariants}
-        className="flex items-center justify-center gap-2 mt-auto pb-6"
+        className="flex items-center justify-center gap-2 mt-auto pb-4"
       >
         <Lock className="size-3 text-[#A0A0A0]" />
         <span className="label-mono text-[#A0A0A0] text-[10px]">YOUR DATA IS PRIVATE AND SECURE</span>
