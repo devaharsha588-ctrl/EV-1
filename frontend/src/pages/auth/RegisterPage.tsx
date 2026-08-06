@@ -5,11 +5,11 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { z } from "zod"
 import { Eye, EyeOff, ArrowRight } from "lucide-react"
 import { toast } from "sonner"
+import { motion } from "framer-motion"
 
 import { PROTECTED_ROUTES, PUBLIC_ROUTES } from "@/constants/routes"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { Card } from "@/components/ui/card"
 import { useGoogleLoginMutation, useGithubLoginMutation, useRegisterMutation } from "@/hooks/useAuth"
 
 const registerSchema = z
@@ -77,121 +77,165 @@ export default function RegisterPage() {
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center p-4 bg-[#0D0F14] text-[#F5F7FA] ambient-light">
-      <Card className="w-full max-w-md space-y-6 p-8 bg-[#151922]">
-        <div className="text-center space-y-2">
-          <div className="flex size-10 items-center justify-center rounded-xl bg-[#5B7CFA] font-bold text-white mx-auto text-sm">
-            EV
-          </div>
-          <h1 className="text-2xl font-bold tracking-tight text-[#F5F7FA]">Create your account</h1>
-          <p className="text-xs text-[#A7B0C0]">Start your AI-powered career evolution</p>
-        </div>
-
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-          <div className="space-y-1.5">
-            <label className="text-xs font-semibold text-[#F5F7FA]">Full Name</label>
-            <Input {...register("name")} placeholder="Alex Johnson" aria-invalid={!!errors.name} />
-            {errors.name && <p className="text-xs text-[#FF6B6B]">{errors.name.message}</p>}
-          </div>
-
-          <div className="space-y-1.5">
-            <label className="text-xs font-semibold text-[#F5F7FA]">Email</label>
-            <Input {...register("email")} type="email" placeholder="alex@example.com" aria-invalid={!!errors.email} />
-            {errors.email && <p className="text-xs text-[#FF6B6B]">{errors.email.message}</p>}
-          </div>
-
-          <div className="space-y-1.5">
-            <label className="text-xs font-semibold text-[#F5F7FA]">Password</label>
-            <div className="relative">
-              <Input
-                {...register("password")}
-                type={showPassword ? "text" : "password"}
-                placeholder="••••••••"
-                aria-invalid={!!errors.password}
-              />
-              <button
-                type="button"
-                onClick={() => setShowPassword(!showPassword)}
-                className="text-[#A7B0C0] hover:text-[#F5F7FA] absolute right-3.5 top-1/2 -translate-y-1/2"
-              >
-                {showPassword ? <EyeOff className="size-4" /> : <Eye className="size-4" />}
-              </button>
-            </div>
-            {passwordVal && (
-              <div className="flex gap-1.5 pt-1">
-                {[1, 2, 3, 4].map((level) => (
-                  <div
-                    key={level}
-                    className={`h-1 flex-1 rounded-full transition-colors ${
-                      level <= passwordStrength
-                        ? passwordStrength <= 2
-                          ? "bg-[#F6C453]"
-                          : "bg-[#32D296]"
-                        : "bg-white/10"
-                    }`}
-                  />
-                ))}
+    <div className="flex min-h-screen bg-[#F5F5F5]">
+      {/* Left: Form Panel */}
+      <motion.div
+        initial={{ opacity: 0, x: -15 }}
+        animate={{ opacity: 1, x: 0 }}
+        transition={{ duration: 0.3 }}
+        className="flex flex-1 items-center justify-center p-6 sm:p-8 lg:max-w-[520px]"
+      >
+        <div className="w-full max-w-[400px] space-y-6">
+          {/* Brand */}
+          <div className="space-y-1">
+            <div className="flex items-center gap-2.5 mb-5">
+              <div className="w-8 h-8 bg-black rounded-[3px] flex items-center justify-center">
+                <span className="text-white font-mono text-[11px] font-bold tracking-widest">EV</span>
               </div>
-            )}
-            {errors.password && <p className="text-xs text-[#FF6B6B]">{errors.password.message}</p>}
+              <span className="font-mono text-[11px] font-bold tracking-[0.14em] uppercase text-black">EV AI</span>
+            </div>
+            <h1 className="text-[28px] font-light tracking-tighter text-[#000000]">Create your account</h1>
+            <p className="text-sm text-[#526E7A]">Start your AI-powered career evolution</p>
           </div>
 
-          <div className="space-y-1.5">
-            <label className="text-xs font-semibold text-[#F5F7FA]">Confirm Password</label>
-            <Input
-              {...register("confirmPassword")}
-              type="password"
-              placeholder="••••••••"
-              aria-invalid={!!errors.confirmPassword}
-            />
-            {errors.confirmPassword && (
-              <p className="text-xs text-[#FF6B6B]">{errors.confirmPassword.message}</p>
-            )}
+          {/* Form */}
+          <form onSubmit={handleSubmit(onSubmit)} className="space-y-3.5">
+            <div className="space-y-1">
+              <label className="label-mono text-[#000000] font-semibold text-xs block">FULL NAME</label>
+              <Input {...register("name")} placeholder="Harsha Deva" aria-invalid={!!errors.name} className="h-11" />
+              {errors.name && <p className="text-xs text-[#EF4444] mt-1">{errors.name.message}</p>}
+            </div>
+
+            <div className="space-y-1">
+              <label className="label-mono text-[#000000] font-semibold text-xs block">EMAIL ADDRESS</label>
+              <Input {...register("email")} type="email" placeholder="alex@example.com" aria-invalid={!!errors.email} className="h-11" />
+              {errors.email && <p className="text-xs text-[#EF4444] mt-1">{errors.email.message}</p>}
+            </div>
+
+            <div className="space-y-1">
+              <label className="label-mono text-[#000000] font-semibold text-xs block">PASSWORD</label>
+              <div className="relative">
+                <Input
+                  {...register("password")}
+                  type={showPassword ? "text" : "password"}
+                  placeholder="••••••••"
+                  aria-invalid={!!errors.password}
+                  className="pr-10 h-11"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="text-[#526E7A] hover:text-black absolute right-3.5 top-1/2 -translate-y-1/2 cursor-pointer"
+                >
+                  {showPassword ? <EyeOff className="size-4" /> : <Eye className="size-4" />}
+                </button>
+              </div>
+              {passwordVal && (
+                <div className="flex gap-1 pt-1">
+                  {[1, 2, 3, 4].map((level) => (
+                    <div
+                      key={level}
+                      className={`h-1 flex-1 rounded-full transition-colors ${
+                        level <= passwordStrength
+                          ? passwordStrength <= 2
+                            ? "bg-[#F59E0B]"
+                            : "bg-[#10B981]"
+                          : "bg-black/10"
+                      }`}
+                    />
+                  ))}
+                </div>
+              )}
+              {errors.password && <p className="text-xs text-[#EF4444] mt-1">{errors.password.message}</p>}
+            </div>
+
+            <div className="space-y-1">
+              <label className="label-mono text-[#000000] font-semibold text-xs block">CONFIRM PASSWORD</label>
+              <Input
+                {...register("confirmPassword")}
+                type="password"
+                placeholder="••••••••"
+                aria-invalid={!!errors.confirmPassword}
+                className="h-11"
+              />
+              {errors.confirmPassword && (
+                <p className="text-xs text-[#EF4444] mt-1">{errors.confirmPassword.message}</p>
+              )}
+            </div>
+
+            <Button
+              type="submit"
+              disabled={isSubmitting || registerMutation.isPending}
+              size="lg"
+              className="w-full mt-2 min-h-[44px]"
+            >
+              {isSubmitting || registerMutation.isPending ? "Creating Account..." : "Get Started"}{" "}
+              <ArrowRight className="ml-2 size-4" />
+            </Button>
+          </form>
+
+          {/* Divider */}
+          <div className="relative text-center">
+            <div className="absolute inset-0 top-1/2 border-t border-black/[0.08]" />
+            <span className="bg-[#F5F5F5] relative z-10 px-3 label-mono text-[#526E7A]">
+              OR CONTINUE WITH
+            </span>
           </div>
 
-          <Button
-            type="submit"
-            disabled={isSubmitting || registerMutation.isPending}
-            size="lg"
-            className="w-full"
-          >
-            {isSubmitting || registerMutation.isPending ? "Creating Account..." : "Get Started"} <ArrowRight className="ml-2 size-4" />
-          </Button>
-        </form>
+          {/* OAuth */}
+          <div className="grid grid-cols-2 gap-3">
+            <Button
+              variant="outline"
+              type="button"
+              onClick={handleGoogleSignIn}
+              disabled={googleLoginMutation.isPending}
+              className="min-h-[44px]"
+            >
+              Google
+            </Button>
+            <Button
+              variant="outline"
+              type="button"
+              onClick={handleGithubSignIn}
+              disabled={githubLoginMutation.isPending}
+              className="min-h-[44px]"
+            >
+              GitHub
+            </Button>
+          </div>
 
-        <div className="relative text-center text-xs">
-          <span className="bg-[#151922] text-[#A7B0C0] font-mono relative z-10 px-3">
-            OR CONTINUE WITH
-          </span>
-          <div className="border-white/5 absolute inset-0 top-1/2 border-t" />
+          <p className="text-[#526E7A] text-center text-sm">
+            Already have an account?{" "}
+            <Link to={PUBLIC_ROUTES.login} className="text-[#000000] font-semibold hover:underline">
+              Sign in
+            </Link>
+          </p>
         </div>
+      </motion.div>
 
-        <div className="grid grid-cols-2 gap-3">
-          <Button
-            variant="outline"
-            type="button"
-            onClick={handleGoogleSignIn}
-            disabled={googleLoginMutation.isPending}
-          >
-            Google
-          </Button>
-          <Button
-            variant="outline"
-            type="button"
-            onClick={handleGithubSignIn}
-            disabled={githubLoginMutation.isPending}
-          >
-            GitHub
-          </Button>
+      {/* Right: Black Panel */}
+      <div className="hidden lg:flex flex-1 bg-black items-center justify-center p-12 relative overflow-hidden">
+        <div
+          className="absolute inset-0 opacity-[0.06]"
+          style={{
+            backgroundImage: "linear-gradient(rgba(255,255,255,0.5) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.5) 1px, transparent 1px)",
+            backgroundSize: "40px 40px",
+          }}
+        />
+
+        <div className="relative z-10 text-center max-w-sm">
+          <div className="w-16 h-16 bg-white rounded-[4px] flex items-center justify-center mx-auto mb-8">
+            <span className="text-black font-mono text-[20px] font-bold tracking-widest">EV</span>
+          </div>
+          <h2 className="text-[32px] font-light tracking-tighter text-white mb-3">
+            Accelerate your<br />
+            <span className="font-bold">Career Trajectory.</span>
+          </h2>
+          <p className="text-[#A0A0A0] text-sm leading-relaxed font-light">
+            Custom milestone roadmaps, live GitHub intelligence, and ATS resume optimization in one platform.
+          </p>
         </div>
-
-        <p className="text-[#A7B0C0] text-center text-xs">
-          Already have an account?{" "}
-          <Link to={PUBLIC_ROUTES.login} className="text-[#5B7CFA] font-semibold hover:underline">
-            Sign in
-          </Link>
-        </p>
-      </Card>
+      </div>
     </div>
   )
 }

@@ -19,7 +19,6 @@ import {
 
 import { PUBLIC_ROUTES } from "@/constants/routes"
 import { Button } from "@/components/ui/button"
-import { ParticleField } from "@/components/ui/particle-field"
 
 const SUBTITLES = [
   "Builds your personalized career roadmap",
@@ -117,24 +116,23 @@ export default function LandingPage() {
   }, [])
 
   return (
-    <div className="relative min-h-screen bg-[#0D0F14] text-[#F5F7FA] overflow-x-hidden ambient-light">
-      <ParticleField count={30} />
+    <div className="relative min-h-screen bg-[#F5F5F5] text-[#000000] overflow-x-hidden">
 
       {/* ── 1. Header ──────────────────────────────────────────────────────────── */}
-      <nav className="glass-surface sticky top-0 z-nav border-b border-white/5 px-6 py-4">
+      <nav className="sticky top-0 z-nav bg-white border-b border-black/[0.08] px-6 py-4">
         <div className="mx-auto flex max-w-6xl items-center justify-between">
           <div className="flex items-center gap-2.5">
-            <div className="flex size-8 items-center justify-center rounded-lg bg-[#5B7CFA] text-xs font-bold text-white">
-              EV
+            <div className="w-7 h-7 bg-black rounded-[3px] flex items-center justify-center">
+              <span className="text-white font-mono text-[11px] font-bold tracking-widest">EV</span>
             </div>
-            <span className="text-base font-semibold text-[#F5F7FA]">Empower & Evolve</span>
+            <span className="font-mono text-sm font-bold tracking-[0.14em] uppercase text-black">EV AI</span>
           </div>
 
           <div className="flex items-center gap-3">
-            <Button asChild variant="ghost" size="sm">
+            <Button asChild variant="ghost" size="sm" className="min-h-[44px]">
               <Link to={PUBLIC_ROUTES.login}>Sign In</Link>
             </Button>
-            <Button asChild size="sm">
+            <Button asChild size="sm" className="min-h-[44px]">
               <Link to={PUBLIC_ROUTES.register}>
                 Get Started <ArrowRight className="ml-1 size-3.5" />
               </Link>
@@ -144,19 +142,24 @@ export default function LandingPage() {
       </nav>
 
       {/* ── 2. Hero Section ────────────────────────────────────────────────────── */}
-      <section className="relative flex min-h-[calc(100vh-4rem)] flex-col items-center justify-center px-4 py-20 text-center">
-        <div className="relative z-10 mx-auto max-w-4xl space-y-8">
-          <div className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-[#151922] px-4 py-1.5 text-xs font-mono text-[#5B7CFA]">
-            <Sparkles className="size-3.5" />
-            <span>Empower. Learn. Evolve.</span>
+      <section className="relative flex min-h-[calc(100vh-5rem)] flex-col items-center justify-center px-4 py-20 text-center">
+        <motion.div
+          initial={{ opacity: 0, y: 15 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.4 }}
+          className="relative z-10 mx-auto max-w-4xl space-y-8"
+        >
+          <div className="inline-flex items-center gap-2 rounded-[3px] border border-black/[0.08] bg-white px-4 py-1.5 label-mono text-[#526E7A] shadow-sm">
+            <Sparkles className="size-3.5 text-[#3B82F6]" />
+            <span>EMPOWER. LEARN. EVOLVE.</span>
           </div>
 
-          <h1 className="text-4xl sm:text-6xl font-bold tracking-tight text-[#F5F7FA] leading-tight">
+          <h1 className="text-4xl sm:text-6xl font-light tracking-tighter text-[#000000] leading-tight">
             Your AI-First Personalized <br />
-            <span className="text-[#5B7CFA]">Career Companion</span>
+            <span className="font-semibold text-black">Career Navigator</span>
           </h1>
 
-          <div className="h-10 text-lg font-mono text-[#A7B0C0] flex items-center justify-center">
+          <div className="h-10 text-base font-mono text-[#526E7A] flex items-center justify-center font-semibold">
             <AnimatePresence mode="wait">
               <motion.p
                 key={subtitleIndex}
@@ -170,23 +173,23 @@ export default function LandingPage() {
             </AnimatePresence>
           </div>
 
-          <p className="mx-auto max-w-xl text-[#A7B0C0] text-sm leading-relaxed sm:text-base">
-            EV is a distraction-free AI workspace that constructs custom milestone roadmaps, audits resume ATS impact, and accelerates your learning velocity.
+          <p className="mx-auto max-w-xl text-[#526E7A] text-sm leading-relaxed sm:text-base">
+            EV is a minimalist engineering-grade workspace that constructs custom milestone roadmaps, audits resume ATS impact, and accelerates your learning velocity.
           </p>
 
           <div className="flex flex-col sm:flex-row items-center justify-center gap-3 pt-2">
-            <Button asChild size="lg">
+            <Button asChild size="lg" className="min-h-[48px] px-8 text-base">
               <Link to={PUBLIC_ROUTES.register}>
                 Start Free Workspace <ArrowRight className="ml-2 size-4" />
               </Link>
             </Button>
-            <Button asChild variant="outline" size="lg">
+            <Button asChild variant="outline" size="lg" className="min-h-[48px]">
               <a href="#features">Explore AI System</a>
             </Button>
           </div>
-        </div>
+        </motion.div>
 
-        <a href="#features" className="text-[#A7B0C0] hover:text-[#F5F7FA] mt-16 transition-colors">
+        <a href="#features" className="text-[#526E7A] hover:text-black mt-16 transition-colors" aria-label="Scroll down">
           <ChevronDown className="size-6 animate-bounce" />
         </a>
       </section>
@@ -194,8 +197,8 @@ export default function LandingPage() {
       {/* ── 3. Features Section ────────────────────────────────────────────────── */}
       <section id="features" className="mx-auto max-w-6xl px-6 py-24 space-y-12">
         <div className="text-center space-y-3 max-w-2xl mx-auto">
-          <span className="font-mono text-xs text-[#5B7CFA]">AI CAPABILITIES</span>
-          <h2 className="text-3xl font-bold tracking-tight text-[#F5F7FA]">Purpose-Built for Calm Career Growth</h2>
+          <span className="label-mono text-[#3B82F6] font-bold">AI CAPABILITIES</span>
+          <h2 className="text-3xl font-light tracking-tighter text-[#000000]">Engineered for Systematic Career Growth</h2>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -207,14 +210,14 @@ export default function LandingPage() {
                 initial={{ opacity: 0, y: 15 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
-                transition={{ delay: idx * 0.06 }}
-                className="clean-card p-6 space-y-3"
+                transition={{ delay: idx * 0.05 }}
+                className="clean-card p-6 space-y-3 bg-white border border-black/[0.08] rounded-[4px]"
               >
-                <div className="inline-flex p-3 rounded-xl bg-[#1C2230] text-[#5B7CFA]">
+                <div className="inline-flex p-3 rounded-[3px] bg-[#F5F5F5] text-black border border-black/[0.06]">
                   <Icon className="size-5" />
                 </div>
-                <h3 className="text-base font-semibold text-[#F5F7FA]">{feature.title}</h3>
-                <p className="text-[#A7B0C0] text-xs leading-relaxed">{feature.description}</p>
+                <h3 className="text-base font-semibold text-[#000000]">{feature.title}</h3>
+                <p className="text-[#526E7A] text-xs leading-relaxed">{feature.description}</p>
               </motion.div>
             )
           })}
@@ -222,26 +225,26 @@ export default function LandingPage() {
       </section>
 
       {/* ── 4. How It Works ────────────────────────────────────────────────────── */}
-      <section className="border-y border-white/5 bg-[#151922] py-24">
+      <section className="border-y border-black/[0.08] bg-white py-24">
         <div className="mx-auto max-w-6xl px-6 space-y-12">
           <div className="text-center space-y-2 max-w-2xl mx-auto">
-            <span className="font-mono text-xs text-[#32D296]">3-STEP WORKFLOW</span>
-            <h2 className="text-3xl font-bold tracking-tight text-[#F5F7FA]">How EV Personalizes Your Journey</h2>
+            <span className="label-mono text-[#10B981] font-bold">3-STEP WORKFLOW</span>
+            <h2 className="text-3xl font-light tracking-tighter text-[#000000]">How EV Personalizes Your Journey</h2>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {STEPS.map((step) => {
               const Icon = step.icon
               return (
-                <div key={step.number} className="clean-card p-6 space-y-3 relative">
+                <div key={step.number} className="clean-card p-6 space-y-3 relative bg-[#F5F5F5] border border-black/[0.08] rounded-[4px]">
                   <div className="flex justify-between items-center">
-                    <span className="font-mono text-3xl font-extrabold text-[#5B7CFA]">{step.number}</span>
-                    <div className="p-2.5 rounded-xl bg-[#1C2230] text-[#5B7CFA]">
-                      <Icon className="size-5" />
+                    <span className="font-mono text-3xl font-bold text-[#000000]">{step.number}</span>
+                    <div className="p-2.5 rounded-[3px] bg-black text-white">
+                      <Icon className="size-4" />
                     </div>
                   </div>
-                  <h3 className="text-base font-semibold text-[#F5F7FA]">{step.title}</h3>
-                  <p className="text-[#A7B0C0] text-xs leading-relaxed">{step.description}</p>
+                  <h3 className="text-base font-semibold text-[#000000]">{step.title}</h3>
+                  <p className="text-[#526E7A] text-xs leading-relaxed">{step.description}</p>
                 </div>
               )
             })}
@@ -252,25 +255,26 @@ export default function LandingPage() {
       {/* ── 5. Testimonials ───────────────────────────────────────────────────── */}
       <section className="mx-auto max-w-6xl px-6 py-24 space-y-12">
         <div className="text-center space-y-2">
-          <h2 className="text-3xl font-bold text-[#F5F7FA]">Validated by Professionals</h2>
+          <span className="label-mono text-[#526E7A]">TESTIMONIALS</span>
+          <h2 className="text-3xl font-light tracking-tighter text-[#000000]">Validated by Engineers</h2>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {TESTIMONIALS.map((item) => (
-            <div key={item.name} className="clean-card p-6 space-y-3">
-              <div className="flex gap-1 text-yellow-400">
+            <div key={item.name} className="clean-card p-6 space-y-3 bg-white border border-black/[0.08] rounded-[4px]">
+              <div className="flex gap-1 text-black">
                 {Array.from({ length: item.stars }).map((_, i) => (
                   <Star key={i} className="size-3.5 fill-current" />
                 ))}
               </div>
-              <p className="text-xs text-[#F5F7FA] leading-relaxed">"{item.quote}"</p>
-              <div className="flex items-center gap-3 pt-2">
-                <div className="size-8 rounded-full bg-[#5B7CFA] flex items-center justify-center font-bold text-white text-xs">
+              <p className="text-xs text-[#333333] leading-relaxed font-medium">"{item.quote}"</p>
+              <div className="flex items-center gap-3 pt-2 border-t border-black/[0.06]">
+                <div className="size-8 rounded-[3px] bg-black flex items-center justify-center font-mono font-bold text-white text-xs">
                   {item.avatar}
                 </div>
                 <div>
-                  <p className="text-xs font-semibold text-[#F5F7FA]">{item.name}</p>
-                  <p className="text-[0.7rem] text-[#A7B0C0]">{item.role}</p>
+                  <p className="text-xs font-semibold text-[#000000]">{item.name}</p>
+                  <p className="label-mono text-[#526E7A] text-[9px]">{item.role}</p>
                 </div>
               </div>
             </div>
@@ -279,15 +283,15 @@ export default function LandingPage() {
       </section>
 
       {/* ── 6. Footer ────────────────────────────────────────────────────────── */}
-      <footer className="border-t border-white/5 bg-[#0B0D12] py-8 px-6 text-xs text-[#A7B0C0]">
+      <footer className="border-t border-black/[0.08] bg-black py-8 px-6 text-xs text-white">
         <div className="mx-auto max-w-6xl flex flex-col md:flex-row justify-between items-center gap-4">
           <div className="flex items-center gap-2">
-            <div className="flex size-6 items-center justify-center rounded bg-[#5B7CFA] font-bold text-white text-[0.65rem]">
+            <div className="flex size-6 items-center justify-center rounded-[2px] bg-white font-mono font-bold text-black text-[0.65rem]">
               EV
             </div>
-            <span className="font-semibold text-[#F5F7FA]">Empower & Evolve</span>
+            <span className="font-mono text-xs font-bold tracking-widest text-white">EV AI SYSTEM</span>
           </div>
-          <p>© {new Date().getFullYear()} EV AI Inc. All rights reserved.</p>
+          <p className="label-mono text-[#A0A0A0]">© {new Date().getFullYear()} EV AI INC. ALL RIGHTS RESERVED.</p>
         </div>
       </footer>
     </div>

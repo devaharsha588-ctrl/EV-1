@@ -280,15 +280,38 @@ export const generatorService = {
     const modulesFinished = Math.max(1, Math.floor(knownCount * 1.5) + Math.floor(hours / 5))
     const streakDays = Math.max(1, Math.min(90, knownCount * 4 + Math.floor(hours / 2)))
 
-    // Score history grows from a baseline relative to skill level
+    // Base score calculation based on skill level
     const baseScore = profile.skillLevel === "Expert" ? 70
       : profile.skillLevel === "Advanced" ? 58
       : profile.skillLevel === "Intermediate" ? 45
       : 30
-    const scoreHistory = Array.from({ length: 5 }, (_, i) => ({
-      week: `W${i + 1}`,
-      score: Math.min(98, baseScore + Math.round(i * (hours * 0.8 + knownCount * 0.5))),
-    }))
+
+    // Time-range filtered historical score datasets
+    const weekData = [
+      { label: "Mon", score: Math.min(98, baseScore + Math.round(hours * 0.2)) },
+      { label: "Tue", score: Math.min(98, baseScore + Math.round(hours * 0.35)) },
+      { label: "Wed", score: Math.min(98, baseScore + Math.round(hours * 0.4)) },
+      { label: "Thu", score: Math.min(98, baseScore + Math.round(hours * 0.55)) },
+      { label: "Fri", score: Math.min(98, baseScore + Math.round(hours * 0.7)) },
+      { label: "Sat", score: Math.min(98, baseScore + Math.round(hours * 0.85)) },
+      { label: "Sun", score: Math.min(98, baseScore + Math.round(hours * 1.0)) },
+    ]
+
+    const monthData = [
+      { label: "W1", score: Math.min(98, baseScore) },
+      { label: "W2", score: Math.min(98, baseScore + Math.round(hours * 0.6)) },
+      { label: "W3", score: Math.min(98, baseScore + Math.round(hours * 1.2)) },
+      { label: "W4", score: Math.min(98, baseScore + Math.round(hours * 1.8 + knownCount * 1.5)) },
+    ]
+
+    const allTimeData = [
+      { label: "Jan", score: Math.max(25, baseScore - 20) },
+      { label: "Feb", score: Math.max(30, baseScore - 15) },
+      { label: "Mar", score: Math.max(38, baseScore - 8) },
+      { label: "Apr", score: Math.max(45, baseScore - 2) },
+      { label: "May", score: Math.min(95, baseScore + Math.round(hours * 1.2)) },
+      { label: "Jun", score: Math.min(98, baseScore + Math.round(hours * 2.0 + knownCount * 2)) },
+    ]
 
     const techs = profile.knownTechnologies.length > 0
       ? profile.knownTechnologies
@@ -296,7 +319,6 @@ export const generatorService = {
       ? profile.interests
       : ["Core Engineering"]
 
-    // Skill breakdown: first skill is strongest, descending by usage order
     const skillBreakdown = techs.slice(0, 6).map((skill, i) => ({
       skill,
       progress: Math.min(96, Math.max(20, 90 - i * 12 + Math.floor(hours * 0.5))),
@@ -309,7 +331,12 @@ export const generatorService = {
       modulesFinished,
       skillsLeveledCount: Math.max(1, knownCount),
       studyStreakDays: streakDays,
-      scoreHistory,
+      scoreHistory: monthData, // Default month dataset
+      scoreHistoryFiltered: {
+        week: weekData,
+        month: monthData,
+        all: allTimeData,
+      },
       skillBreakdown,
       aiSummary: `At your ${hours}h/week commitment with ${knownCount} indexed skill${knownCount !== 1 ? "s" : ""}, you are projected to achieve "${profile.primaryGoal || "your goal"}" in ~${weeksToGoal} weeks. Keep your study streak active to accelerate velocity.`,
     }

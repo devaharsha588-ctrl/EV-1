@@ -97,12 +97,22 @@ export interface GithubData {
   readonly aiInsights: string[]
 }
 
+export interface AnalyticsScoreItem {
+  readonly label: string
+  readonly score: number
+}
+
 export interface AnalyticsData {
   readonly learningHours: number
   readonly modulesFinished: number
   readonly skillsLeveledCount: number
   readonly studyStreakDays: number
-  readonly scoreHistory: Array<{ readonly week: string; readonly score: number }>
+  readonly scoreHistory: AnalyticsScoreItem[]
+  readonly scoreHistoryFiltered?: {
+    readonly week: AnalyticsScoreItem[]
+    readonly month: AnalyticsScoreItem[]
+    readonly all: AnalyticsScoreItem[]
+  }
   readonly skillBreakdown: Array<{ readonly skill: string; readonly progress: number }>
   readonly aiSummary: string
 }

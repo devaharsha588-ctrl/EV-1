@@ -1,21 +1,18 @@
 import { useState, useEffect } from "react"
-import { Sun, Moon, Bell, Shield, User, Sliders } from "lucide-react"
+import { Bell, Shield, User } from "lucide-react"
 import { toast } from "sonner"
+import { motion, AnimatePresence } from "framer-motion"
 
 import { PageHeader } from "@/components/common/PageHeader"
-import { useTheme } from "@/hooks/useTheme"
-import { useSidebar } from "@/hooks/useSidebar"
 import { useProfile } from "@/hooks/useProfile"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Card } from "@/components/ui/card"
 
 export default function SettingsPage() {
-  const { theme, setTheme } = useTheme()
-  const { isCollapsed, toggleSidebar } = useSidebar()
-  const { profile, updateProfile } = useProfile()
+  const { profile, updateProfile, isLoading } = useProfile()
 
-  const [activeSection, setActiveSection] = useState<"account" | "appearance" | "notifications" | "privacy">("account")
+  const [activeSection, setActiveSection] = useState<"account" | "notifications" | "privacy">("account")
 
   const [fullName, setFullName] = useState(profile.name || "")
   const [nickname, setNickname] = useState(profile.nickname || "")
@@ -30,26 +27,48 @@ export default function SettingsPage() {
   }, [profile])
 
   const handleSave = async () => {
-    await updateProfile({
-      name: fullName,
-      nickname: nickname,
-      primaryGoal: primaryGoal,
-      weeklyHours: Number(weeklyHours),
-    })
-    toast.success("Settings updated successfully!")
+    try {
+      await updateProfile({
+        name: fullName,
+        nickname: nickname,
+        primaryGoal: primaryGoal,
+        weeklyHours: Number(weeklyHours),
+      })
+      toast.success("Settings saved successfully!")
+    } catch {
+      toast.error("Failed to save settings.")
+    }
+  }
+
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: { opacity: 1, transition: { staggerChildren: 0.05 } },
+  }
+
+  const itemVariants = {
+    hidden: { opacity: 0, y: 10 },
+    visible: { opacity: 1, y: 0, transition: { duration: 0.2 } },
   }
 
   return (
-    <div className="space-y-8 pb-12 max-w-4xl mx-auto">
-      <PageHeader title="Settings" description="Manage your profile parameters, AI alerts, and system preferences." />
+    <motion.div
+      initial="hidden"
+      animate="visible"
+      variants={containerVariants}
+      className="space-y-8 pb-12 max-w-4xl mx-auto px-4 sm:px-6 py-8 min-h-[calc(100vh-64px)]"
+    >
+      <PageHeader
+        label="SYSTEM PREFERENCES"
+        title="Settings"
+        description="Manage your account parameters, notification preferences, and data privacy."
+      />
 
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-4">
-        {/* Left Nav */}
-        <div className="lg:col-span-1">
-          <div className="bg-[#151922] rounded-2xl p-1.5 flex flex-row lg:flex-col gap-1 border border-white/5">
+        {/* Left Nav Tabs */}
+        <motion.div variants={itemVariants} className="lg:col-span-1">
+          <div className="bg-white rounded-[4px] p-1.5 flex flex-row lg:flex-col gap-1 border border-black/[0.08] shadow-sm overflow-x-auto scrollbar-thin">
             {[
               { id: "account", label: "Account", icon: User },
-              { id: "appearance", label: "Appearance", icon: Sliders },
               { id: "notifications", label: "Notifications", icon: Bell },
               { id: "privacy", label: "Privacy & Data", icon: Shield },
             ].map((tab) => {
@@ -59,126 +78,159 @@ export default function SettingsPage() {
                 <button
                   key={tab.id}
                   onClick={() => setActiveSection(tab.id as any)}
-                  className={`flex flex-1 items-center gap-2.5 px-3.5 py-2 text-xs font-semibold rounded-xl transition-all ${
-                    isActive
-                      ? "bg-[#5B7CFA] text-white font-semibold"
-                      : "text-[#A7B0C0] hover:text-[#F5F7FA]"
+                  className={`relative flex items-center gap-2.5 px-4 py-2.5 text-xs font-semibold rounded-[3px] transition-colors min-h-[44px] cursor-pointer text-left whitespace-nowrap ${
+                    isActive ? "text-white font-bold" : "text-[#526E7A] hover:text-black hover:bg-black/[0.04]"
                   }`}
                 >
-                  <Icon className="size-4" />
-                  <span>{tab.label}</span>
+                  {isActive && (
+                    <motion.div
+                      layoutId="settings-active-tab"
+                      className="absolute inset-0 bg-black rounded-[3px]"
+                      transition={{ type: "spring", stiffness: 400, damping: 30 }}
+                    />
+                  )}
+                  <Icon className="size-4 relative z-10 shrink-0" />
+                  <span className="relative z-10">{tab.label}</span>
                 </button>
               )
             })}
           </div>
-        </div>
+        </motion.div>
 
         {/* Right Settings Content */}
-        <div className="lg:col-span-3 space-y-6">
-          {activeSection === "account" && (
-            <Card className="space-y-5 p-6">
-              <h2 className="font-mono text-xs font-semibold text-[#F5F7FA]">ACCOUNT DETAILS</h2>
-              <div className="space-y-4">
-                <div className="space-y-1.5">
-                  <label htmlFor="settings-fullname" className="text-xs font-semibold text-[#F5F7FA]">Full Name</label>
-                  <Input id="settings-fullname" value={fullName} onChange={(e) => setFullName(e.target.value)} />
-                </div>
-                <div className="space-y-1.5">
-                  <label htmlFor="settings-nickname" className="text-xs font-semibold text-[#F5F7FA]">Preferred Nickname</label>
-                  <Input id="settings-nickname" value={nickname} onChange={(e) => setNickname(e.target.value)} />
-                </div>
-                <div className="space-y-1.5">
-                  <label htmlFor="settings-goal" className="text-xs font-semibold text-[#F5F7FA]">Primary Target Goal</label>
-                  <Input id="settings-goal" value={primaryGoal} onChange={(e) => setPrimaryGoal(e.target.value)} />
-                </div>
-                <div className="space-y-1.5">
-                  <label htmlFor="settings-hours" className="text-xs font-semibold text-[#F5F7FA]">Weekly Commitment (Hours)</label>
-                  <Input
-                    id="settings-hours"
-                    type="number"
-                    min="2"
-                    max="40"
-                    value={weeklyHours}
-                    onChange={(e) => setWeeklyHours(Number(e.target.value))}
-                  />
-                </div>
-                <Button onClick={handleSave} size="sm" className="mt-2">
-                  Save Account Changes
-                </Button>
-              </div>
-            </Card>
-          )}
+        <motion.div variants={itemVariants} className="lg:col-span-3 space-y-6">
+          <AnimatePresence mode="wait">
+            {activeSection === "account" && (
+              <motion.div
+                key="account"
+                initial={{ opacity: 0, x: 10 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -10 }}
+                transition={{ duration: 0.2 }}
+              >
+                <Card className="space-y-5 p-6 gap-0">
+                  <h2 className="label-mono text-[#000000] font-bold text-xs">ACCOUNT DETAILS</h2>
+                  <div className="space-y-4 mt-3">
+                    {/* Full Name */}
+                    <div className="space-y-1.5">
+                      <label htmlFor="settings-fullname" className="label-mono text-[#000000] font-semibold text-xs block">
+                        Full Name
+                      </label>
+                      <Input
+                        id="settings-fullname"
+                        value={fullName}
+                        onChange={(e) => setFullName(e.target.value)}
+                        placeholder="e.g. Harsha Deva"
+                        className="h-11"
+                      />
+                    </div>
 
-          {activeSection === "appearance" && (
-            <Card className="space-y-5 p-6">
-              <h2 className="font-mono text-xs font-semibold text-[#F5F7FA]">THEME & INTERFACE MODE</h2>
-              <div className="space-y-4">
-                <span className="text-xs font-semibold text-[#F5F7FA] block">Theme Preference</span>
-                <div className="grid grid-cols-2 gap-3 max-w-xs">
-                  {[
-                    { id: "light", label: "Light Mode", icon: Sun },
-                    { id: "dark", label: "Dark Mode (Default)", icon: Moon },
-                  ].map((t) => {
-                    const Icon = t.icon
-                    const isSelected = theme === t.id
-                    return (
-                      <button
-                        key={t.id}
-                        onClick={() => setTheme(t.id as "light" | "dark")}
-                        className={`p-4 rounded-xl border flex flex-col items-center gap-2 transition-all ${
-                          isSelected
-                            ? "border-[#5B7CFA] bg-[#5B7CFA]/15 font-semibold text-white"
-                            : "border-white/5 bg-[#1C2230] text-[#A7B0C0]"
-                        }`}
-                      >
-                        <Icon className="size-5" />
-                        <span className="text-xs">{t.label}</span>
-                      </button>
-                    )
-                  })}
-                </div>
+                    {/* Preferred Nickname (Bug 3 Fix) */}
+                    <div className="space-y-1.5">
+                      <label htmlFor="settings-nickname" className="label-mono text-[#000000] font-semibold text-xs block">
+                        Preferred Nickname
+                      </label>
+                      <Input
+                        id="settings-nickname"
+                        value={nickname}
+                        onChange={(e) => setNickname(e.target.value)}
+                        placeholder="e.g. Harsha (Add a preferred nickname)"
+                        className="h-11"
+                      />
+                      <p className="text-[11px] text-[#526E7A]">Used by EV AI for personal greetings and dashboard displays.</p>
+                    </div>
 
-                <div className="border-t border-white/5 pt-4 flex items-center justify-between">
-                  <div>
-                    <p className="text-xs font-semibold text-[#F5F7FA]">Sidebar Collapsed State</p>
-                    <p className="text-xs text-[#A7B0C0]">Keep sidebar minified for maximum workspace</p>
+                    {/* Primary Target Goal */}
+                    <div className="space-y-1.5">
+                      <label htmlFor="settings-goal" className="label-mono text-[#000000] font-semibold text-xs block">
+                        Primary Target Goal
+                      </label>
+                      <Input
+                        id="settings-goal"
+                        value={primaryGoal}
+                        onChange={(e) => setPrimaryGoal(e.target.value)}
+                        placeholder="e.g. Become Full Stack Developer"
+                        className="h-11"
+                      />
+                    </div>
+
+                    {/* Weekly Commitment */}
+                    <div className="space-y-1.5">
+                      <label htmlFor="settings-hours" className="label-mono text-[#000000] font-semibold text-xs block">
+                        Weekly Commitment (Hours)
+                      </label>
+                      <Input
+                        id="settings-hours"
+                        type="number"
+                        min="2"
+                        max="60"
+                        value={weeklyHours}
+                        onChange={(e) => setWeeklyHours(Number(e.target.value))}
+                        className="h-11"
+                      />
+                    </div>
+
+                    <Button onClick={handleSave} disabled={isLoading} size="lg" className="mt-4 w-full sm:w-auto min-h-[44px]">
+                      {isLoading ? "Saving..." : "Save Account Changes"}
+                    </Button>
                   </div>
-                  <Button variant="outline" size="sm" onClick={toggleSidebar}>
-                    {isCollapsed ? "Collapsed" : "Expanded"}
+                </Card>
+              </motion.div>
+            )}
+
+            {activeSection === "notifications" && (
+              <motion.div
+                key="notifications"
+                initial={{ opacity: 0, x: 10 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -10 }}
+                transition={{ duration: 0.2 }}
+              >
+                <Card className="space-y-5 p-6 gap-0">
+                  <h2 className="label-mono text-[#000000] font-bold text-xs">NOTIFICATION ALERTS</h2>
+                  <div className="space-y-4 mt-3">
+                    <div className="flex items-center justify-between border-b border-black/[0.06] pb-3">
+                      <div>
+                        <p className="text-sm font-semibold text-[#000000]">Email Weekly Digest</p>
+                        <p className="text-xs text-[#526E7A]">Weekly summary of milestone progress and AI velocity</p>
+                      </div>
+                      <input type="checkbox" defaultChecked className="size-5 accent-[#000000] rounded cursor-pointer" />
+                    </div>
+
+                    <div className="flex items-center justify-between border-b border-black/[0.06] pb-3">
+                      <div>
+                        <p className="text-sm font-semibold text-[#000000]">GitHub Activity Sync Alerts</p>
+                        <p className="text-xs text-[#526E7A]">Notify when new commits or repository stars are indexed</p>
+                      </div>
+                      <input type="checkbox" defaultChecked className="size-5 accent-[#000000] rounded cursor-pointer" />
+                    </div>
+                  </div>
+                </Card>
+              </motion.div>
+            )}
+
+            {activeSection === "privacy" && (
+              <motion.div
+                key="privacy"
+                initial={{ opacity: 0, x: 10 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -10 }}
+                transition={{ duration: 0.2 }}
+              >
+                <Card className="space-y-4 p-6 gap-0">
+                  <h2 className="label-mono text-[#000000] font-bold text-xs">PRIVACY & DATA SECURITY</h2>
+                  <p className="text-sm text-[#333333] leading-relaxed mt-2">
+                    Your profile data is encrypted end-to-end and used exclusively to generate personalized career trajectory recommendations.
+                  </p>
+                  <Button variant="outline" size="sm" onClick={() => toast.info("Data export initiated")} className="mt-2 min-h-[44px]">
+                    Export My Account Data
                   </Button>
-                </div>
-              </div>
-            </Card>
-          )}
-
-          {activeSection === "notifications" && (
-            <Card className="space-y-5 p-6">
-              <h2 className="font-mono text-xs font-semibold text-[#F5F7FA]">NOTIFICATION ALERTS</h2>
-              <div className="space-y-4">
-                <div className="flex items-center justify-between border-b border-white/5 pb-3">
-                  <div>
-                    <p className="text-xs font-semibold text-[#F5F7FA]">Email Digest</p>
-                    <p className="text-xs text-[#A7B0C0]">Weekly summary of milestone progress</p>
-                  </div>
-                  <input type="checkbox" defaultChecked className="size-4 accent-[#5B7CFA]" />
-                </div>
-              </div>
-            </Card>
-          )}
-
-          {activeSection === "privacy" && (
-            <Card className="space-y-4 p-6">
-              <h2 className="font-mono text-xs font-semibold text-[#F5F7FA]">PRIVACY & DATA SECURITY</h2>
-              <p className="text-xs text-[#A7B0C0] leading-relaxed">
-                Your data is encrypted end-to-end and used exclusively to generate custom career trajectory recommendations.
-              </p>
-              <Button variant="outline" size="sm" onClick={() => toast.info("Data export initiated")}>
-                Export My Account Data
-              </Button>
-            </Card>
-          )}
-        </div>
+                </Card>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </motion.div>
       </div>
-    </div>
+    </motion.div>
   )
 }
