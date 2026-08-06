@@ -9,8 +9,8 @@ function getApiBaseUrl(): string {
   const isVercel = isBrowser && window.location.hostname.includes("vercel.app")
 
   // Fallback to production Render backend if deployed on Vercel without custom URL or pointing to localhost
-  if (isVercel && (!envUrl || envUrl.includes("localhost") || envUrl.includes("127.0.0.1"))) {
-    envUrl = "https://ev-ai-backend.onrender.com/api/v1"
+  if (isVercel && (!envUrl || envUrl.includes("localhost") || envUrl.includes("127.0.0.1") || envUrl.includes("ev-ai-backend"))) {
+    envUrl = "https://ev-11.onrender.com/api/v1"
   }
 
   // Ensure /api/v1 suffix is present for non-empty URLs
