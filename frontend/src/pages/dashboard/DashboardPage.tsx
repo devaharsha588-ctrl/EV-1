@@ -115,7 +115,7 @@ export default function DashboardPage() {
     setIsTyping(true)
 
     try {
-      const response = await sendChatMessage(content)
+      const response = await sendChatMessage(content, undefined, undefined, profile)
       if (response?.aiMessage) {
         setMessages((prev) => [...prev, response.aiMessage])
       } else {
