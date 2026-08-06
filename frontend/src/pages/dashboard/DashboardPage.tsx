@@ -9,7 +9,7 @@ import {
   HelpCircle,
   Code2,
   Lock,
-  RotateCcw,
+  X,
 } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
@@ -68,7 +68,9 @@ export default function DashboardPage() {
   const [promptText, setPromptText] = useState("")
   const [messages, setMessages] = useState<Message[]>([])
   const [isTyping, setIsTyping] = useState(false)
+  const [isInputFocused, setIsInputFocused] = useState(false)
   const messagesContainerRef = useRef<HTMLDivElement>(null)
+  const inputRef = useRef<HTMLInputElement>(null)
 
   const displayName = profile?.nickname || profile?.name || "Learner"
   const userInitials = displayName
@@ -141,6 +143,10 @@ export default function DashboardPage() {
 
   const handleEndChat = () => {
     setMessages([])
+    setIsInputFocused(false)
+    if (inputRef.current) {
+      inputRef.current.blur()
+    }
   }
 
   // Staggered Entrance Variants
@@ -207,6 +213,7 @@ export default function DashboardPage() {
   }
 
   const isChatActive = messages.length > 0
+  const isFocusedOrActive = isInputFocused || isChatActive
 
   return (
     <motion.div
@@ -216,9 +223,36 @@ export default function DashboardPage() {
       className="w-full max-w-5xl mx-auto py-8 px-4 sm:px-6 flex flex-col items-center min-h-[calc(100vh-64px)] overflow-hidden"
     >
 
-      {/* ── Hero Greeting (Hides smoothly when chatting) ── */}
+      {/* ── Top-Left End Chat Button Bar ── */}
+      <AnimatePresence>
+        {isFocusedOrActive && (
+          <motion.div
+            initial={{ opacity: 0, y: -12, height: 0 }}
+            animate={{ opacity: 1, y: 0, height: "auto" }}
+            exit={{ opacity: 0, y: -12, height: 0 }}
+            transition={{ duration: 0.3, ease: "easeOut" }}
+            className="w-full flex items-center justify-between mb-4"
+          >
+            {/* Top-Left End Chat Button */}
+            <Button
+              onClick={handleEndChat}
+              className="h-8 px-3.5 bg-black hover:bg-[#1a1a1a] text-white text-xs font-mono font-bold tracking-wider flex items-center gap-2 rounded-[4px] shadow-sm transition-all active:scale-95 cursor-pointer"
+            >
+              <X className="size-3.5" />
+              <span>END CHAT</span>
+            </Button>
+
+            <div className="flex items-center gap-2">
+              <span className="label-mono text-[#526E7A] text-[10px]">EV AI SESSION ACTIVE</span>
+              <span className="size-2 rounded-full bg-[#10B981] animate-pulse" />
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* ── Hero Greeting (Hides smoothly when clicking search bar or chatting) ── */}
       <AnimatePresence mode="wait">
-        {!isChatActive && (
+        {!isFocusedOrActive && (
           <motion.div
             key="hero-greeting-section"
             initial={{ opacity: 0, height: 0, scale: 0.95 }}
@@ -256,36 +290,6 @@ export default function DashboardPage() {
             >
               How can I empower your learning journey today?
             </motion.p>
-          </motion.div>
-        )}
-      </AnimatePresence>
-
-      {/* ── Active Conversation Top Bar & Clear Button ── */}
-      <AnimatePresence>
-        {isChatActive && (
-          <motion.div
-            initial={{ opacity: 0, y: -10, height: 0 }}
-            animate={{ opacity: 1, y: 0, height: "auto" }}
-            exit={{ opacity: 0, y: -10, height: 0 }}
-            transition={{ duration: 0.3 }}
-            className="w-full flex items-center justify-between bg-white border border-black/[0.08] rounded-[4px] px-4 py-2.5 mb-4 shadow-sm"
-          >
-            <div className="flex items-center gap-2">
-              <div className="w-5 h-5 bg-black rounded-[3px] flex items-center justify-center">
-                <span className="text-white font-mono text-[8px] font-bold">EV</span>
-              </div>
-              <span className="label-mono text-black text-[11px] font-bold">ACTIVE CONVERSATION</span>
-            </div>
-
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={handleEndChat}
-              className="h-7 text-xs font-mono text-[#526E7A] hover:text-black border-black/10 hover:bg-black/[0.04] flex items-center gap-1.5 rounded-[3px]"
-            >
-              <RotateCcw className="size-3" />
-              New Chat
-            </Button>
           </motion.div>
         )}
       </AnimatePresence>
@@ -369,7 +373,9 @@ export default function DashboardPage() {
 
         {/* Input */}
         <input
+          ref={inputRef}
           value={promptText}
+          onFocus={() => setIsInputFocused(true)}
           onChange={(e) => setPromptText(e.target.value)}
           placeholder="What would you like to achieve today?"
           className="flex-1 bg-transparent text-[15px] text-[#000000] placeholder:text-[#A0A0A0] outline-none border-none font-sans"
