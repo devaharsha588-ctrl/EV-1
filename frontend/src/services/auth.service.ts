@@ -16,10 +16,12 @@ const MOCK_STORAGE_KEY = "ev_auth_session_fallback"
  */
 export function mapSupabaseUser(user: User | null | undefined): AuthUser | undefined {
   if (!user) return undefined
+  const emailName = user.email ? user.email.split("@")[0].replace(/[._-]/g, " ") : "Learner"
+  const formattedName = emailName.charAt(0).toUpperCase() + emailName.slice(1)
   return {
-    id: user.id || "user-alex-123",
-    email: user.email || "alex@example.com",
-    name: user.user_metadata?.name || user.user_metadata?.full_name || user.email?.split("@")[0] || "Alex Johnson",
+    id: user.id || "user-" + Date.now(),
+    email: user.email || "user@example.com",
+    name: user.user_metadata?.name || user.user_metadata?.full_name || formattedName,
     avatarUrl: user.user_metadata?.avatar_url || user.user_metadata?.picture,
     role: user.role || "authenticated",
   }
@@ -31,8 +33,8 @@ export function mapSupabaseUser(user: User | null | undefined): AuthUser | undef
 export function mapSupabaseSession(session: Session | null | undefined): AuthSession | null {
   if (!session) return null
   return {
-    accessToken: session.access_token || "demo-access-token",
-    refreshToken: session.refresh_token || "demo-refresh-token",
+    accessToken: session.access_token || "access-token",
+    refreshToken: session.refresh_token || "refresh-token",
     user: mapSupabaseUser(session.user),
     rawSession: session,
     rawUser: session.user,
@@ -43,10 +45,12 @@ export function mapSupabaseSession(session: Session | null | undefined): AuthSes
  * Create a local fallback session for smooth local testing / demo mode.
  */
 export function createFallbackSession(email: string, name?: string): AuthSession {
+  const emailName = email ? email.split("@")[0].replace(/[._-]/g, " ") : "Learner"
+  const formattedName = emailName.charAt(0).toUpperCase() + emailName.slice(1)
   const fallbackUser: AuthUser = {
     id: "user-" + Date.now(),
     email,
-    name: name || email.split("@")[0] || "Alex Johnson",
+    name: name || formattedName,
     role: "authenticated",
   }
   const fallbackSession: AuthSession = {

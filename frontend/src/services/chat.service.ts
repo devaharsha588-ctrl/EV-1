@@ -106,8 +106,8 @@ export async function sendChatMessage(content: string, conversationId?: string, 
 }
 
 export function subscribeToChatMessages(
-  threadId: string,
-  onMessage: (message: Record<string, unknown>) => void,
+  _threadId: string,
+  _onMessage: (message: Record<string, unknown>) => void,
 ) {
   return () => {}
 }
