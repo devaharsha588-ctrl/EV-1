@@ -18,70 +18,125 @@ export default function RoadmapPage() {
 
   const targetGoal = profile.primaryGoal || "Software Developer"
 
+  // Stagger Animation Variants
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.08,
+        delayChildren: 0.05,
+      },
+    },
+  }
+
+  const itemVariants = {
+    hidden: { opacity: 0, y: 14 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: { duration: 0.35 },
+    },
+  }
+
+  const phaseCardVariants = {
+    hidden: { opacity: 0, x: -16, y: 8 },
+    visible: {
+      opacity: 1,
+      x: 0,
+      y: 0,
+      transition: { duration: 0.4 },
+    },
+  }
+
   return (
-    <div className="space-y-8 pb-12 max-w-4xl mx-auto px-4 sm:px-6 py-8">
-      <PageHeader
-        label="CAREER ROADMAP"
-        title={targetGoal}
-        description={`Your milestone progression — generated from your profile.`}
-      />
+    <motion.div
+      initial="hidden"
+      animate="visible"
+      variants={containerVariants}
+      className="space-y-8 pb-12 max-w-5xl mx-auto px-4 sm:px-6 py-8 min-h-[calc(100vh-64px)]"
+    >
+      {/* Page Header */}
+      <motion.div variants={itemVariants}>
+        <PageHeader
+          label="CAREER ROADMAP"
+          title={targetGoal}
+          description={`Your milestone progression — generated from your profile.`}
+        />
+      </motion.div>
 
       {/* Overview Row */}
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+      <motion.div variants={containerVariants} className="grid grid-cols-1 gap-4 sm:grid-cols-3">
         {/* Overall Progress */}
-        <Card className="space-y-3 p-5 gap-0">
-          <span className="label-mono">OVERALL PROGRESS</span>
-          <p className="font-mono text-[40px] font-bold text-[#000000] leading-none mt-2">
-            {roadmapData.overallProgress}
-            <span className="text-[20px] font-normal text-[#526E7A]">%</span>
-          </p>
-          <div className="w-full bg-black/[0.06] h-1 rounded-full overflow-hidden mt-3">
-            <div
-              className="bg-[#000000] h-full rounded-full transition-all duration-500"
-              style={{ width: `${roadmapData.overallProgress}%` }}
-            />
-          </div>
-        </Card>
+        <motion.div variants={itemVariants}>
+          <Card className="space-y-3 p-5 gap-0">
+            <span className="label-mono">OVERALL PROGRESS</span>
+            <p className="font-mono text-[40px] font-bold text-[#000000] leading-none mt-2">
+              {roadmapData.overallProgress}
+              <span className="text-[20px] font-normal text-[#526E7A]">%</span>
+            </p>
+            <div className="w-full bg-black/[0.06] h-1 rounded-full overflow-hidden mt-3">
+              <motion.div
+                initial={{ width: 0 }}
+                animate={{ width: `${roadmapData.overallProgress}%` }}
+                transition={{ duration: 0.8, delay: 0.2 }}
+                className="bg-[#000000] h-full rounded-full"
+              />
+            </div>
+          </Card>
+        </motion.div>
 
         {/* Active Phase */}
-        <Card className="space-y-2 p-5 gap-0">
-          <span className="label-mono">ACTIVE PHASE</span>
-          <p className="text-[15px] font-semibold text-[#000000] truncate mt-2 leading-snug">
-            {roadmapData.currentPhaseTitle}
-          </p>
-          <span className="label-mono text-[#10B981]">
-            {roadmapData.finishedMilestonesCount} / {roadmapData.totalMilestonesCount} MILESTONES
-          </span>
-        </Card>
+        <motion.div variants={itemVariants}>
+          <Card className="space-y-2 p-5 gap-0">
+            <span className="label-mono">ACTIVE PHASE</span>
+            <p className="text-[15px] font-semibold text-[#000000] truncate mt-2 leading-snug">
+              {roadmapData.currentPhaseTitle}
+            </p>
+            <span className="label-mono text-[#10B981]">
+              {roadmapData.finishedMilestonesCount} / {roadmapData.totalMilestonesCount} MILESTONES
+            </span>
+          </Card>
+        </motion.div>
 
         {/* AI Recommendation */}
-        <Card className="p-5 gap-0" aiActive>
-          <span className="label-mono text-[#3B82F6]">AI RECOMMENDATION</span>
-          <p className="text-[13px] font-medium text-[#000000] leading-relaxed mt-2">
-            {roadmapData.aiRecommendation}
-          </p>
-        </Card>
-      </div>
+        <motion.div variants={itemVariants}>
+          <Card className="p-5 gap-0" aiActive>
+            <span className="label-mono text-[#3B82F6]">AI RECOMMENDATION</span>
+            <p className="text-[13px] font-medium text-[#000000] leading-relaxed mt-2">
+              {roadmapData.aiRecommendation}
+            </p>
+          </Card>
+        </motion.div>
+      </motion.div>
 
       {/* Timeline */}
-      <div className="space-y-3">
+      <motion.div variants={containerVariants} className="space-y-3">
         {roadmapData.phases.map((phase, phaseIndex) => {
           const isExpanded = expandedPhase === phase.id
           return (
-            <div key={phase.id} className="flex gap-4">
+            <motion.div key={phase.id} variants={phaseCardVariants} className="flex gap-4">
               {/* Timeline Track */}
               <div className="hidden sm:flex flex-col items-center pt-5">
-                <div
-                  className={`size-3 rounded-full shrink-0 border-2 ${
+                <motion.div
+                  initial={{ scale: 0 }}
+                  animate={{ scale: 1 }}
+                  transition={{ delay: phaseIndex * 0.1 }}
+                  className={`size-3.5 rounded-full shrink-0 border-2 ${
                     phase.status === "completed"
-                      ? "bg-[#10B981] border-[#10B981]"
+                      ? "bg-[#10B981] border-[#10B981] shadow-[0_0_10px_rgba(16,185,129,0.3)]"
                       : phase.status === "current"
-                      ? "bg-[#3B82F6] border-[#3B82F6]"
+                      ? "bg-[#3B82F6] border-[#3B82F6] shadow-[0_0_10px_rgba(59,130,246,0.4)] animate-pulse"
                       : "bg-white border-black/20"
                   }`}
                 />
                 {phaseIndex < roadmapData.phases.length - 1 && (
-                  <div className="w-px flex-1 bg-black/[0.08] mt-1" />
+                  <motion.div
+                    initial={{ scaleY: 0 }}
+                    animate={{ scaleY: 1 }}
+                    transition={{ duration: 0.4, delay: phaseIndex * 0.1 }}
+                    className="w-px flex-1 bg-black/[0.08] mt-1 origin-top"
+                  />
                 )}
               </div>
 
@@ -94,7 +149,7 @@ export default function RoadmapPage() {
                 {/* Phase Header */}
                 <button
                   onClick={() => togglePhase(phase.id)}
-                  className="flex w-full items-center justify-between p-5 text-left hover:bg-black/[0.02] transition-colors"
+                  className="flex w-full items-center justify-between p-5 text-left hover:bg-black/[0.02] transition-colors cursor-pointer"
                 >
                   <div className="flex items-center gap-3">
                     <div>
@@ -136,12 +191,15 @@ export default function RoadmapPage() {
                       initial={{ opacity: 0, height: 0 }}
                       animate={{ opacity: 1, height: "auto" }}
                       exit={{ opacity: 0, height: 0 }}
-                      transition={{ duration: 0.2, ease: "easeOut" }}
+                      transition={{ duration: 0.25, ease: "easeOut" }}
                       className="border-t border-black/[0.06] px-5 pb-5 pt-4 space-y-2"
                     >
-                      {phase.milestones.map((m) => (
-                        <div
+                      {phase.milestones.map((m, mIndex) => (
+                        <motion.div
                           key={m.id}
+                          initial={{ opacity: 0, x: -8 }}
+                          animate={{ opacity: 1, x: 0 }}
+                          transition={{ delay: mIndex * 0.05 }}
                           className={`flex items-start justify-between rounded-[4px] p-3.5 border transition-all ${
                             m.status === "current"
                               ? "border-[#3B82F6]/20 bg-[#3B82F6]/[0.03]"
@@ -173,16 +231,16 @@ export default function RoadmapPage() {
                           <span className="label-mono text-[#526E7A] shrink-0 ml-4">
                             {m.estimatedTime}
                           </span>
-                        </div>
+                        </motion.div>
                       ))}
                     </motion.div>
                   )}
                 </AnimatePresence>
               </Card>
-            </div>
+            </motion.div>
           )
         })}
-      </div>
-    </div>
+      </motion.div>
+    </motion.div>
   )
 }
