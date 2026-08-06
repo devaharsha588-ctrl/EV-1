@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "node ./node_modules/nodemon/bin/nodemon.js src/server.js",
     "dev:frontend": "npm --prefix frontend run dev",
+    "build": "npm --prefix frontend run build",
     "build:frontend": "npm --prefix frontend run build",
     "start": "node src/server.js",
     "check": "node scripts/check.js",
