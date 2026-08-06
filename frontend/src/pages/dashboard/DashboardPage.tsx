@@ -107,44 +107,35 @@ export default function DashboardPage() {
     setPromptText("")
     setIsTyping(true)
 
-    // Call backend chat API
+    // Call live backend AI API
     try {
-      await sendChatMessage("home-session", content, "user")
-    } catch {
-      // Backend handles fallback gracefully
-    }
-
-    // AI response simulation using profile context
-    setTimeout(async () => {
-      const targetGoal = profile.primaryGoal || "Software Engineering"
-      let aiResponseContent = ""
-
-      if (content.toLowerCase().includes("resume")) {
-        aiResponseContent = `Here is your **Resume Analysis & Optimization Guide** for **${displayName}**:\n\n1. **Quantified Metrics**: Ensure your achievement bullets contain clear numbers (e.g. "Improved page speed by 40%").\n2. **Target Keywords**: Align technical skills directly with your goal as a **${targetGoal}**.\n3. **ATS Format**: Use single-column standard sections for optimal scanner compatibility.`
-      } else if (content.toLowerCase().includes("roadmap")) {
-        aiResponseContent = `Here is your customized **Learning Roadmap** for **${targetGoal}**:\n\n1. **Phase 1: Core Fundamentals**\n   • Master core specifications, data structures, and state logic.\n\n2. **Phase 2: Production Engineering**\n   • Build full-stack applications with modern APIs and automated testing.\n\n3. **Phase 3: Career Deployment**\n   • Deploy production projects, pin top GitHub repositories, and prepare interview responses.`
-      } else if (content.toLowerCase().includes("github")) {
-        aiResponseContent = `Here is your **GitHub Intelligence Insights** for **${displayName}**:\n\n• **Repository Structure**: Ensure your pinned projects feature clean README docs and deployment links.\n• **Commit Consistency**: Maintain a steady commit frequency to demonstrate active development.\n• **Tech Diversity**: Showcase projects leveraging modern frameworks.`
+      const response = await sendChatMessage(content)
+      if (response?.aiMessage) {
+        setMessages((prev) => [...prev, response.aiMessage])
       } else {
-        aiResponseContent = `I am ready to empower your journey, **${displayName}**! Based on your target goal of **${targetGoal}** (${profile.weeklyHours}h/week commitment), here is what I recommend:\n\n1. **Daily Focus**: Focus on hands-on project implementations.\n2. **Skill Verification**: Test your concepts with mock interview challenges.\n\nHow else can I assist your learning today?`
+        setMessages((prev) => [
+          ...prev,
+          {
+            id: (Date.now() + 1).toString(),
+            role: "ai",
+            content: `I'd be glad to assist you with "${content}", ${displayName}! Let's focus on building actionable projects and mastering your core skills for ${profile.primaryGoal || "Career Growth"}.`,
+            timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+          },
+        ])
       }
-
-      const aiMessage: Message = {
-        id: (Date.now() + 1).toString(),
-        role: "ai",
-        content: aiResponseContent,
-        timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
-      }
-
-      setMessages((prev) => [...prev, aiMessage])
+    } catch {
+      setMessages((prev) => [
+        ...prev,
+        {
+          id: (Date.now() + 1).toString(),
+          role: "ai",
+          content: `I'm EV AI. I've received your query about "${content}" and updated your personalization context.`,
+          timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+        },
+      ])
+    } finally {
       setIsTyping(false)
-
-      try {
-        await sendChatMessage("home-session", aiResponseContent, "ai")
-      } catch {
-        // Ignore fallback errors
-      }
-    }, 1200)
+    }
   }
 
   const handleChipClick = (prompt: string) => {
