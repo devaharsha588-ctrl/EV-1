@@ -172,9 +172,11 @@ export default function GithubPage() {
             <ResponsiveContainer width="100%" height="100%">
               <PieChart>
                 <Pie data={data.langData} dataKey="value" innerRadius={35} outerRadius={60} paddingAngle={3}>
-                  {data.langData.map((entry, index) => (
-                    <Cell key={`cell-${index}`} fill={entry.color} />
-                  ))}
+                  {data.langData.map((entry, index) => {
+                    const fallbackColors = ["#000000", "#3B82F6", "#526E7A", "#10B981", "#94A3B8"]
+                    const color = entry.color || fallbackColors[index % fallbackColors.length]
+                    return <Cell key={`cell-${index}`} fill={color} />
+                  })}
                 </Pie>
                 <Tooltip
                   contentStyle={{

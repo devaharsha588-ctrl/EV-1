@@ -231,7 +231,7 @@ export const generatorService = {
     const hours = profile.weeklyHours || 10
     const repoCount = Math.max(2, techs.length + 1)
     const weeklyCommits = Math.round(hours * 1.5)
-    const colors = ["#8B5CF6", "#4338CA", "#10B981", "#F59E0B", "#EF4444", "#3B82F6"]
+    const colors = ["#000000", "#3B82F6", "#526E7A", "#10B981", "#94A3B8"]
 
     // Build last 6 months dynamic from current month
     const months = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"]
@@ -248,9 +248,8 @@ export const generatorService = {
           { name: "Other", value: 10, color: colors[3] },
         ]
       : [
-          { name: "JavaScript", value: 45, color: colors[0] },
-          { name: "HTML/CSS", value: 25, color: colors[1] },
-          { name: "Other", value: 30, color: colors[2] },
+          { name: "TypeScript", value: 75, color: colors[0] },
+          { name: "JavaScript", value: 25, color: colors[1] },
         ]
 
     return {

@@ -57,16 +57,12 @@ export async function syncGithubAnalysis(
 
 // ─── Real GitHub Public API ───────────────────────────────────────────────────
 
-const LANG_COLORS: Record<string, string> = {
-  JavaScript: "#F7DF1E", TypeScript: "#3178C6", Python: "#3572A5",
-  Java: "#B07219", "C++": "#F34B7D", "C#": "#239120", Go: "#00ADD8",
-  Rust: "#DEA584", HTML: "#E34C26", CSS: "#563D7C", Vue: "#41B883",
-  PHP: "#4F5D95", Ruby: "#CC342D", Swift: "#FA7343", Kotlin: "#A97BFF",
-  Dart: "#00B4AB", Shell: "#89E051",
-}
+const EV_PALETTE = ["#000000", "#3B82F6", "#526E7A", "#10B981", "#94A3B8"]
 const MONTHS = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"]
 
-function getLangColor(lang: string) { return LANG_COLORS[lang] || "#8B5CF6" }
+function getLangColor(index: number) {
+  return EV_PALETTE[index % EV_PALETTE.length]
+}
 
 function extractHandle(githubUrl: string): string | null {
   const match = githubUrl?.match(/github\.com\/([^/\s?#]+)/i)
@@ -127,12 +123,14 @@ export async function fetchRealGitHubData(githubUrl: string): Promise<RealGitHub
     }
     const totalLangRepos = Math.max(1, Object.values(langCounts).reduce((a, b) => a + b, 0))
     const topLangs = Object.entries(langCounts).sort((a, b) => b[1] - a[1]).slice(0, 4)
-    let langData = topLangs.map(([name, count]) => ({
-      name, value: Math.round((count / totalLangRepos) * 100), color: getLangColor(name),
+    let langData = topLangs.map(([name, count], idx) => ({
+      name,
+      value: Math.round((count / totalLangRepos) * 100),
+      color: getLangColor(idx),
     }))
     const usedPct = langData.reduce((s, l) => s + l.value, 0)
-    if (100 - usedPct > 5) langData.push({ name: "Other", value: 100 - usedPct, color: getLangColor("Other") })
-    if (langData.length === 0) langData = [{ name: "Code", value: 100, color: "#8B5CF6" }]
+    if (100 - usedPct > 5) langData.push({ name: "Other", value: 100 - usedPct, color: getLangColor(langData.length) })
+    if (langData.length === 0) langData = [{ name: "TypeScript", value: 100, color: "#000000" }]
 
     // Monthly contributions from push events
     const last6 = getLast6MonthLabels()
