@@ -1,8 +1,6 @@
 import { memo } from "react"
 import { NavLink } from "react-router-dom"
 import {
-  ChevronLeft,
-  ChevronRight,
   Home,
   GitBranch,
   FileText,
@@ -42,7 +40,7 @@ const ACCOUNT_NAV: NavItem[] = [
 ]
 
 export const AppSidebar = memo(function AppSidebar() {
-  const { isCollapsed, toggleSidebar } = useSidebar()
+  const { isCollapsed } = useSidebar()
 
   return (
     <aside
@@ -179,22 +177,6 @@ export const AppSidebar = memo(function AppSidebar() {
             </div>
           </div>
         )}
-
-        {/* Collapse Button */}
-        <button
-          onClick={toggleSidebar}
-          className="flex h-9 w-full items-center gap-2 rounded-[4px] px-3 text-xs text-[#526E7A] hover:text-[#000000] hover:bg-black/[0.04] transition-colors font-mono uppercase tracking-wider"
-          aria-label="Toggle sidebar"
-        >
-          {isCollapsed ? (
-            <ChevronRight className="size-4 shrink-0 mx-auto" />
-          ) : (
-            <>
-              <ChevronLeft className="size-4 shrink-0" />
-              <span>Collapse</span>
-            </>
-          )}
-        </button>
       </div>
     </aside>
   )
