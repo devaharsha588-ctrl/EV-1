@@ -5,12 +5,13 @@ const openrouterClient = require('./openrouter.client');
 const env = require('../../config/env');
 const logger = require('../../utils/logger');
 const AppError = require('../../utils/AppError');
+const { PROMPT_VERSION } = require('../../prompts/personalization.prompt');
 
 const clients = {
-  gemini: { client: geminiClient, model: process.env.GEMINI_MODEL || 'gemini-1.5-flash' },
-  openai: { client: openaiClient, model: process.env.OPENAI_MODEL || 'gpt-4o-mini' },
-  grok: { client: grokClient, model: process.env.GROK_MODEL || 'grok-4' },
-  openrouter: { client: openrouterClient, model: process.env.OPENROUTER_MODEL || 'anthropic/claude-3-opus' }
+  openai: { client: openaiClient, model: process.env.OPENAI_MODEL || 'gpt-4o-mini', maxContextTokens: 128000 },
+  grok: { client: grokClient, model: process.env.GROK_MODEL || 'grok-4', maxContextTokens: 131072 },
+  gemini: { client: geminiClient, model: process.env.GEMINI_MODEL || 'gemini-1.5-flash', maxContextTokens: 1000000 },
+  openrouter: { client: openrouterClient, model: process.env.OPENROUTER_MODEL || 'anthropic/claude-3-opus', maxContextTokens: 200000 }
 };
 
 const callProvider = async (provider, prompt, options = {}) => {
@@ -27,11 +28,13 @@ const callProvider = async (provider, prompt, options = {}) => {
 
   logger.info('AI provider served response', {
     provider,
+    promptVersion: options.promptVersion || PROMPT_VERSION,
     usage: response.usage || null
   });
 
   return {
     provider,
+    promptVersion: options.promptVersion || PROMPT_VERSION,
     content: response.choices?.[0]?.message?.content || '',
     usage: response.usage || null
   };
@@ -62,4 +65,4 @@ const generateCompletion = async (prompt, options = {}) => {
   throw lastError;
 };
 
-module.exports = { generateCompletion };
+module.exports = { generateCompletion, clients };

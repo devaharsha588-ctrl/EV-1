@@ -24,4 +24,16 @@ const authLimiter = rateLimit({
   }
 });
 
-module.exports = { apiLimiter, authLimiter };
+const chatLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 30,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: {
+    success: false,
+    message: 'Too many AI chat requests, please slow down and try again later',
+    errors: []
+  }
+});
+
+module.exports = { apiLimiter, authLimiter, chatLimiter };

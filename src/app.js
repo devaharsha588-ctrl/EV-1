@@ -30,6 +30,17 @@ app.use(cookieParser(env.cookieSecret));
 app.use(requestLogger);
 app.use('/api', apiLimiter);
 
+app.get('/', (req, res) => {
+  res.json({
+    success: true,
+    message: 'EV AI API backend is running',
+    endpoints: {
+      health: '/health',
+      apiV1: '/api/v1'
+    }
+  });
+});
+
 app.use('/health', require('./routes/health.routes'));
 
 app.use('/api/v1', requireDatabase, routes);
