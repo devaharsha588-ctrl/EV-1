@@ -220,7 +220,7 @@ export default function DashboardPage() {
       initial="hidden"
       animate="visible"
       variants={containerVariants}
-      className="w-full max-w-5xl mx-auto py-8 px-4 sm:px-6 flex flex-col items-center min-h-[calc(100vh-64px)] overflow-hidden"
+      className="w-full max-w-4xl mx-auto py-10 px-4 sm:px-6 flex flex-col items-center justify-between min-h-[calc(100vh-64px)] overflow-hidden"
     >
 
       {/* ── Top-Left Compact End Chat Button ── */}
@@ -231,7 +231,7 @@ export default function DashboardPage() {
             animate={{ opacity: 1, x: 0, height: "auto" }}
             exit={{ opacity: 0, x: -10, height: 0 }}
             transition={{ duration: 0.25, ease: "easeOut" }}
-            className="w-full flex justify-start mb-3"
+            className="w-full flex justify-start mb-4"
           >
             <button
               onClick={handleEndChat}
@@ -244,175 +244,179 @@ export default function DashboardPage() {
         )}
       </AnimatePresence>
 
-      {/* ── Hero Greeting (Hides smoothly when clicking search bar or chatting) ── */}
-      <AnimatePresence mode="wait">
-        {!isFocusedOrActive && (
-          <motion.div
-            key="hero-greeting-section"
-            initial={{ opacity: 0, height: 0, scale: 0.95 }}
-            animate={{ opacity: 1, height: "auto", scale: 1 }}
-            exit={{ opacity: 0, height: 0, scale: 0.95 }}
-            transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
-            className="w-full flex flex-col items-center text-center mt-2 mb-6 overflow-hidden"
-          >
-            {/* EV AI Badge */}
-            <motion.div variants={badgeVariants} className="mb-4">
-              <motion.div
-                whileHover={{ scale: 1.08, rotate: 2 }}
-                whileTap={{ scale: 0.95 }}
-                className="w-12 h-12 bg-black rounded-[4px] flex items-center justify-center mx-auto mb-3 shadow-lg cursor-pointer relative"
-              >
-                <span className="text-white font-mono text-[13px] font-bold tracking-widest">EV</span>
-                <span className="absolute -top-1 -right-1 size-2.5 bg-[#3B82F6] rounded-full ring-2 ring-white animate-pulse" />
-              </motion.div>
-              <span className="label-mono text-[#526E7A] tracking-[0.22em] text-[10px]">AI CAREER NAVIGATOR</span>
-            </motion.div>
+      {/* ── Center Content Group ────────────────────────── */}
+      <div className="w-full flex-1 flex flex-col items-center justify-center">
 
-            {/* Greeting Headline */}
-            <motion.h1
-              variants={textFadeUpVariants}
-              className="text-[36px] sm:text-[46px] font-light tracking-tighter text-[#000000] mb-2 leading-tight"
-            >
-              {greeting},{" "}
-              <span className="font-semibold bg-gradient-to-r from-black via-[#1a1a1a] to-[#3B82F6] bg-clip-text text-transparent">{displayName}</span>
-            </motion.h1>
-
-            {/* Subheadline */}
-            <motion.p
-              variants={textFadeUpVariants}
-              className="text-[15px] text-[#526E7A] mb-0 font-normal"
-            >
-              How can I empower your learning journey today?
-            </motion.p>
-          </motion.div>
-        )}
-      </AnimatePresence>
-
-      {/* ── Conversation Messages Container ────────────── */}
-      {isChatActive && (
-        <div
-          ref={messagesContainerRef}
-          className="w-full space-y-4 mb-6 overflow-y-auto max-h-[500px] scrollbar-thin p-1 flex-1"
-        >
-          <AnimatePresence>
-            {messages.map((m) => (
-              <motion.div
-                key={m.id}
-                initial={{ opacity: 0, y: 10, scale: 0.98 }}
-                animate={{ opacity: 1, y: 0, scale: 1 }}
-                transition={{ duration: 0.25 }}
-                className={`flex gap-3 ${m.role === "user" ? "flex-row-reverse" : "flex-row"}`}
-              >
-                {/* Avatar */}
-                {m.role === "ai" ? (
-                  <div className="flex size-8 shrink-0 items-center justify-center rounded-[4px] bg-black text-white text-[10px] font-mono font-bold shadow-md">
-                    EV
-                  </div>
-                ) : (
-                  <div className="flex size-8 shrink-0 items-center justify-center rounded-[4px] bg-[#3B82F6] text-white text-[10px] font-mono font-bold shadow-md">
-                    {userInitials}
-                  </div>
-                )}
-
-                {/* Bubble */}
-                <div
-                  className={`max-w-2xl rounded-[4px] px-4 py-3 text-sm leading-relaxed shadow-sm ${
-                    m.role === "user"
-                      ? "bg-black text-white"
-                      : "bg-white border border-black/[0.07] text-[#000000]"
-                  }`}
-                >
-                  <div className="whitespace-pre-wrap">{m.content}</div>
-                  <span className={`block font-mono text-[9px] mt-1.5 tracking-wider ${
-                    m.role === "user" ? "text-white/50 text-right" : "text-[#526E7A]"
-                  }`}>
-                    {m.timestamp}
-                  </span>
-                </div>
-              </motion.div>
-            ))}
-          </AnimatePresence>
-
-          {isTyping && (
+        {/* ── Hero Greeting (Hides smoothly when clicking search bar or chatting) ── */}
+        <AnimatePresence mode="wait">
+          {!isFocusedOrActive && (
             <motion.div
-              initial={{ opacity: 0, y: 8 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="flex items-center gap-3"
+              key="hero-greeting-section"
+              initial={{ opacity: 0, height: 0, scale: 0.95 }}
+              animate={{ opacity: 1, height: "auto", scale: 1 }}
+              exit={{ opacity: 0, height: 0, scale: 0.95 }}
+              transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
+              className="w-full flex flex-col items-center text-center mb-8 overflow-hidden"
             >
-              <div className="flex size-8 items-center justify-center rounded-[4px] bg-black text-white text-[10px] font-mono font-bold">
-                EV
-              </div>
-              <div className="rounded-[4px] bg-white border border-black/[0.07] px-4 py-3 text-xs text-[#526E7A] flex items-center gap-2 shadow-sm">
-                <Sparkles className="size-3 text-[#3B82F6] animate-spin" />
-                <span className="font-mono tracking-wider">GENERATING RESPONSE...</span>
-              </div>
+              {/* EV AI Badge */}
+              <motion.div variants={badgeVariants} className="mb-4">
+                <motion.div
+                  whileHover={{ scale: 1.08, rotate: 2 }}
+                  whileTap={{ scale: 0.95 }}
+                  className="w-12 h-12 bg-black rounded-[4px] flex items-center justify-center mx-auto mb-3 shadow-md cursor-pointer relative"
+                >
+                  <span className="text-white font-mono text-[13px] font-bold tracking-widest">EV</span>
+                  <span className="absolute -top-1 -right-1 size-2.5 bg-[#3B82F6] rounded-full ring-2 ring-white animate-pulse" />
+                </motion.div>
+                <span className="label-mono text-[#526E7A] tracking-[0.22em] text-[10px]">AI CAREER NAVIGATOR</span>
+              </motion.div>
+
+              {/* Greeting Headline */}
+              <motion.h1
+                variants={textFadeUpVariants}
+                className="text-[36px] sm:text-[46px] font-light tracking-tighter text-[#000000] mb-2 leading-tight"
+              >
+                {greeting},{" "}
+                <span className="font-semibold bg-gradient-to-r from-black via-[#1a1a1a] to-[#3B82F6] bg-clip-text text-transparent">{displayName}</span>
+              </motion.h1>
+
+              {/* Subheadline */}
+              <motion.p
+                variants={textFadeUpVariants}
+                className="text-[15px] text-[#526E7A] mb-0 font-normal"
+              >
+                How can I empower your learning journey today?
+              </motion.p>
             </motion.div>
           )}
-        </div>
-      )}
+        </AnimatePresence>
 
-      {/* ── Center AI Input Bar ────────────────────────── */}
-      <motion.form
-        variants={inputBarVariants}
-        onSubmit={(e) => {
-          e.preventDefault()
-          handlePromptSubmit()
-        }}
-        className="w-full bg-white border border-black/[0.09] rounded-[4px] flex items-center gap-3 px-5 py-3 mb-6 shadow-[0_4px_20px_rgba(0,0,0,0.05)] hover:border-black/20 transition-all duration-200"
-      >
-        {/* EV Mark */}
-        <div className="w-6 h-6 bg-black rounded-[3px] flex items-center justify-center shrink-0">
-          <span className="text-white font-mono text-[8px] font-bold">EV</span>
-        </div>
+        {/* ── Conversation Messages Container ────────────── */}
+        {isChatActive && (
+          <div
+            ref={messagesContainerRef}
+            className="w-full space-y-4 mb-6 overflow-y-auto max-h-[460px] scrollbar-thin p-1 flex-1"
+          >
+            <AnimatePresence>
+              {messages.map((m) => (
+                <motion.div
+                  key={m.id}
+                  initial={{ opacity: 0, y: 10, scale: 0.98 }}
+                  animate={{ opacity: 1, y: 0, scale: 1 }}
+                  transition={{ duration: 0.25 }}
+                  className={`flex gap-3 ${m.role === "user" ? "flex-row-reverse" : "flex-row"}`}
+                >
+                  {/* Avatar */}
+                  {m.role === "ai" ? (
+                    <div className="flex size-8 shrink-0 items-center justify-center rounded-[4px] bg-black text-white text-[10px] font-mono font-bold shadow-md">
+                      EV
+                    </div>
+                  ) : (
+                    <div className="flex size-8 shrink-0 items-center justify-center rounded-[4px] bg-[#3B82F6] text-white text-[10px] font-mono font-bold shadow-md">
+                      {userInitials}
+                    </div>
+                  )}
 
-        {/* Input */}
-        <input
-          ref={inputRef}
-          value={promptText}
-          onFocus={() => setIsInputFocused(true)}
-          onChange={(e) => setPromptText(e.target.value)}
-          placeholder="What would you like to achieve today?"
-          className="flex-1 bg-transparent text-[15px] text-[#000000] placeholder:text-[#A0A0A0] outline-none border-none font-sans"
-        />
+                  {/* Bubble */}
+                  <div
+                    className={`max-w-2xl rounded-[4px] px-4 py-3 text-sm leading-relaxed shadow-sm ${
+                      m.role === "user"
+                        ? "bg-black text-white"
+                        : "bg-white border border-black/[0.07] text-[#000000]"
+                    }`}
+                  >
+                    <div className="whitespace-pre-wrap">{m.content}</div>
+                    <span className={`block font-mono text-[9px] mt-1.5 tracking-wider ${
+                      m.role === "user" ? "text-white/50 text-right" : "text-[#526E7A]"
+                    }`}>
+                      {m.timestamp}
+                    </span>
+                  </div>
+                </motion.div>
+              ))}
+            </AnimatePresence>
 
-        {/* Send */}
-        <Button
-          type="submit"
-          disabled={!promptText.trim() || isTyping}
-          size="icon"
-          className="size-9 rounded-[4px] bg-black hover:bg-[#1a1a1a] text-white disabled:opacity-30 active:scale-[0.95] transition-transform"
+            {isTyping && (
+              <motion.div
+                initial={{ opacity: 0, y: 8 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="flex items-center gap-3"
+              >
+                <div className="flex size-8 items-center justify-center rounded-[4px] bg-black text-white text-[10px] font-mono font-bold">
+                  EV
+                </div>
+                <div className="rounded-[4px] bg-white border border-black/[0.07] px-4 py-3 text-xs text-[#526E7A] flex items-center gap-2 shadow-sm">
+                  <Sparkles className="size-3 text-[#3B82F6] animate-spin" />
+                  <span className="font-mono tracking-wider">GENERATING RESPONSE...</span>
+                </div>
+              </motion.div>
+            )}
+          </div>
+        )}
+
+        {/* ── Center AI Input Bar ────────────────────────── */}
+        <motion.form
+          variants={inputBarVariants}
+          onSubmit={(e) => {
+            e.preventDefault()
+            handlePromptSubmit()
+          }}
+          className="w-full bg-white border border-black/[0.09] rounded-[4px] flex items-center gap-3 px-5 py-3.5 mb-6 shadow-[0_4px_20px_rgba(0,0,0,0.05)] hover:border-black/20 transition-all duration-200"
         >
-          <Send className="size-3.5" />
-        </Button>
-      </motion.form>
+          {/* EV Mark */}
+          <div className="w-6 h-6 bg-black rounded-[3px] flex items-center justify-center shrink-0">
+            <span className="text-white font-mono text-[8px] font-bold">EV</span>
+          </div>
 
-      {/* ── Quick Action Chips ───────────────────────────── */}
-      <motion.div
-        variants={chipsContainerVariants}
-        className="flex flex-wrap items-center justify-center gap-2.5 w-full mb-8"
-      >
-        {QUICK_ACTIONS.map((chip) => {
-          const Icon = chip.icon
-          return (
-            <motion.button
-              key={chip.label}
-              variants={chipItemVariants}
-              whileHover={{ scale: 1.04, y: -2 }}
-              whileTap={{ scale: 0.96 }}
-              onClick={() => handlePromptSubmit(chip.prompt)}
-              className="flex items-center gap-2 px-4 py-2 bg-white border border-black/[0.08] rounded-[4px] text-[13px] font-medium text-[#526E7A] hover:text-black hover:border-black/25 hover:bg-[#F9F9F9] shadow-sm transition-all duration-150 cursor-pointer"
-            >
-              <Icon className="size-3.5 text-[#333333]" />
-              <span>{chip.label}</span>
-            </motion.button>
-          )
-        })}
-      </motion.div>
+          {/* Input */}
+          <input
+            ref={inputRef}
+            value={promptText}
+            onFocus={() => setIsInputFocused(true)}
+            onChange={(e) => setPromptText(e.target.value)}
+            placeholder="What would you like to achieve today?"
+            className="flex-1 bg-transparent text-[15px] text-[#000000] placeholder:text-[#A0A0A0] outline-none border-none font-sans"
+          />
+
+          {/* Send */}
+          <Button
+            type="submit"
+            disabled={!promptText.trim() || isTyping}
+            size="icon"
+            className="size-9 rounded-[4px] bg-black hover:bg-[#1a1a1a] text-white disabled:opacity-30 active:scale-[0.95] transition-transform"
+          >
+            <Send className="size-3.5" />
+          </Button>
+        </motion.form>
+
+        {/* ── Quick Action Chips (Balanced 2x3 Grid Layout) ── */}
+        <motion.div
+          variants={chipsContainerVariants}
+          className="grid grid-cols-2 sm:grid-cols-3 gap-3 w-full mb-8"
+        >
+          {QUICK_ACTIONS.map((chip) => {
+            const Icon = chip.icon
+            return (
+              <motion.button
+                key={chip.label}
+                variants={chipItemVariants}
+                whileHover={{ scale: 1.02, y: -2 }}
+                whileTap={{ scale: 0.98 }}
+                onClick={() => handlePromptSubmit(chip.prompt)}
+                className="flex items-center justify-center gap-2 px-4 py-2.5 bg-white border border-black/[0.08] rounded-[4px] text-[13px] font-medium text-[#526E7A] hover:text-black hover:border-black/25 hover:bg-[#F9F9F9] shadow-sm transition-all duration-150 cursor-pointer text-center"
+              >
+                <Icon className="size-3.5 text-[#333333] shrink-0" />
+                <span className="truncate">{chip.label}</span>
+              </motion.button>
+            )
+          })}
+        </motion.div>
+      </div>
 
       {/* ── Footer Microcopy ────────────────────────────── */}
       <motion.div
         variants={textFadeUpVariants}
-        className="flex items-center justify-center gap-2 mt-auto pb-4"
+        className="flex items-center justify-center gap-2 mt-auto pt-4 pb-2"
       >
         <Lock className="size-3 text-[#A0A0A0]" />
         <span className="label-mono text-[#A0A0A0] text-[10px]">YOUR DATA IS PRIVATE AND SECURE</span>
