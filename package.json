@@ -5,6 +5,8 @@
   "main": "src/server.js",
   "scripts": {
     "dev": "node ./node_modules/nodemon/bin/nodemon.js src/server.js",
+    "dev:frontend": "npm --prefix frontend run dev",
+    "build:frontend": "npm --prefix frontend run build",
     "start": "node src/server.js",
     "check": "node scripts/check.js",
     "verify:env": "node scripts/verify-env.js",
