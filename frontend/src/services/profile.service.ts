@@ -2,6 +2,7 @@ import { supabase } from "@/lib/supabase"
 import type { UserProfile } from "@/types/profile.types"
 
 const PROFILE_STORAGE_KEY = "ev_user_profile"
+const ONBOARDING_FLAG_KEY = "ev_onboarding_completed_flag"
 
 export const INITIAL_PROFILE: UserProfile = {
   name: "",
@@ -23,15 +24,23 @@ export const INITIAL_PROFILE: UserProfile = {
 
 export const profileService = {
   getProfile(): UserProfile {
+    const isCompleted = localStorage.getItem(ONBOARDING_FLAG_KEY) === "true"
     try {
       const stored = localStorage.getItem(PROFILE_STORAGE_KEY)
       if (stored) {
-        return JSON.parse(stored) as UserProfile
+        const parsed = JSON.parse(stored) as UserProfile
+        return {
+          ...parsed,
+          isOnboardingCompleted: Boolean(parsed.isOnboardingCompleted || isCompleted),
+        }
       }
     } catch {
       // Fallback if parsing fails
     }
-    return INITIAL_PROFILE
+    return {
+      ...INITIAL_PROFILE,
+      isOnboardingCompleted: isCompleted,
+    }
   },
 
   async fetchRemoteProfile(userId?: string): Promise<UserProfile> {
@@ -123,6 +132,11 @@ export const profileService = {
   },
 
   async completeOnboarding(profileData: Partial<UserProfile>, userId?: string): Promise<UserProfile> {
+    try {
+      localStorage.setItem(ONBOARDING_FLAG_KEY, "true")
+    } catch {
+      // Local storage fallback
+    }
     return this.updateProfile({ ...profileData, isOnboardingCompleted: true }, userId)
   },
 }
