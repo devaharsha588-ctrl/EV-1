@@ -223,29 +223,23 @@ export default function DashboardPage() {
       className="w-full max-w-5xl mx-auto py-8 px-4 sm:px-6 flex flex-col items-center min-h-[calc(100vh-64px)] overflow-hidden"
     >
 
-      {/* ── Top-Left End Chat Button Bar ── */}
+      {/* ── Top-Left Compact End Chat Button ── */}
       <AnimatePresence>
         {isFocusedOrActive && (
           <motion.div
-            initial={{ opacity: 0, y: -12, height: 0 }}
-            animate={{ opacity: 1, y: 0, height: "auto" }}
-            exit={{ opacity: 0, y: -12, height: 0 }}
-            transition={{ duration: 0.3, ease: "easeOut" }}
-            className="w-full flex items-center justify-between mb-4"
+            initial={{ opacity: 0, x: -10, height: 0 }}
+            animate={{ opacity: 1, x: 0, height: "auto" }}
+            exit={{ opacity: 0, x: -10, height: 0 }}
+            transition={{ duration: 0.25, ease: "easeOut" }}
+            className="w-full flex justify-start mb-3"
           >
-            {/* Top-Left End Chat Button */}
-            <Button
+            <button
               onClick={handleEndChat}
-              className="h-8 px-3.5 bg-black hover:bg-[#1a1a1a] text-white text-xs font-mono font-bold tracking-wider flex items-center gap-2 rounded-[4px] shadow-sm transition-all active:scale-95 cursor-pointer"
+              className="flex items-center gap-1.5 px-3 py-1.5 bg-black hover:bg-[#1a1a1a] text-white rounded-[4px] font-mono text-[11px] font-bold tracking-wider shadow-sm transition-all active:scale-95 cursor-pointer"
             >
-              <X className="size-3.5" />
+              <X className="size-3.5 text-white" />
               <span>END CHAT</span>
-            </Button>
-
-            <div className="flex items-center gap-2">
-              <span className="label-mono text-[#526E7A] text-[10px]">EV AI SESSION ACTIVE</span>
-              <span className="size-2 rounded-full bg-[#10B981] animate-pulse" />
-            </div>
+            </button>
           </motion.div>
         )}
       </AnimatePresence>
