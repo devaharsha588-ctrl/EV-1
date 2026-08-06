@@ -1,0 +1,43 @@
+﻿gh : --hostname required 
+when not running 
+interactively
+At line:1 char:1
++ gh auth refresh -s repo 
+2>&1 | Out-File -FilePath 
+auth_out.txt -Encod ...
++ 
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo           
+   : NotSpecified: (--hostn  
+  ame requ...g interactive   
+ ly:String) [], RemoteExc    
+eption
+    + FullyQualifiedErrorId  
+   : NativeCommandError
+ 
+
+Usage:  gh auth refresh 
+[flags]
+
+Flags:
+  -c, --clipboard            
+   Copy one-time OAuth 
+device code to clipboard
+  -h, --hostname string      
+   The GitHub host to use 
+for authentication
+      --insecure-storage     
+   Save authentication 
+credentials in plain text 
+instead of credential store
+  -r, --remove-scopes 
+strings   Authentication 
+scopes to remove from gh
+      --reset-scopes         
+   Reset authentication 
+scopes to the default 
+minimum set of scopes
+  -s, --scopes strings       
+   Additional authentication 
+scopes for gh to have
+  

@@ -23,14 +23,7 @@ app.use(cookieParser(env.cookieSecret));
 app.use(requestLogger);
 app.use('/api', apiLimiter);
 
-app.get('/health', (req, res) => {
-  const database = getDatabaseHealth();
-  res.status(database.connected ? 200 : 503).json({
-    success: database.connected,
-    message: database.connected ? 'EV AI API is healthy' : 'EV AI API is running but database is unavailable',
-    data: { uptime: process.uptime(), database }
-  });
-});
+app.use('/health', require('./routes/health.routes'));
 
 app.use('/api/v1', requireDatabase, routes);
 app.use(notFound);

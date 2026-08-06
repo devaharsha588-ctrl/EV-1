@@ -1,3 +1,4 @@
+const geminiClient = require('./gemini.client');
 const openaiClient = require('./openai.client');
 const grokClient = require('./grok.client');
 const openrouterClient = require('./openrouter.client');
@@ -6,6 +7,7 @@ const logger = require('../../utils/logger');
 const AppError = require('../../utils/AppError');
 
 const clients = {
+  gemini: { client: geminiClient, model: process.env.GEMINI_MODEL || 'gemini-1.5-flash' },
   openai: { client: openaiClient, model: process.env.OPENAI_MODEL || 'gpt-4o-mini' },
   grok: { client: grokClient, model: process.env.GROK_MODEL || 'grok-4' },
   openrouter: { client: openrouterClient, model: process.env.OPENROUTER_MODEL || 'anthropic/claude-3-opus' }
@@ -38,7 +40,7 @@ const callProvider = async (provider, prompt, options = {}) => {
 const generateCompletion = async (prompt, options = {}) => {
   const availableProviders = Object.keys(clients).filter((p) => Boolean(clients[p].client));
   if (availableProviders.length === 0) {
-    throw new AppError('No AI provider is configured. Set OPENAI_API_KEY, GROK_API_KEY, or OPENROUTER_API_KEY in .env.', 503);
+    throw new AppError('No AI provider is configured. Set GEMINI_API_KEY, OPENAI_API_KEY, GROK_API_KEY, or OPENROUTER_API_KEY in .env.', 503);
   }
 
   const preferred = options.provider || env.ai.provider || 'openai';

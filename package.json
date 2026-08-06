@@ -14,7 +14,8 @@
     "test": "node ./node_modules/jest/bin/jest.js",
     "db:migrate": "node ./node_modules/sequelize-cli/lib/sequelize db:migrate",
     "db:migrate:undo": "node ./node_modules/sequelize-cli/lib/sequelize db:migrate:undo",
-    "db:seed": "node ./node_modules/sequelize-cli/lib/sequelize db:seed:all"
+    "db:seed": "node ./node_modules/sequelize-cli/lib/sequelize db:seed:all",
+    "seed:demo": "node scripts/seed-demo.js"
   },
   "keywords": [
     "express",

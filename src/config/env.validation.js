@@ -48,7 +48,8 @@ const validateEnv = ({ strict = env.isProduction } = {}) => {
   assertLongSecret('JWT_REFRESH_SECRET', env.jwt.refreshSecret, strict ? errors : warnings);
   assertLongSecret('COOKIE_SECRET', env.cookieSecret, strict ? errors : warnings);
 
-  if (!['openai', 'grok', 'openrouter'].includes(env.ai.provider)) errors.push('AI_PROVIDER must be openai, grok, or openrouter');
+  if (!['gemini', 'openai', 'grok', 'openrouter'].includes(env.ai.provider)) errors.push('AI_PROVIDER must be gemini, openai, grok, or openrouter');
+  if (strict && env.ai.provider === 'gemini' && isMissing(env.ai.geminiApiKey)) errors.push('GEMINI_API_KEY is required when AI_PROVIDER=gemini');
   if (strict && env.ai.provider === 'openai' && isMissing(env.ai.openaiApiKey)) errors.push('OPENAI_API_KEY is required when AI_PROVIDER=openai');
   if (strict && env.ai.provider === 'grok' && isMissing(env.ai.grokApiKey)) errors.push('GROK_API_KEY is required when AI_PROVIDER=grok');
   if (env.ai.provider === 'grok' && isMissing(env.ai.grokBaseUrl)) errors.push('GROK_BASE_URL is required when AI_PROVIDER=grok');

@@ -1,12 +1,14 @@
 const router = require('express').Router();
 const { authenticate } = require('../middleware/auth.middleware');
 
+router.use('/health', require('./health.routes'));
 router.use('/auth', require('./auth.routes'));
 router.use('/users', authenticate, require('./user.routes'));
 router.use('/profile', authenticate, require('./profile.routes'));
 router.use('/dashboard', authenticate, require('./dashboard.routes'));
 router.use('/ai', authenticate, require('./ai.routes'));
 router.use('/chat', authenticate, require('./chat.routes'));
+router.use('/roadmap', authenticate, require('./roadmap.routes'));
 router.use('/recommendations', authenticate, require('./recommendation.routes'));
 router.use('/resume', authenticate, require('./resume.routes'));
 router.use('/github', authenticate, require('./github.routes'));

@@ -39,6 +39,8 @@ const env = {
   cookieSecret: process.env.COOKIE_SECRET || 'dev_cookie_secret_change_me',
   ai: {
     provider: process.env.AI_PROVIDER || 'openai',
+    geminiApiKey: process.env.GEMINI_API_KEY,
+    geminiModel: process.env.GEMINI_MODEL || 'gemini-1.5-flash',
     openaiApiKey: process.env.OPENAI_API_KEY,
     grokApiKey: process.env.GROK_API_KEY,
     grokBaseUrl: process.env.GROK_BASE_URL || 'https://api.x.ai/v1',

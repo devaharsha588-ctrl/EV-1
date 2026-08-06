@@ -1,262 +1,147 @@
 # EV AI (Evolution Vector) Backend
 
-EV AI is a personalized AI career navigator for technology roles. This backend exposes a JSON-only, versioned REST API for authentication, onboarding, dashboard data, AI chat, recommendations, resume analysis, GitHub analysis, learning tracking, feedback, analytics, notifications, and achievements.
+> **Your Personalized AI Career Navigator**
 
-## Stack
+EV AI is a production-ready, personalized AI career navigation engine for software engineers, students, and technology professionals. It features multi-provider AI support (Google Gemini API, OpenAI, Grok, OpenRouter), Supabase & MySQL database connectors, real-time mentor chat, automated roadmap synthesis, portfolio & resume analysis, learning progress analytics, and comprehensive security hardening.
 
-- Node.js, Express.js
-- MySQL with Sequelize ORM and migrations
-- JWT access and refresh tokens
-- bcrypt password hashing
-- express-validator validation
-- OpenAI + Grok through the official `openai` SDK
-- helmet, cors, rate limiting, morgan, cookie-parser
-- multer uploads
-- nodemailer reset-password email
-- axios GitHub API integration
+---
 
-## Folder Structure
+## 🌟 Core Features & Stack
+
+- **Framework**: Node.js, Express.js (Modular clean architecture)
+- **AI Integrations**: Google Gemini API (`gemini-1.5-flash`), OpenAI GPT-4o, Grok, OpenRouter (Auto-fallback)
+- **Database Support**: Supabase PostgreSQL & MySQL (Sequelize ORM with relational migrations)
+- **Authentication**: JWT access & refresh tokens with HTTP-only cookies, bcrypt (12 rounds)
+- **Security**: Helmet security headers, CORS protection, express-rate-limit, request sanitization, zero plain secrets
+- **Validation**: express-validator schemas with strict input checks
+- **Telemetry & Logging**: Winston structured logger, morgan HTTP logger, live `/health` telemetry
+- **Testing**: Jest test suites & automated smoke diagnostics
+
+---
+
+## 📁 Project Architecture
 
 ```text
 backend/
-  src/
-    config/
-    controllers/
-    middleware/
-    models/
-    routes/
-    services/
-      ai/
-    utils/
-    prompts/
-    validators/
-    database/
-      migrations/
-      seeders/
-    constants/
-    helpers/
-    jobs/
-  uploads/
-  logs/
-  src/server.js
-  src/app.js
-  .env.example
+├── docs/
+│   ├── openapi.json                 # OpenAPI 3.0 API Specification
+│   ├── API.md                       # Comprehensive API Reference Manual
+│   ├── FRONTEND_INTEGRATION_GUIDE.md# Frontend integration guide & TypeScript snippets
+│   └── EV_AI.postman_collection.json# Complete Postman Collection
+├── scripts/
+│   ├── seed-demo.js                 # Demo data seeder script
+│   ├── check.js                     # Static code analysis scanner
+│   ├── smoke.js                     # Automated smoke test diagnostic
+│   ├── verify-env.js                # Environment variable validator
+│   ├── verify-external.js           # Supabase, DB & AI provider verifier
+│   └── db-status.js                 # Database connection inspector
+├── src/
+│   ├── config/                      # Environment, DB & security configs
+│   ├── controllers/                 # Business logic & API request handlers
+│   ├── middleware/                  # Auth, rate limiting, error handling, DB middleware
+│   ├── models/                      # Sequelize & Supabase data models
+│   ├── routes/                      # Versioned REST endpoints (/api/v1)
+│   ├── services/                    # AI providers (Gemini, OpenAI, Grok), Supabase, DB
+│   └── utils/                       # AppError, Winston logger, JSON helpers
+├── render.yaml                      # Render 1-click cloud deployment spec
+└── package.json
 ```
 
-## Setup
+---
 
+## 🚀 Quick Start
+
+### 1. Installation
 ```bash
-cd backend
 npm install
+```
+
+### 2. Environment Setup
+Create `.env` from `.env.example`:
+```bash
 cp .env.example .env
-npm run db:migrate
+```
+
+### 3. Run Diagnostic Verification
+```bash
+npm run check          # Validates code syntax and import graph across 80+ files
+npm run verify:env     # Checks environment variable integrity
+npm run smoke          # Executes automated server boot smoke test
+```
+
+### 4. Seed Demo Data (Optional)
+```bash
+npm run seed:demo
+```
+
+### 5. Start Development Server
+```bash
 npm run dev
 ```
 
-The API listens on `PORT` and exposes `GET /health`.
+---
 
-Useful diagnostics:
+## 🤖 Multi-Provider AI Architecture (Gemini Default)
 
-```bash
-npm run check
-npm run verify:env
-npm run verify:external
-npm run db:status
-npm run smoke
+All AI interactions flow through `src/services/ai/ai.service.js` with dynamic failover:
+
+```text
+[Request] ──► Google Gemini API (Primary)
+                  │ (If error / rate limit)
+                  ▼
+              OpenAI / Grok / OpenRouter (Fallback)
 ```
 
-`npm run smoke` starts the API briefly and calls `/health`. In development, if MySQL is not running, the API stays alive and `/health` returns `503` with a clear database error instead of letting nodemon crash-loop. In production, startup fails fast when the database cannot connect.
-
-## Environment Variables
-
-See `.env.example`. Required production secrets:
-
-- `JWT_ACCESS_SECRET`
-- `JWT_REFRESH_SECRET`
-- `COOKIE_SECRET`
-- `OPENAI_API_KEY` and/or `GROK_API_KEY`
-- `DB_*`
-- `SMTP_*` for password reset email
-
-Secrets are read only on the backend and are never returned by the API.
-
-## Database
-
-Run migrations with:
-
-```bash
-npm run db:migrate
+Set your primary provider in `.env`:
+```env
+AI_PROVIDER=gemini
+GEMINI_API_KEY=your_gemini_api_key_here
+GEMINI_MODEL=gemini-1.5-flash
 ```
 
-This project uses MySQL through Sequelize only. It does not use MongoDB or Mongoose. Before running migrations, make sure a MySQL server is reachable using the `DB_HOST`, `DB_PORT`, `DB_NAME`, `DB_USER`, and `DB_PASSWORD` values in `.env`.
+---
 
-The `users` table contains profile and onboarding fields directly. `skills` and `interests` use MySQL JSON columns for hackathon speed; they can be normalized into join tables later if strict relational integrity is needed.
+## 📊 Health Check Endpoint
 
-AI recommendations are stored in `recommendations`. User portfolio projects are stored separately in `projects` and should only contain projects explicitly added by the user.
-
-## AI Provider Layer
-
-All AI features call `src/services/ai/ai.service.js`.
-
-- `AI_PROVIDER=openai` or `AI_PROVIDER=grok` selects the default.
-- A service can pass `{ provider: "openai" | "grok" }` to override per request.
-- Grok is called through the OpenAI SDK with `GROK_BASE_URL`.
-- If the selected provider fails, the service retries once with the other provider and logs which provider served the response.
-
-## Response Format
-
-Success:
-
+- **Endpoint**: `GET /health` or `GET /api/v1/health`
+- **Auth**: None
+- **Sample Output**:
 ```json
-{ "success": true, "message": "Success message", "data": {} }
+{
+  "success": true,
+  "message": "EV AI API is operational",
+  "data": {
+    "status": "healthy",
+    "version": "1.0.0",
+    "timestamp": "2026-08-06T00:30:00.000Z",
+    "uptime": 142.8,
+    "database": { "connected": true, "dialect": "mysql" },
+    "supabase": { "configured": true, "connected": true },
+    "ai": { "provider": "gemini", "geminiConfigured": true }
+  }
+}
 ```
 
-Error:
+---
 
-```json
-{ "success": false, "message": "Meaningful error", "errors": [] }
-```
+## 🔒 Security Hardening
 
-Validation errors are returned in `errors`.
+- **JWT Expiration**: 15m access tokens, 7d refresh tokens with automatic rotation.
+- **Password Hashing**: Salted bcrypt (12 rounds).
+- **Helmet Headers**: Disables `X-Powered-By`, enables HSTS, frameguard, and CSP defenses.
+- **SQL Injection Defense**: Parameterized queries via ORM and Supabase query builder.
 
-## API Documentation
+---
 
-All routes are prefixed with `/api/v1`.
+## 🌐 Deployment (Render)
 
-### Auth
+Deploy seamlessly to Render using `render.yaml`:
+1. Connect your GitHub repository `https://github.com/ToshitSai/EV`.
+2. Select **New Blueprint Instance** in Render.
+3. Configure `GEMINI_API_KEY`, `SUPABASE_URL`, and `SUPABASE_ANON_KEY`.
 
-| Method | Route | Auth | Body |
-| --- | --- | --- | --- |
-| POST | `/auth/register` | No | `name`, `email`, `password` |
-| POST | `/auth/login` | No | `email`, `password` |
-| POST | `/auth/logout` | No | optional `refreshToken` if not using cookie |
-| POST | `/auth/refresh` | No | optional `refreshToken` if not using cookie |
-| POST | `/auth/forgot-password` | No | `email` |
-| POST | `/auth/reset-password` | No | `token`, `password` |
-| GET | `/auth/me` | Yes | none |
-| PUT | `/auth/change-password` | Yes | `currentPassword`, `newPassword` |
+---
 
-### Profile
+## 📄 License
 
-| Method | Route | Auth | Body |
-| --- | --- | --- | --- |
-| POST | `/profile/onboarding` | Yes | profile fields, required `profession`, `careerGoal` |
-| GET | `/profile` | Yes | none |
-| PUT | `/profile` | Yes | editable profile fields |
-
-### Users
-
-| Method | Route | Auth | Body |
-| --- | --- | --- | --- |
-| GET | `/users/me` | Yes | none |
-| PUT | `/users/me` | Yes | editable account fields |
-
-### Dashboard
-
-| Method | Route | Auth |
-| --- | --- | --- |
-| GET | `/dashboard` | Yes |
-
-Returns welcome message, current roadmap, today's tasks, weekly progress, skill progress, recommendations, resume score, GitHub suggestions, AI insights, chart data, notifications, and upcoming goals.
-
-### Chat
-
-| Method | Route | Auth | Body |
-| --- | --- | --- | --- |
-| POST | `/chat` | Yes | `message`, optional `provider` |
-| GET | `/chat/history` | Yes | none |
-
-Every chat call includes user profile, prior conversation, roadmap, completed tasks, and skill level in the AI prompt.
-
-### AI
-
-| Method | Route | Auth | Body |
-| --- | --- | --- | --- |
-| GET | `/ai/status` | Yes | none |
-| POST | `/ai/generate` | Yes | `prompt`, optional `provider` |
-
-### Recommendations
-
-| Method | Route | Auth |
-| --- | --- | --- |
-| GET | `/recommendations?type=project` | Yes |
-| POST | `/recommendations/regenerate` | Yes |
-
-Recommendations include projects, courses, internships, resources, books, repos, interview questions, certifications, and roadmaps as typed records.
-
-### Resume
-
-| Method | Route | Auth | Body |
-| --- | --- | --- | --- |
-| POST | `/resume/analyze` | Yes | multipart field `resume` |
-| GET | `/resume/history` | Yes | none |
-
-Returns score, strengths, weaknesses, ATS suggestions, missing skills, projects to add, and certifications.
-
-### GitHub
-
-| Method | Route | Auth | Body |
-| --- | --- | --- | --- |
-| POST | `/github/analyze` | Yes | `username` |
-| GET | `/github/history` | Yes | none |
-
-Uses GitHub REST API through axios, then sends repo context to the AI provider.
-
-### Learning Tracker
-
-| Method | Route | Auth | Body |
-| --- | --- | --- | --- |
-| POST | `/tasks` | Yes | `title`, optional task fields |
-| GET | `/tasks` | Yes | none |
-| PUT | `/tasks/:id/complete` | Yes | optional `hoursSpent` |
-| DELETE | `/tasks/:id` | Yes | none |
-
-### Feedback
-
-| Method | Route | Auth | Body |
-| --- | --- | --- | --- |
-| POST | `/feedback/like/:recommendationId` | Yes | none |
-| POST | `/feedback/dislike/:recommendationId` | Yes | none |
-| POST | `/feedback/rate-ai-response` | Yes | `rating`, optional `comment`, `metadata` |
-| POST | `/feedback` | Yes | `type`, optional `rating`, `comment`, `metadata` |
-
-### Analytics
-
-| Method | Route | Auth |
-| --- | --- | --- |
-| GET | `/analytics/weekly-progress` | Yes |
-| GET | `/analytics/monthly-progress` | Yes |
-| GET | `/analytics/learning-hours` | Yes |
-| GET | `/analytics/skills-growth` | Yes |
-| GET | `/analytics/roadmap-completion` | Yes |
-| GET | `/analytics/category-distribution` | Yes |
-
-Analytics endpoints are read-only aggregations over learning tracker and roadmap data.
-
-### Notifications & Achievements
-
-| Method | Route | Auth |
-| --- | --- | --- |
-| GET | `/notifications` | Yes |
-| PUT | `/notifications/:id/read` | Yes |
-| GET | `/achievements` | Yes |
-
-## Deployment
-
-This backend is env-driven and deployable on Render with a managed MySQL database. Set all `.env.example` values in the Render dashboard, run migrations during release, and expose only the API service. CORS should point to the deployed frontend URL through `CLIENT_URL`.
-
-## OpenAPI
-
-The route surface is documented in `docs/openapi.json`. Keep it in sync with `src/routes` whenever endpoints are added or renamed.
-
-## Future Scope
-
-- Normalize skills/interests into join tables.
-- Add background jobs for recommendation refreshes.
-- Add OpenAPI generation.
-- Add Redis-backed rate limiting for multi-instance deployments.
-- Add test suites for auth, AI fallback, and analytics.
-
-## License
-
-MIT
+MIT © EV AI Team
