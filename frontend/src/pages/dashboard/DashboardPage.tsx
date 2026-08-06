@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react"
-import { motion } from "framer-motion"
+import { motion, AnimatePresence } from "framer-motion"
 import {
   BookOpen,
   FileText,
@@ -16,7 +16,7 @@ import { useProfile } from "@/hooks/useProfile"
 import { sendChatMessage } from "@/services/chat.service"
 
 const GithubIcon = (props: React.SVGProps<SVGSVGElement>) => (
-  <svg className="size-4 fill-current" viewBox="0 0 24 24" {...props}>
+  <svg className="size-3.5 fill-current" viewBox="0 0 24 24" {...props}>
     <path fillRule="evenodd" clipRule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.53 1.032 1.53 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z" />
   </svg>
 )
@@ -133,85 +133,151 @@ export default function DashboardPage() {
     }
   }
 
+  // Staggered Entrance Variants
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.08,
+        delayChildren: 0.05,
+      },
+    },
+  }
+
+  const badgeVariants = {
+    hidden: { opacity: 0, scale: 0.8, y: -12 },
+    visible: {
+      opacity: 1,
+      scale: 1,
+      y: 0,
+      transition: { duration: 0.45 },
+    },
+  }
+
+  const textFadeUpVariants = {
+    hidden: { opacity: 0, y: 16, filter: "blur(6px)" },
+    visible: {
+      opacity: 1,
+      y: 0,
+      filter: "blur(0px)",
+      transition: { duration: 0.5 },
+    },
+  }
+
+  const inputBarVariants = {
+    hidden: { opacity: 0, scale: 0.96, y: 18 },
+    visible: {
+      opacity: 1,
+      scale: 1,
+      y: 0,
+      transition: { duration: 0.45 },
+    },
+  }
+
+  const chipsContainerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.04,
+        delayChildren: 0.1,
+      },
+    },
+  }
+
+  const chipItemVariants = {
+    hidden: { opacity: 0, scale: 0.9, y: 10 },
+    visible: {
+      opacity: 1,
+      scale: 1,
+      y: 0,
+      transition: { duration: 0.3 },
+    },
+  }
+
   return (
-    <div className="w-full max-w-3xl mx-auto py-12 px-4 sm:px-6 flex flex-col items-center min-h-[calc(100vh-64px)]">
+    <motion.div
+      initial="hidden"
+      animate="visible"
+      variants={containerVariants}
+      className="w-full max-w-3xl mx-auto py-12 px-4 sm:px-6 flex flex-col items-center min-h-[calc(100vh-64px)] overflow-hidden"
+    >
 
       {/* ── Hero Greeting ──────────────────────────────── */}
-      <motion.div
-        initial="hidden"
-        animate="visible"
-        variants={{
-          hidden: { opacity: 0 },
-          visible: { opacity: 1, transition: { staggerChildren: 0.07 } },
-        }}
-        className="w-full flex flex-col items-center text-center mt-6 mb-10"
-      >
-        {/* EV AI Mark */}
-        <motion.div
-          variants={{ hidden: { opacity: 0, y: 12 }, visible: { opacity: 1, y: 0 } }}
-          className="mb-6"
-        >
-          <div className="w-12 h-12 bg-black rounded-[4px] flex items-center justify-center mx-auto mb-4">
+      <div className="w-full flex flex-col items-center text-center mt-4 mb-8">
+        {/* EV AI Badge */}
+        <motion.div variants={badgeVariants} className="mb-5">
+          <motion.div
+            whileHover={{ scale: 1.08, rotate: 2 }}
+            whileTap={{ scale: 0.95 }}
+            className="w-12 h-12 bg-black rounded-[4px] flex items-center justify-center mx-auto mb-3.5 shadow-lg cursor-pointer relative"
+          >
             <span className="text-white font-mono text-[13px] font-bold tracking-widest">EV</span>
-          </div>
-          <span className="label-mono text-[#526E7A] tracking-[0.2em]">AI CAREER NAVIGATOR</span>
+            <span className="absolute -top-1 -right-1 size-2.5 bg-[#3B82F6] rounded-full ring-2 ring-white animate-pulse" />
+          </motion.div>
+          <span className="label-mono text-[#526E7A] tracking-[0.22em] text-[10px]">AI CAREER NAVIGATOR</span>
         </motion.div>
 
         {/* Greeting Headline */}
         <motion.h1
-          variants={{ hidden: { opacity: 0, y: 12 }, visible: { opacity: 1, y: 0 } }}
-          className="text-[36px] sm:text-[44px] font-light tracking-tighter text-[#000000] mb-2 leading-tight"
+          variants={textFadeUpVariants}
+          className="text-[36px] sm:text-[46px] font-light tracking-tighter text-[#000000] mb-2 leading-tight"
         >
           {greeting},{" "}
-          <span className="font-semibold">{displayName}</span>
+          <span className="font-semibold bg-gradient-to-r from-black via-[#1a1a1a] to-[#3B82F6] bg-clip-text text-transparent">{displayName}</span>
         </motion.h1>
 
+        {/* Subheadline */}
         <motion.p
-          variants={{ hidden: { opacity: 0, y: 12 }, visible: { opacity: 1, y: 0 } }}
+          variants={textFadeUpVariants}
           className="text-[15px] text-[#526E7A] mb-0 font-normal"
         >
           How can I empower your learning journey today?
         </motion.p>
-      </motion.div>
+      </div>
 
       {/* ── Conversation Messages ───────────────────────── */}
       {messages.length > 0 && (
         <div className="w-full space-y-4 mb-8 overflow-y-auto max-h-[420px] scrollbar-thin p-1">
-          {messages.map((m) => (
-            <motion.div
-              key={m.id}
-              initial={{ opacity: 0, y: 8 }}
-              animate={{ opacity: 1, y: 0 }}
-              className={`flex gap-3 ${m.role === "user" ? "flex-row-reverse" : "flex-row"}`}
-            >
-              {/* Avatar */}
-              {m.role === "ai" ? (
-                <div className="flex size-8 shrink-0 items-center justify-center rounded-[4px] bg-black text-white text-[10px] font-mono font-bold">
-                  EV
-                </div>
-              ) : (
-                <div className="flex size-8 shrink-0 items-center justify-center rounded-[4px] bg-[#3B82F6] text-white text-[10px] font-mono font-bold">
-                  {userInitials}
-                </div>
-              )}
-
-              {/* Bubble */}
-              <div
-                className={`max-w-2xl rounded-[4px] px-4 py-3 text-sm leading-relaxed ${
-                  m.role === "user"
-                    ? "bg-black text-white"
-                    : "bg-white border border-black/[0.07] text-[#000000]"
-                }`}
+          <AnimatePresence>
+            {messages.map((m) => (
+              <motion.div
+                key={m.id}
+                initial={{ opacity: 0, y: 10, scale: 0.98 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                transition={{ duration: 0.25 }}
+                className={`flex gap-3 ${m.role === "user" ? "flex-row-reverse" : "flex-row"}`}
               >
-                <div className="whitespace-pre-wrap">{m.content}</div>
-                <span className={`block font-mono text-[9px] mt-1.5 tracking-wider ${
-                  m.role === "user" ? "text-white/50 text-right" : "text-[#526E7A]"
-                }`}>
-                  {m.timestamp}
-                </span>
-              </div>
-            </motion.div>
-          ))}
+                {/* Avatar */}
+                {m.role === "ai" ? (
+                  <div className="flex size-8 shrink-0 items-center justify-center rounded-[4px] bg-black text-white text-[10px] font-mono font-bold shadow-md">
+                    EV
+                  </div>
+                ) : (
+                  <div className="flex size-8 shrink-0 items-center justify-center rounded-[4px] bg-[#3B82F6] text-white text-[10px] font-mono font-bold shadow-md">
+                    {userInitials}
+                  </div>
+                )}
+
+                {/* Bubble */}
+                <div
+                  className={`max-w-2xl rounded-[4px] px-4 py-3 text-sm leading-relaxed shadow-sm ${
+                    m.role === "user"
+                      ? "bg-black text-white"
+                      : "bg-white border border-black/[0.07] text-[#000000]"
+                  }`}
+                >
+                  <div className="whitespace-pre-wrap">{m.content}</div>
+                  <span className={`block font-mono text-[9px] mt-1.5 tracking-wider ${
+                    m.role === "user" ? "text-white/50 text-right" : "text-[#526E7A]"
+                  }`}>
+                    {m.timestamp}
+                  </span>
+                </div>
+              </motion.div>
+            ))}
+          </AnimatePresence>
 
           {isTyping && (
             <motion.div
@@ -222,7 +288,7 @@ export default function DashboardPage() {
               <div className="flex size-8 items-center justify-center rounded-[4px] bg-black text-white text-[10px] font-mono font-bold">
                 EV
               </div>
-              <div className="rounded-[4px] bg-white border border-black/[0.07] px-4 py-3 text-xs text-[#526E7A] flex items-center gap-2">
+              <div className="rounded-[4px] bg-white border border-black/[0.07] px-4 py-3 text-xs text-[#526E7A] flex items-center gap-2 shadow-sm">
                 <Sparkles className="size-3 text-[#3B82F6] animate-spin" />
                 <span className="font-mono tracking-wider">GENERATING RESPONSE...</span>
               </div>
@@ -233,15 +299,14 @@ export default function DashboardPage() {
         </div>
       )}
 
-      {/* ── AI Input Bar ────────────────────────────────── */}
+      {/* ── Center AI Input Bar ────────────────────────── */}
       <motion.form
-        initial={{ opacity: 0, y: 12 }}
-        animate={{ opacity: 1, y: 0 }}
+        variants={inputBarVariants}
         onSubmit={(e) => {
           e.preventDefault()
           handlePromptSubmit()
         }}
-        className="w-full bg-white border border-black/[0.09] rounded-[4px] flex items-center gap-3 px-5 py-3 mb-5 shadow-float"
+        className="w-full bg-white border border-black/[0.09] rounded-[4px] flex items-center gap-3 px-5 py-3 mb-6 shadow-[0_4px_20px_rgba(0,0,0,0.05)] hover:border-black/20 transition-all duration-200"
       >
         {/* EV Mark */}
         <div className="w-6 h-6 bg-black rounded-[3px] flex items-center justify-center shrink-0">
@@ -253,7 +318,7 @@ export default function DashboardPage() {
           value={promptText}
           onChange={(e) => setPromptText(e.target.value)}
           placeholder="What would you like to achieve today?"
-          className="flex-1 bg-transparent text-[15px] text-[#000000] placeholder:text-[#A0A0A0] outline-none border-none"
+          className="flex-1 bg-transparent text-[15px] text-[#000000] placeholder:text-[#A0A0A0] outline-none border-none font-sans"
         />
 
         {/* Send */}
@@ -261,7 +326,7 @@ export default function DashboardPage() {
           type="submit"
           disabled={!promptText.trim() || isTyping}
           size="icon"
-          className="size-9 rounded-[4px] bg-black hover:bg-[#1a1a1a] text-white disabled:opacity-30"
+          className="size-9 rounded-[4px] bg-black hover:bg-[#1a1a1a] text-white disabled:opacity-30 active:scale-[0.95] transition-transform"
         >
           <Send className="size-3.5" />
         </Button>
@@ -269,34 +334,35 @@ export default function DashboardPage() {
 
       {/* ── Quick Action Chips ───────────────────────────── */}
       <motion.div
-        initial={{ opacity: 0, y: 12 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="flex flex-wrap items-center justify-center gap-2 w-full mb-10"
+        variants={chipsContainerVariants}
+        className="flex flex-wrap items-center justify-center gap-2.5 w-full mb-10"
       >
         {QUICK_ACTIONS.map((chip) => {
           const Icon = chip.icon
           return (
-            <button
+            <motion.button
               key={chip.label}
+              variants={chipItemVariants}
+              whileHover={{ scale: 1.04, y: -2 }}
+              whileTap={{ scale: 0.96 }}
               onClick={() => handlePromptSubmit(chip.prompt)}
-              className="flex items-center gap-2 px-4 py-2 bg-white border border-black/[0.08] rounded-[4px] text-[13px] text-[#526E7A] hover:text-black hover:border-black/20 hover:bg-[#F8F8F8] transition-all duration-150 cursor-pointer"
+              className="flex items-center gap-2 px-4 py-2 bg-white border border-black/[0.08] rounded-[4px] text-[13px] font-medium text-[#526E7A] hover:text-black hover:border-black/25 hover:bg-[#F9F9F9] shadow-sm transition-all duration-150 cursor-pointer"
             >
-              <Icon className="size-3.5" />
+              <Icon className="size-3.5 text-[#333333]" />
               <span>{chip.label}</span>
-            </button>
+            </motion.button>
           )
         })}
       </motion.div>
 
-      {/* ── Footer ──────────────────────────────────────── */}
+      {/* ── Footer Microcopy ────────────────────────────── */}
       <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
+        variants={textFadeUpVariants}
         className="flex items-center justify-center gap-2 mt-auto pb-6"
       >
         <Lock className="size-3 text-[#A0A0A0]" />
-        <span className="label-mono text-[#A0A0A0]">YOUR DATA IS PRIVATE AND SECURE</span>
+        <span className="label-mono text-[#A0A0A0] text-[10px]">YOUR DATA IS PRIVATE AND SECURE</span>
       </motion.div>
-    </div>
+    </motion.div>
   )
 }
