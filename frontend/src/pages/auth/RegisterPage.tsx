@@ -76,23 +76,23 @@ export default function RegisterPage() {
     await githubLoginMutation.mutateAsync()
   }
 
-  const containerVariants = {
+  const leftContainerVariants = {
     hidden: { opacity: 0 },
     visible: {
       opacity: 1,
       transition: {
-        staggerChildren: 0.06,
+        staggerChildren: 0.07,
         delayChildren: 0.05,
       },
     },
   }
 
-  const itemVariants = {
-    hidden: { opacity: 0, y: 14 },
+  const textFadeUpVariants = {
+    hidden: { opacity: 0, y: 16 },
     visible: {
       opacity: 1,
       y: 0,
-      transition: { duration: 0.35 },
+      transition: { duration: 0.4 },
     },
   }
 
@@ -107,8 +107,17 @@ export default function RegisterPage() {
     },
   }
 
+  const rightTextVariants = {
+    hidden: { opacity: 0, y: 22 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: { duration: 0.5 },
+    },
+  }
+
   const popVariants = {
-    hidden: { opacity: 0, scale: 0.9, y: 10 },
+    hidden: { opacity: 0, scale: 0.85, y: 12 },
     visible: {
       opacity: 1,
       scale: 1,
@@ -123,44 +132,48 @@ export default function RegisterPage() {
       <motion.div
         initial="hidden"
         animate="visible"
-        variants={containerVariants}
+        variants={leftContainerVariants}
         className="flex flex-1 items-center justify-center p-6 sm:p-8 lg:max-w-[520px]"
       >
         <div className="w-full max-w-[400px] space-y-6">
           {/* Brand */}
-          <motion.div variants={itemVariants} className="space-y-1">
+          <motion.div variants={textFadeUpVariants} className="space-y-1">
             <div className="flex items-center gap-2.5 mb-5">
               <motion.div
-                whileHover={{ scale: 1.05, rotate: 2 }}
+                whileHover={{ scale: 1.08, rotate: 2 }}
                 className="w-8 h-8 bg-black rounded-[3px] flex items-center justify-center cursor-pointer"
               >
                 <span className="text-white font-mono text-[11px] font-bold tracking-widest">EV</span>
               </motion.div>
               <span className="font-mono text-[11px] font-bold tracking-[0.14em] uppercase text-black">EV AI</span>
             </div>
-            <h1 className="text-[32px] font-light tracking-tighter text-[#000000]">
-              Create your account
-            </h1>
-            <p className="text-sm text-[#526E7A]">
-              Start your AI-powered career evolution
-            </p>
+            <motion.div variants={textFadeUpVariants}>
+              <h1 className="text-[32px] font-light tracking-tighter text-[#000000]">
+                Create your account
+              </h1>
+            </motion.div>
+            <motion.div variants={textFadeUpVariants}>
+              <p className="text-sm text-[#526E7A]">
+                Start your AI-powered career evolution
+              </p>
+            </motion.div>
           </motion.div>
 
           {/* Form */}
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-3.5">
-            <motion.div variants={itemVariants} className="space-y-1">
+            <motion.div variants={textFadeUpVariants} className="space-y-1">
               <label className="label-mono text-[#000000] font-semibold text-xs block">FULL NAME</label>
               <Input {...register("name")} placeholder="Harsha Deva" aria-invalid={!!errors.name} className="h-11" />
               {errors.name && <p className="text-xs text-[#EF4444] mt-1">{errors.name.message}</p>}
             </motion.div>
 
-            <motion.div variants={itemVariants} className="space-y-1">
+            <motion.div variants={textFadeUpVariants} className="space-y-1">
               <label className="label-mono text-[#000000] font-semibold text-xs block">EMAIL ADDRESS</label>
               <Input {...register("email")} type="email" placeholder="alex@example.com" aria-invalid={!!errors.email} className="h-11" />
               {errors.email && <p className="text-xs text-[#EF4444] mt-1">{errors.email.message}</p>}
             </motion.div>
 
-            <motion.div variants={itemVariants} className="space-y-1">
+            <motion.div variants={textFadeUpVariants} className="space-y-1">
               <label className="label-mono text-[#000000] font-semibold text-xs block">PASSWORD</label>
               <div className="relative">
                 <Input
@@ -197,7 +210,7 @@ export default function RegisterPage() {
               {errors.password && <p className="text-xs text-[#EF4444] mt-1">{errors.password.message}</p>}
             </motion.div>
 
-            <motion.div variants={itemVariants} className="space-y-1">
+            <motion.div variants={textFadeUpVariants} className="space-y-1">
               <label className="label-mono text-[#000000] font-semibold text-xs block">CONFIRM PASSWORD</label>
               <Input
                 {...register("confirmPassword")}
@@ -211,7 +224,7 @@ export default function RegisterPage() {
               )}
             </motion.div>
 
-            <motion.div variants={itemVariants}>
+            <motion.div variants={textFadeUpVariants}>
               <Button
                 type="submit"
                 disabled={isSubmitting || registerMutation.isPending}
@@ -225,7 +238,7 @@ export default function RegisterPage() {
           </form>
 
           {/* Divider */}
-          <motion.div variants={itemVariants} className="relative text-center">
+          <motion.div variants={textFadeUpVariants} className="relative text-center">
             <div className="absolute inset-0 top-1/2 border-t border-black/[0.08]" />
             <span className="bg-[#F5F5F5] relative z-10 px-3 label-mono text-[#526E7A]">
               OR CONTINUE WITH
@@ -233,7 +246,7 @@ export default function RegisterPage() {
           </motion.div>
 
           {/* OAuth */}
-          <motion.div variants={itemVariants} className="grid grid-cols-2 gap-3">
+          <motion.div variants={textFadeUpVariants} className="grid grid-cols-2 gap-3">
             <Button
               variant="outline"
               type="button"
@@ -254,7 +267,7 @@ export default function RegisterPage() {
             </Button>
           </motion.div>
 
-          <motion.div variants={itemVariants}>
+          <motion.div variants={textFadeUpVariants}>
             <p className="text-[#526E7A] text-center text-sm">
               Already have an account?{" "}
               <Link to={PUBLIC_ROUTES.login} className="text-[#000000] font-semibold hover:underline">
@@ -283,23 +296,23 @@ export default function RegisterPage() {
           }}
         />
 
-        <div className="relative z-10 text-center max-w-sm">
+        <div className="relative z-10 text-center max-w-sm space-y-6">
           <motion.div
             variants={popVariants}
-            whileHover={{ scale: 1.06, rotate: -2 }}
-            className="w-16 h-16 bg-white rounded-[4px] flex items-center justify-center mx-auto mb-8 shadow-2xl cursor-pointer"
+            whileHover={{ scale: 1.08, rotate: -2 }}
+            className="w-16 h-16 bg-white rounded-[4px] flex items-center justify-center mx-auto shadow-2xl cursor-pointer"
           >
             <span className="text-black font-mono text-[22px] font-bold tracking-widest">EV</span>
           </motion.div>
 
-          <motion.div variants={itemVariants}>
-            <h2 className="text-[36px] font-light tracking-tighter text-white leading-tight mb-3">
+          <motion.div variants={rightTextVariants}>
+            <h2 className="text-[36px] font-light tracking-tighter text-white leading-tight">
               Accelerate your<br />
               <span className="font-bold">Career Trajectory.</span>
             </h2>
           </motion.div>
 
-          <motion.div variants={itemVariants}>
+          <motion.div variants={rightTextVariants}>
             <p className="text-[#A0A0A0] text-sm leading-relaxed font-light px-2">
               Custom milestone roadmaps, live GitHub intelligence, and ATS resume optimization in one platform.
             </p>
