@@ -32,18 +32,18 @@ export default function ProfilePage() {
       initial="hidden"
       animate="visible"
       variants={containerVariants}
-      className="mx-auto max-w-4xl space-y-6 pb-12 px-4 sm:px-6 py-8 min-h-[calc(100vh-64px)]"
+      className="mx-auto max-w-5xl space-y-6 pb-12 px-4 sm:px-6 py-8 min-h-[calc(100vh-64px)]"
     >
-      {/* Profile Header Card with Perfect Alignment */}
+      {/* Profile Header Card with Flawless Layout */}
       <motion.div variants={itemVariants}>
         <Card className="p-0 border border-black/[0.08] bg-white shadow-sm gap-0 overflow-hidden">
-          {/* Top Schematic Pattern Banner */}
-          <div className="bg-black h-24 w-full border-b border-black/[0.08] relative overflow-hidden flex items-center justify-between px-6">
+          {/* Top Black Schematic Banner */}
+          <div className="bg-black h-32 w-full border-b border-black/[0.08] relative overflow-hidden flex items-start justify-between p-6">
             <div
-              className="absolute inset-0 opacity-15 pointer-events-none"
+              className="absolute inset-0 opacity-20 pointer-events-none"
               style={{
                 backgroundImage: "linear-gradient(rgba(255,255,255,0.4) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.4) 1px, transparent 1px)",
-                backgroundSize: "24px 24px",
+                backgroundSize: "28px 28px",
               }}
             />
             <span className="font-mono text-[10px] text-white/70 tracking-[0.2em] relative z-10 uppercase font-bold">
@@ -51,26 +51,18 @@ export default function ProfilePage() {
             </span>
           </div>
 
-          {/* Profile Details Container */}
-          <div className="px-6 pb-6 pt-4">
-            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-              {/* Avatar & User Details */}
-              <div className="flex items-center gap-4">
-                <Avatar size="lg" className="size-16 ring-2 ring-black/10 border border-black/10 shadow-sm rounded-[6px] shrink-0">
-                  {profile.avatarUrl && <AvatarImage src={profile.avatarUrl} alt={displayName} />}
-                  <AvatarFallback className="bg-black text-lg font-mono font-bold text-white rounded-[6px]">{userInitials}</AvatarFallback>
-                </Avatar>
-
-                <div className="space-y-1">
-                  <h1 className="text-2xl font-semibold text-[#000000] tracking-tight leading-none">{displayName}</h1>
-                  <p className="label-mono text-[#3B82F6] font-bold text-xs">
-                    {(profile.primaryGoal || "Software Developer").toUpperCase()} • {(profile.userType || "Developer").toUpperCase()}
-                  </p>
-                </div>
-              </div>
+          {/* Details Section Below Banner */}
+          <div className="px-6 pb-6 pt-0 relative z-10">
+            {/* Avatar & Action Row */}
+            <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 -mt-12 mb-4">
+              {/* Avatar overlapping banner cleanly */}
+              <Avatar size="lg" className="size-20 ring-4 ring-white border border-black/15 shadow-md rounded-[6px] shrink-0 bg-black">
+                {profile.avatarUrl && <AvatarImage src={profile.avatarUrl} alt={displayName} />}
+                <AvatarFallback className="bg-black text-xl font-mono font-bold text-white rounded-[6px]">{userInitials}</AvatarFallback>
+              </Avatar>
 
               {/* Action Buttons */}
-              <div className="flex items-center gap-2 self-start sm:self-center">
+              <div className="flex items-center gap-2 self-start sm:self-auto">
                 <Button variant="outline" size="sm" asChild className="h-9">
                   <a href="/settings">
                     <Edit3 className="mr-1.5 size-3.5" /> Edit Profile
@@ -82,19 +74,29 @@ export default function ProfilePage() {
               </div>
             </div>
 
-            {/* Sub-meta metrics bar */}
-            <div className="mt-6 pt-4 border-t border-black/[0.06] grid grid-cols-1 sm:grid-cols-3 gap-3 font-mono text-xs text-[#333333]">
-              <div className="flex items-center gap-2 bg-[#F5F5F5] p-2.5 rounded-[4px] border border-black/[0.05]">
+            {/* Name & Role Section (Sitting strictly in White area) */}
+            <div className="space-y-1 mb-5">
+              <h1 className="text-2xl sm:text-3xl font-bold text-[#000000] tracking-tight leading-tight">
+                {displayName}
+              </h1>
+              <p className="label-mono text-[#3B82F6] font-bold text-xs">
+                {(profile.primaryGoal || "Software Developer").toUpperCase()} • {(profile.userType || "Developer").toUpperCase()}
+              </p>
+            </div>
+
+            {/* Sub-meta Metrics Bar */}
+            <div className="pt-4 border-t border-black/[0.07] grid grid-cols-1 sm:grid-cols-3 gap-3 font-mono text-xs text-[#333333]">
+              <div className="flex items-center gap-2 bg-[#F5F5F5] p-3 rounded-[4px] border border-black/[0.05]">
                 <MapPin className="size-3.5 text-[#3B82F6] shrink-0" />
                 <span className="truncate">Goal: <strong className="text-black">{profile.primaryGoal || "Career Evolution"}</strong></span>
               </div>
 
-              <div className="flex items-center gap-2 bg-[#F5F5F5] p-2.5 rounded-[4px] border border-black/[0.05]">
+              <div className="flex items-center gap-2 bg-[#F5F5F5] p-3 rounded-[4px] border border-black/[0.05]">
                 <Mail className="size-3.5 text-[#10B981] shrink-0" />
                 <span className="truncate">Commitment: <strong className="text-black">{profile.weeklyHours}h / week</strong></span>
               </div>
 
-              <div className="flex items-center gap-2 bg-[#F5F5F5] p-2.5 rounded-[4px] border border-black/[0.05]">
+              <div className="flex items-center gap-2 bg-[#F5F5F5] p-3 rounded-[4px] border border-black/[0.05]">
                 <Award className="size-3.5 text-[#3B82F6] shrink-0" />
                 <span className="truncate">CAREER HEALTH: <strong className="text-black">{dashboardData.careerScore}/100</strong></span>
               </div>
@@ -148,7 +150,7 @@ export default function ProfilePage() {
           <motion.div variants={itemVariants}>
             <Card aiActive={true} className="p-5 space-y-3 gap-0">
               <span className="label-mono text-[#3B82F6] block font-bold text-xs">AI PROFILE SNAPSHOT</span>
-              <div className="space-y-2 font-mono text-xs text-[#000000] pt-1">
+              <div className="space-y-2.5 font-mono text-xs text-[#000000] pt-1">
                 <div className="flex items-center justify-between border-b border-black/[0.05] pb-2">
                   <span className="text-[#526E7A]">PRIMARY GOAL:</span>
                   <strong className="text-[#10B981] font-bold">{profile.primaryGoal || "Career Growth"}</strong>

@@ -55,7 +55,7 @@ export default function SettingsPage() {
       initial="hidden"
       animate="visible"
       variants={containerVariants}
-      className="space-y-8 pb-12 max-w-4xl mx-auto px-4 sm:px-6 py-8 min-h-[calc(100vh-64px)]"
+      className="space-y-8 pb-12 max-w-5xl mx-auto px-4 sm:px-6 py-8 min-h-[calc(100vh-64px)]"
     >
       <PageHeader
         label="SYSTEM PREFERENCES"

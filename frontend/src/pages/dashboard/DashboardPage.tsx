@@ -201,7 +201,7 @@ export default function DashboardPage() {
       initial="hidden"
       animate="visible"
       variants={containerVariants}
-      className="w-full max-w-3xl mx-auto py-12 px-4 sm:px-6 flex flex-col items-center min-h-[calc(100vh-64px)] overflow-hidden"
+      className="w-full max-w-5xl mx-auto py-10 px-4 sm:px-6 flex flex-col items-center min-h-[calc(100vh-64px)] overflow-hidden"
     >
 
       {/* ── Hero Greeting ──────────────────────────────── */}
