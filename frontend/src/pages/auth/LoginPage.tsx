@@ -3,7 +3,7 @@ import { Link, useNavigate } from "react-router-dom"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { z } from "zod"
-import { Eye, EyeOff, ArrowRight } from "lucide-react"
+import { Eye, EyeOff, ArrowRight, Activity } from "lucide-react"
 import { toast } from "sonner"
 import { motion } from "framer-motion"
 
@@ -55,13 +55,13 @@ export default function LoginPage() {
     await githubLoginMutation.mutateAsync()
   }
 
-  // Animation variants
+  // Stagger animation variants for left panel
   const leftContainerVariants = {
     hidden: { opacity: 0 },
     visible: {
       opacity: 1,
       transition: {
-        staggerChildren: 0.08,
+        staggerChildren: 0.07,
         delayChildren: 0.05,
       },
     },
@@ -76,28 +76,30 @@ export default function LoginPage() {
     },
   }
 
+  // Right panel rich animation variants
   const rightContainerVariants = {
     hidden: { opacity: 0 },
     visible: {
       opacity: 1,
       transition: {
-        staggerChildren: 0.14,
-        delayChildren: 0.15,
+        staggerChildren: 0.15,
+        delayChildren: 0.1,
       },
     },
   }
 
-  const rightTextVariants = {
-    hidden: { opacity: 0, y: 24 },
+  const textRevealVariants = {
+    hidden: { opacity: 0, y: 28, filter: "blur(6px)" },
     visible: {
       opacity: 1,
       y: 0,
-      transition: { duration: 0.55 },
+      filter: "blur(0px)",
+      transition: { duration: 0.6 },
     },
   }
 
-  const popVariants = {
-    hidden: { opacity: 0, scale: 0.85, y: 14 },
+  const badgeVariants = {
+    hidden: { opacity: 0, scale: 0.7, y: 20 },
     visible: {
       opacity: 1,
       scale: 1,
@@ -106,9 +108,28 @@ export default function LoginPage() {
     },
   }
 
+  const statsBoxVariants = {
+    hidden: { opacity: 0, scale: 0.92, y: 25 },
+    visible: {
+      opacity: 1,
+      scale: 1,
+      y: 0,
+      transition: { duration: 0.55 },
+    },
+  }
+
+  const statItemVariants = {
+    hidden: { opacity: 0, y: 15 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: { duration: 0.4 },
+    },
+  }
+
   return (
     <div className="flex min-h-screen bg-[#F5F5F5] overflow-hidden">
-      {/* Left: Form Panel with Staggered Text Animations */}
+      {/* Left: Form Panel */}
       <motion.div
         initial="hidden"
         animate="visible"
@@ -242,79 +263,92 @@ export default function LoginPage() {
         </div>
       </motion.div>
 
-      {/* Right: Black Side Panel with Animated Text & Elements */}
+      {/* Right: Black Side Panel with Ultra-Rich Animated Visuals */}
       <motion.div
         initial="hidden"
         animate="visible"
         variants={rightContainerVariants}
         className="hidden lg:flex flex-1 bg-black items-center justify-center p-12 relative overflow-hidden select-none"
       >
-        {/* Animated Background Grid */}
+        {/* Animated Background Laser Grid with Continuous Scanning Pulse */}
         <motion.div
-          initial={{ scale: 1.1, opacity: 0 }}
-          animate={{ scale: 1, opacity: 0.06 }}
-          transition={{ duration: 1.4 }}
-          className="absolute inset-0"
+          initial={{ scale: 1.15, opacity: 0 }}
+          animate={{ scale: [1.15, 1, 1.02, 1], opacity: [0, 0.08, 0.06] }}
+          transition={{ duration: 3, repeat: Infinity, repeatType: "mirror", ease: "easeInOut" }}
+          className="absolute inset-0 pointer-events-none"
           style={{
-            backgroundImage: "linear-gradient(rgba(255,255,255,0.5) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.5) 1px, transparent 1px)",
-            backgroundSize: "40px 40px",
+            backgroundImage: "linear-gradient(rgba(255,255,255,0.6) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.6) 1px, transparent 1px)",
+            backgroundSize: "44px 44px",
           }}
         />
 
-        <div className="relative z-10 text-center max-w-sm space-y-6">
+        {/* Ambient Glowing Halo Behind Logo */}
+        <div className="absolute size-72 rounded-full bg-[#3B82F6]/10 blur-3xl pointer-events-none top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 animate-pulse" />
 
-          {/* White EV Logo Badge Animation */}
+        <div className="relative z-10 text-center max-w-sm space-y-7">
+
+          {/* White EV Logo Badge with Continuous Float & Pulse Glow */}
           <motion.div
-            variants={popVariants}
-            whileHover={{ scale: 1.08, rotate: -2 }}
+            variants={badgeVariants}
+            animate={{ y: [0, -6, 0] }}
+            transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+            whileHover={{ scale: 1.12, rotate: -3 }}
             whileTap={{ scale: 0.95 }}
-            className="w-16 h-16 bg-white rounded-[4px] flex items-center justify-center mx-auto shadow-2xl cursor-pointer"
+            className="w-16 h-16 bg-white rounded-[4px] flex items-center justify-center mx-auto shadow-[0_0_40px_rgba(255,255,255,0.25)] cursor-pointer relative group"
           >
-            <span className="text-black font-mono text-[22px] font-bold tracking-widest">EV</span>
+            <span className="text-black font-mono text-[22px] font-bold tracking-widest group-hover:scale-110 transition-transform">EV</span>
+            <span className="absolute -top-1 -right-1 size-3 bg-[#3B82F6] rounded-full border-2 border-black animate-ping" />
+            <span className="absolute -top-1 -right-1 size-3 bg-[#3B82F6] rounded-full border-2 border-black" />
           </motion.div>
 
-          {/* Animated Headline Line 1 */}
-          <motion.div variants={rightTextVariants}>
-            <h2 className="text-[38px] font-light tracking-tighter text-white leading-tight">
+          {/* System Status Pill */}
+          <motion.div variants={textRevealVariants} className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/[0.04] px-3.5 py-1 backdrop-blur-md">
+            <Activity className="size-3 text-[#10B981] animate-pulse" />
+            <span className="font-mono text-[10px] font-bold text-[#A0A0A0] tracking-[0.18em] uppercase">EV AI CORE // ONLINE</span>
+          </motion.div>
+
+          {/* Headline 1: Empower */}
+          <motion.div variants={textRevealVariants}>
+            <h2 className="text-[44px] font-extralight tracking-tighter text-white leading-none">
               Empower.
             </h2>
           </motion.div>
 
-          {/* Animated Headline Line 2 */}
-          <motion.div variants={rightTextVariants}>
-            <h2 className="text-[38px] font-bold tracking-tighter text-white leading-tight">
+          {/* Headline 2: Evolve (with Glowing Blue Gradient Text) */}
+          <motion.div variants={textRevealVariants}>
+            <h2 className="text-[44px] font-bold tracking-tighter leading-none bg-gradient-to-r from-white via-[#60A5FA] to-[#3B82F6] bg-clip-text text-transparent drop-shadow-[0_0_20px_rgba(59,130,246,0.3)]">
               Evolve.
             </h2>
           </motion.div>
 
-          {/* Animated Description Paragraph */}
-          <motion.div variants={rightTextVariants}>
-            <p className="text-[#A0A0A0] text-sm leading-relaxed font-light px-2">
-              AI-powered career navigation for the next generation of engineers and developers.
+          {/* Paragraph Description with Blur-Unveil */}
+          <motion.div variants={textRevealVariants}>
+            <p className="text-[#A0A0A0] text-sm leading-relaxed font-normal px-2">
+              AI-powered career navigation & milestone trajectory for engineers.
             </p>
           </motion.div>
 
-          {/* Animated Stats Card Box */}
+          {/* Interactive Stats Box with Glowing Sheen & Staggered Pop-in */}
           <motion.div
-            variants={popVariants}
-            className="grid grid-cols-3 gap-4 border border-white/10 rounded-[4px] p-5 bg-white/[0.02] backdrop-blur-sm shadow-xl"
+            variants={statsBoxVariants}
+            className="grid grid-cols-3 gap-3 border border-white/15 rounded-[4px] p-5 bg-white/[0.03] backdrop-blur-md shadow-2xl hover:border-[#3B82F6]/50 transition-colors group"
           >
             {[
-              { value: "12K+", label: "USERS" },
-              { value: "94%", label: "PLACEMENT" },
-              { value: "4.9★", label: "RATING" },
+              { value: "12K+", label: "USERS", color: "#FFFFFF" },
+              { value: "94%", label: "PLACEMENT", color: "#3B82F6" },
+              { value: "4.9★", label: "RATING", color: "#10B981" },
             ].map((s) => (
               <motion.div
                 key={s.label}
-                variants={rightTextVariants}
-                whileHover={{ y: -3 }}
-                transition={{ duration: 0.15 }}
-                className="text-center cursor-default"
+                variants={statItemVariants}
+                whileHover={{ y: -4, scale: 1.04 }}
+                transition={{ type: "spring", stiffness: 400, damping: 15 }}
+                className="text-center cursor-default p-1"
               >
-                <p className="font-mono text-[22px] font-bold text-white tracking-tight">
+                <p className="font-mono text-[22px] font-bold tracking-tight" style={{ color: s.color }}>
                   {s.value}
                 </p>
-                <p className="label-mono text-[#526E7A] mt-1.5 text-[9px] tracking-[0.14em]">
+                <p className="label-mono text-[#A0A0A0] mt-1 text-[9px] tracking-[0.16em] uppercase">
                   {s.label}
                 </p>
               </motion.div>

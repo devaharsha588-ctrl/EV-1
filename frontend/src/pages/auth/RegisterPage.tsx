@@ -3,7 +3,7 @@ import { Link, useNavigate } from "react-router-dom"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { z } from "zod"
-import { Eye, EyeOff, ArrowRight } from "lucide-react"
+import { Eye, EyeOff, ArrowRight, Activity } from "lucide-react"
 import { toast } from "sonner"
 import { motion } from "framer-motion"
 
@@ -101,28 +101,29 @@ export default function RegisterPage() {
     visible: {
       opacity: 1,
       transition: {
-        staggerChildren: 0.12,
-        delayChildren: 0.15,
+        staggerChildren: 0.15,
+        delayChildren: 0.1,
       },
     },
   }
 
-  const rightTextVariants = {
-    hidden: { opacity: 0, y: 22 },
+  const textRevealVariants = {
+    hidden: { opacity: 0, y: 28, filter: "blur(6px)" },
     visible: {
       opacity: 1,
       y: 0,
-      transition: { duration: 0.5 },
+      filter: "blur(0px)",
+      transition: { duration: 0.6 },
     },
   }
 
-  const popVariants = {
-    hidden: { opacity: 0, scale: 0.85, y: 12 },
+  const badgeVariants = {
+    hidden: { opacity: 0, scale: 0.7, y: 20 },
     visible: {
       opacity: 1,
       scale: 1,
       y: 0,
-      transition: { duration: 0.45 },
+      transition: { duration: 0.5 },
     },
   }
 
@@ -285,35 +286,53 @@ export default function RegisterPage() {
         variants={rightContainerVariants}
         className="hidden lg:flex flex-1 bg-black items-center justify-center p-12 relative overflow-hidden select-none"
       >
+        {/* Animated Background Laser Grid */}
         <motion.div
-          initial={{ scale: 1.08, opacity: 0 }}
-          animate={{ scale: 1, opacity: 0.06 }}
-          transition={{ duration: 1.2 }}
-          className="absolute inset-0"
+          initial={{ scale: 1.15, opacity: 0 }}
+          animate={{ scale: [1.15, 1, 1.02, 1], opacity: [0, 0.08, 0.06] }}
+          transition={{ duration: 3, repeat: Infinity, repeatType: "mirror", ease: "easeInOut" }}
+          className="absolute inset-0 pointer-events-none"
           style={{
-            backgroundImage: "linear-gradient(rgba(255,255,255,0.5) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.5) 1px, transparent 1px)",
-            backgroundSize: "40px 40px",
+            backgroundImage: "linear-gradient(rgba(255,255,255,0.6) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.6) 1px, transparent 1px)",
+            backgroundSize: "44px 44px",
           }}
         />
 
-        <div className="relative z-10 text-center max-w-sm space-y-6">
+        {/* Ambient Glow Ring */}
+        <div className="absolute size-72 rounded-full bg-[#3B82F6]/10 blur-3xl pointer-events-none top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 animate-pulse" />
+
+        <div className="relative z-10 text-center max-w-sm space-y-7">
           <motion.div
-            variants={popVariants}
-            whileHover={{ scale: 1.08, rotate: -2 }}
-            className="w-16 h-16 bg-white rounded-[4px] flex items-center justify-center mx-auto shadow-2xl cursor-pointer"
+            variants={badgeVariants}
+            animate={{ y: [0, -6, 0] }}
+            transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+            whileHover={{ scale: 1.12, rotate: -3 }}
+            className="w-16 h-16 bg-white rounded-[4px] flex items-center justify-center mx-auto shadow-[0_0_40px_rgba(255,255,255,0.25)] cursor-pointer relative group"
           >
             <span className="text-black font-mono text-[22px] font-bold tracking-widest">EV</span>
+            <span className="absolute -top-1 -right-1 size-3 bg-[#3B82F6] rounded-full border-2 border-black animate-ping" />
+            <span className="absolute -top-1 -right-1 size-3 bg-[#3B82F6] rounded-full border-2 border-black" />
           </motion.div>
 
-          <motion.div variants={rightTextVariants}>
-            <h2 className="text-[36px] font-light tracking-tighter text-white leading-tight">
-              Accelerate your<br />
-              <span className="font-bold">Career Trajectory.</span>
+          <motion.div variants={textRevealVariants} className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/[0.04] px-3.5 py-1 backdrop-blur-md">
+            <Activity className="size-3 text-[#10B981] animate-pulse" />
+            <span className="font-mono text-[10px] font-bold text-[#A0A0A0] tracking-[0.18em] uppercase">SYSTEM READY // REGISTRATION</span>
+          </motion.div>
+
+          <motion.div variants={textRevealVariants}>
+            <h2 className="text-[44px] font-extralight tracking-tighter text-white leading-none">
+              Accelerate your
             </h2>
           </motion.div>
 
-          <motion.div variants={rightTextVariants}>
-            <p className="text-[#A0A0A0] text-sm leading-relaxed font-light px-2">
+          <motion.div variants={textRevealVariants}>
+            <h2 className="text-[44px] font-bold tracking-tighter leading-none bg-gradient-to-r from-white via-[#60A5FA] to-[#3B82F6] bg-clip-text text-transparent drop-shadow-[0_0_20px_rgba(59,130,246,0.3)]">
+              Trajectory.
+            </h2>
+          </motion.div>
+
+          <motion.div variants={textRevealVariants}>
+            <p className="text-[#A0A0A0] text-sm leading-relaxed font-normal px-2">
               Custom milestone roadmaps, live GitHub intelligence, and ATS resume optimization in one platform.
             </p>
           </motion.div>
