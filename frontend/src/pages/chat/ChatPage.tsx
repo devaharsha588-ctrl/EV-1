@@ -61,10 +61,15 @@ export default function ChatPage() {
   const [messages, setMessages] = useState<Message[]>(initialMessages)
   const [input, setInput] = useState("")
   const [isTyping, setIsTyping] = useState(false)
-  const messagesEndRef = useRef<HTMLDivElement>(null)
+  const chatContainerRef = useRef<HTMLDivElement>(null)
 
   const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" })
+    if (chatContainerRef.current) {
+      chatContainerRef.current.scrollTo({
+        top: chatContainerRef.current.scrollHeight,
+        behavior: "smooth",
+      })
+    }
   }
 
   useEffect(() => {
@@ -128,7 +133,7 @@ export default function ChatPage() {
       </div>
 
       {/* Centered Message Stream */}
-      <div className="scrollbar-thin flex-1 space-y-6 overflow-y-auto p-6">
+      <div ref={chatContainerRef} className="scrollbar-thin flex-1 space-y-6 overflow-y-auto p-6">
         {messages.map((m) => (
           <div
             key={m.id}
@@ -180,8 +185,6 @@ export default function ChatPage() {
             </div>
           </div>
         )}
-
-        <div ref={messagesEndRef} />
       </div>
 
       {/* Input Bar */}

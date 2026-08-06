@@ -67,7 +67,6 @@ export default function DashboardPage() {
   const [promptText, setPromptText] = useState("")
   const [messages, setMessages] = useState<Message[]>([])
   const [isTyping, setIsTyping] = useState(false)
-  const messagesEndRef = useRef<HTMLDivElement>(null)
 
   const displayName = profile?.nickname || profile?.name || "Learner"
   const userInitials = displayName
@@ -84,8 +83,15 @@ export default function DashboardPage() {
     else setGreeting("Good evening")
   }, [])
 
+  const messagesContainerRef = useRef<HTMLDivElement>(null)
+
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" })
+    if (messagesContainerRef.current) {
+      messagesContainerRef.current.scrollTo({
+        top: messagesContainerRef.current.scrollHeight,
+        behavior: "smooth",
+      })
+    }
   }, [messages, isTyping])
 
   const handlePromptSubmit = async (promptToSubmit?: string) => {
@@ -239,7 +245,7 @@ export default function DashboardPage() {
 
       {/* ── Conversation Messages ───────────────────────── */}
       {messages.length > 0 && (
-        <div className="w-full space-y-4 mb-8 overflow-y-auto max-h-[420px] scrollbar-thin p-1">
+        <div ref={messagesContainerRef} className="w-full space-y-4 mb-8 overflow-y-auto max-h-[420px] scrollbar-thin p-1">
           <AnimatePresence>
             {messages.map((m) => (
               <motion.div
@@ -294,8 +300,6 @@ export default function DashboardPage() {
               </div>
             </motion.div>
           )}
-
-          <div ref={messagesEndRef} />
         </div>
       )}
 
