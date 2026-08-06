@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react"
-import { motion, AnimatePresence } from "framer-motion"
+import { motion, AnimatePresence, useReducedMotion, type Transition } from "framer-motion"
 import {
   BookOpen,
   FileText,
@@ -64,11 +64,11 @@ const QUICK_ACTIONS = [
 
 export default function DashboardPage() {
   const { profile } = useProfile()
+  const shouldReduceMotion = useReducedMotion()
   const [greeting, setGreeting] = useState("Good evening")
   const [promptText, setPromptText] = useState("")
   const [messages, setMessages] = useState<Message[]>([])
   const [isTyping, setIsTyping] = useState(false)
-  const [isInputFocused, setIsInputFocused] = useState(false)
   const messagesContainerRef = useRef<HTMLDivElement>(null)
   const inputRef = useRef<HTMLInputElement>(null)
 
@@ -79,6 +79,8 @@ export default function DashboardPage() {
     .join("")
     .toUpperCase()
     .slice(0, 2) || "EV"
+
+  const isChatActive = messages.length > 0
 
   useEffect(() => {
     const hour = new Date().getHours()
@@ -107,6 +109,7 @@ export default function DashboardPage() {
       timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
     }
 
+    // Adding user message immediately sets isChatActive to true, triggering hero collapse
     setMessages((prev) => [...prev, userMessage])
     setPromptText("")
     setIsTyping(true)
@@ -143,13 +146,12 @@ export default function DashboardPage() {
 
   const handleEndChat = () => {
     setMessages([])
-    setIsInputFocused(false)
     if (inputRef.current) {
       inputRef.current.blur()
     }
   }
 
-  // Staggered Entrance Variants
+  // Animation Variant Configurations
   const containerVariants = {
     hidden: { opacity: 0 },
     visible: {
@@ -181,23 +183,14 @@ export default function DashboardPage() {
     },
   }
 
-  const inputBarVariants = {
-    hidden: { opacity: 0, scale: 0.96, y: 18 },
-    visible: {
-      opacity: 1,
-      scale: 1,
-      y: 0,
-      transition: { duration: 0.45 },
-    },
-  }
-
   const chipsContainerVariants = {
-    hidden: { opacity: 0 },
+    hidden: { opacity: 0, height: 0 },
     visible: {
       opacity: 1,
+      height: "auto",
       transition: {
-        staggerChildren: 0.04,
-        delayChildren: 0.1,
+        staggerChildren: shouldReduceMotion ? 0 : 0.03,
+        delayChildren: 0.05,
       },
     },
   }
@@ -208,30 +201,31 @@ export default function DashboardPage() {
       opacity: 1,
       scale: 1,
       y: 0,
-      transition: { duration: 0.3 },
+      transition: { duration: 0.25 },
     },
   }
 
-  const isChatActive = messages.length > 0
-  const isFocusedOrActive = isInputFocused || isChatActive
+  const heroSectionTransition: Transition = shouldReduceMotion
+    ? { duration: 0 }
+    : { duration: 0.3, ease: "easeInOut" }
 
   return (
     <motion.div
       initial="hidden"
       animate="visible"
       variants={containerVariants}
-      className="w-full max-w-4xl mx-auto py-10 px-4 sm:px-6 flex flex-col items-center justify-between min-h-[calc(100vh-64px)] overflow-hidden"
+      className="w-full max-w-4xl mx-auto py-8 px-4 sm:px-6 flex flex-col items-center justify-between min-h-[calc(100vh-64px)] overflow-hidden"
     >
 
       {/* ── Top-Left Compact End Chat Button ── */}
       <AnimatePresence>
-        {isFocusedOrActive && (
+        {isChatActive && (
           <motion.div
-            initial={{ opacity: 0, x: -10, height: 0 }}
-            animate={{ opacity: 1, x: 0, height: "auto" }}
-            exit={{ opacity: 0, x: -10, height: 0 }}
-            transition={{ duration: 0.25, ease: "easeOut" }}
-            className="w-full flex justify-start mb-4"
+            initial={shouldReduceMotion ? { opacity: 0 } : { opacity: 0, x: -10, height: 0 }}
+            animate={shouldReduceMotion ? { opacity: 1 } : { opacity: 1, x: 0, height: "auto" }}
+            exit={shouldReduceMotion ? { opacity: 0 } : { opacity: 0, x: -10, height: 0 }}
+            transition={heroSectionTransition}
+            className="w-full flex justify-start mb-3"
           >
             <button
               onClick={handleEndChat}
@@ -244,34 +238,34 @@ export default function DashboardPage() {
         )}
       </AnimatePresence>
 
-      {/* ── Center Content Group ────────────────────────── */}
+      {/* ── Center Content Workspace ────────────────────── */}
       <div className="w-full flex-1 flex flex-col items-center justify-center">
 
-        {/* ── Hero Greeting (Hides smoothly when clicking search bar or chatting) ── */}
+        {/* ── Hero Greeting Block (Animates out completely when chat starts) ── */}
         <AnimatePresence mode="wait">
-          {!isFocusedOrActive && (
+          {!isChatActive && (
             <motion.div
               key="hero-greeting-section"
-              initial={{ opacity: 0, height: 0, scale: 0.95 }}
-              animate={{ opacity: 1, height: "auto", scale: 1 }}
-              exit={{ opacity: 0, height: 0, scale: 0.95 }}
-              transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
+              initial={shouldReduceMotion ? { opacity: 0 } : { opacity: 0, height: 0, scale: 0.96 }}
+              animate={shouldReduceMotion ? { opacity: 1 } : { opacity: 1, height: "auto", scale: 1 }}
+              exit={shouldReduceMotion ? { opacity: 0 } : { opacity: 0, height: 0, scale: 0.96 }}
+              transition={heroSectionTransition}
               className="w-full flex flex-col items-center text-center mb-8 overflow-hidden"
             >
               {/* EV AI Badge */}
-            <motion.div variants={badgeVariants} className="mb-4">
-              <motion.div
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                className="w-12 h-12 bg-black rounded-[4px] flex items-center justify-center mx-auto mb-3 shadow-md cursor-pointer transition-transform"
-              >
-                <span className="text-white font-mono text-[14px] font-bold tracking-widest pl-0.5">EV</span>
+              <motion.div variants={badgeVariants} className="mb-4">
+                <motion.div
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  className="w-12 h-12 bg-black rounded-[4px] flex items-center justify-center mx-auto mb-3 shadow-md cursor-pointer transition-transform"
+                >
+                  <span className="text-white font-mono text-[14px] font-bold tracking-widest pl-0.5">EV</span>
+                </motion.div>
+                <div className="flex items-center justify-center gap-1.5">
+                  <span className="size-1.5 rounded-full bg-[#10B981] animate-pulse" />
+                  <span className="label-mono text-[#526E7A] tracking-[0.22em] text-[10px]">AI CAREER NAVIGATOR</span>
+                </div>
               </motion.div>
-              <div className="flex items-center justify-center gap-1.5">
-                <span className="size-1.5 rounded-full bg-[#10B981] animate-pulse" />
-                <span className="label-mono text-[#526E7A] tracking-[0.22em] text-[10px]">AI CAREER NAVIGATOR</span>
-              </div>
-            </motion.div>
 
               {/* Greeting Headline */}
               <motion.h1
@@ -293,11 +287,11 @@ export default function DashboardPage() {
           )}
         </AnimatePresence>
 
-        {/* ── Conversation Messages Container ────────────── */}
+        {/* ── Active Conversation Messages Stream ────────────── */}
         {isChatActive && (
           <div
             ref={messagesContainerRef}
-            className="w-full space-y-4 mb-6 overflow-y-auto max-h-[460px] scrollbar-thin p-1 flex-1"
+            className="w-full space-y-4 mb-6 overflow-y-auto max-h-[480px] scrollbar-thin p-1 flex-1"
           >
             <AnimatePresence>
               {messages.map((m) => (
@@ -319,7 +313,7 @@ export default function DashboardPage() {
                     </div>
                   )}
 
-                  {/* Bubble */}
+                  {/* Message Bubble */}
                   <div
                     className={`max-w-2xl rounded-[4px] px-4 py-3 text-sm leading-relaxed shadow-sm ${
                       m.role === "user"
@@ -356,9 +350,9 @@ export default function DashboardPage() {
           </div>
         )}
 
-        {/* ── Center AI Input Bar ────────────────────────── */}
+        {/* ── Center AI Input Bar (Does NOT unmount, repositions via layout) ── */}
         <motion.form
-          variants={inputBarVariants}
+          layout
           onSubmit={(e) => {
             e.preventDefault()
             handlePromptSubmit()
@@ -374,7 +368,6 @@ export default function DashboardPage() {
           <input
             ref={inputRef}
             value={promptText}
-            onFocus={() => setIsInputFocused(true)}
             onChange={(e) => setPromptText(e.target.value)}
             placeholder="What would you like to achieve today?"
             className="flex-1 bg-transparent text-[15px] text-[#000000] placeholder:text-[#A0A0A0] outline-none border-none font-sans"
@@ -391,28 +384,37 @@ export default function DashboardPage() {
           </Button>
         </motion.form>
 
-        {/* ── Quick Action Chips (Balanced 2x3 Grid Layout) ── */}
-        <motion.div
-          variants={chipsContainerVariants}
-          className="grid grid-cols-2 sm:grid-cols-3 gap-3 w-full mb-8"
-        >
-          {QUICK_ACTIONS.map((chip) => {
-            const Icon = chip.icon
-            return (
-              <motion.button
-                key={chip.label}
-                variants={chipItemVariants}
-                whileHover={{ scale: 1.02, y: -2 }}
-                whileTap={{ scale: 0.98 }}
-                onClick={() => handlePromptSubmit(chip.prompt)}
-                className="flex items-center justify-center gap-2 px-4 py-2.5 bg-white border border-black/[0.08] rounded-[4px] text-[13px] font-medium text-[#526E7A] hover:text-black hover:border-black/25 hover:bg-[#F9F9F9] shadow-sm transition-all duration-150 cursor-pointer text-center"
-              >
-                <Icon className="size-3.5 text-[#333333] shrink-0" />
-                <span className="truncate">{chip.label}</span>
-              </motion.button>
-            )
-          })}
-        </motion.div>
+        {/* ── Quick Action Chips (Hides smoothly when chatting) ── */}
+        <AnimatePresence>
+          {!isChatActive && (
+            <motion.div
+              key="quick-action-chips-grid"
+              variants={chipsContainerVariants}
+              initial={shouldReduceMotion ? { opacity: 0 } : { opacity: 0, height: 0 }}
+              animate={shouldReduceMotion ? { opacity: 1 } : { opacity: 1, height: "auto" }}
+              exit={shouldReduceMotion ? { opacity: 0 } : { opacity: 0, height: 0 }}
+              transition={heroSectionTransition}
+              className="grid grid-cols-2 sm:grid-cols-3 gap-3 w-full mb-8 overflow-hidden"
+            >
+              {QUICK_ACTIONS.map((chip) => {
+                const Icon = chip.icon
+                return (
+                  <motion.button
+                    key={chip.label}
+                    variants={chipItemVariants}
+                    whileHover={{ scale: 1.02, y: -2 }}
+                    whileTap={{ scale: 0.98 }}
+                    onClick={() => handlePromptSubmit(chip.prompt)}
+                    className="flex items-center justify-center gap-2 px-4 py-2.5 bg-white border border-black/[0.08] rounded-[4px] text-[13px] font-medium text-[#526E7A] hover:text-black hover:border-black/25 hover:bg-[#F9F9F9] shadow-sm transition-all duration-150 cursor-pointer text-center"
+                  >
+                    <Icon className="size-3.5 text-[#333333] shrink-0" />
+                    <span className="truncate">{chip.label}</span>
+                  </motion.button>
+                )
+              })}
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
 
       {/* ── Footer Microcopy ────────────────────────────── */}
