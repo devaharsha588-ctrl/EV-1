@@ -2,22 +2,26 @@ services:
   - type: web
     name: ev-ai-backend
     env: node
+    region: oregon
     buildCommand: npm install
     startCommand: npm start
-    healthCheckPath: /health
     envVars:
       - key: NODE_ENV
         value: production
       - key: PORT
-        value: 10000
-      - key: CLIENT_URL
-        value: https://ev-ai.vercel.app
+        value: 5000
       - key: AI_PROVIDER
-        value: gemini
-      - key: GEMINI_MODEL
-        value: gemini-1.5-flash
+        value: openrouter
+      - key: OPENROUTER_MODEL
+        value: meta-llama/llama-3.3-70b-instruct
+      - key: OPENROUTER_API_KEY
+        sync: false # Set in Render Environment Dashboard
+      - key: OPENAI_API_KEY
+        sync: false # Set in Render Environment Dashboard (Optional)
       - key: GEMINI_API_KEY
-        sync: false
+        sync: false # Set in Render Environment Dashboard (Optional)
+      - key: GROK_API_KEY
+        sync: false # Set in Render Environment Dashboard (Optional)
       - key: JWT_ACCESS_SECRET
         generateValue: true
       - key: JWT_REFRESH_SECRET
@@ -25,6 +29,6 @@ services:
       - key: COOKIE_SECRET
         generateValue: true
       - key: SUPABASE_URL
-        sync: false
+        sync: false # Set in Render Environment Dashboard
       - key: SUPABASE_ANON_KEY
-        sync: false
+        sync: false # Set in Render Environment Dashboard
