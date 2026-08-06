@@ -259,17 +259,19 @@ export default function DashboardPage() {
               className="w-full flex flex-col items-center text-center mb-8 overflow-hidden"
             >
               {/* EV AI Badge */}
-              <motion.div variants={badgeVariants} className="mb-4">
-                <motion.div
-                  whileHover={{ scale: 1.08, rotate: 2 }}
-                  whileTap={{ scale: 0.95 }}
-                  className="w-12 h-12 bg-black rounded-[4px] flex items-center justify-center mx-auto mb-3 shadow-md cursor-pointer relative"
-                >
-                  <span className="text-white font-mono text-[13px] font-bold tracking-widest">EV</span>
-                  <span className="absolute -top-1 -right-1 size-2.5 bg-[#3B82F6] rounded-full ring-2 ring-white animate-pulse" />
-                </motion.div>
-                <span className="label-mono text-[#526E7A] tracking-[0.22em] text-[10px]">AI CAREER NAVIGATOR</span>
+            <motion.div variants={badgeVariants} className="mb-4">
+              <motion.div
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                className="w-12 h-12 bg-black rounded-[4px] flex items-center justify-center mx-auto mb-3 shadow-md cursor-pointer transition-transform"
+              >
+                <span className="text-white font-mono text-[14px] font-bold tracking-widest pl-0.5">EV</span>
               </motion.div>
+              <div className="flex items-center justify-center gap-1.5">
+                <span className="size-1.5 rounded-full bg-[#10B981] animate-pulse" />
+                <span className="label-mono text-[#526E7A] tracking-[0.22em] text-[10px]">AI CAREER NAVIGATOR</span>
+              </div>
+            </motion.div>
 
               {/* Greeting Headline */}
               <motion.h1
