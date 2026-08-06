@@ -1,18 +1,16 @@
 import { useNavigate } from "react-router-dom"
 import { toast } from "sonner"
-import { Bell, PanelLeftClose, PanelLeftOpen } from "lucide-react"
+import { Bell } from "lucide-react"
 
 import { PUBLIC_ROUTES } from "@/constants/routes"
 import { useAuth, useLogoutMutation } from "@/hooks/useAuth"
 import { useProfile } from "@/hooks/useProfile"
-import { useSidebar } from "@/hooks/useSidebar"
 
 export function TopNavbar() {
   const { session } = useAuth()
   const { profile } = useProfile()
   const logoutMutation = useLogoutMutation()
   const navigate = useNavigate()
-  const { isCollapsed, toggleSidebar } = useSidebar()
 
   const displayName = profile.nickname || profile.name || session?.user?.name || "User"
   const userInitial = (displayName[0] || "U").toUpperCase()
@@ -29,19 +27,9 @@ export function TopNavbar() {
 
   return (
     <header className="z-nav relative flex h-[64px] shrink-0 items-center justify-between px-6 select-none bg-white border-b border-black/[0.06]">
-      {/* Left: Sidebar Toggle */}
+      {/* Left Title / Branding */}
       <div className="flex items-center gap-3">
-        <button
-          onClick={toggleSidebar}
-          className="hidden md:flex p-2 rounded-[4px] hover:bg-black/[0.04] text-[#526E7A] hover:text-black transition-colors"
-          aria-label="Toggle Sidebar"
-        >
-          {isCollapsed ? (
-            <PanelLeftOpen className="size-4" />
-          ) : (
-            <PanelLeftClose className="size-4" />
-          )}
-        </button>
+        <span className="label-mono text-[#526E7A] tracking-widest text-[11px]">WORKSPACE ACTIVE</span>
       </div>
 
       {/* Right: Notifications, Profile */}

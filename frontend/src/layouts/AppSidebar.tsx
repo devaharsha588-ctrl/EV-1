@@ -10,8 +10,6 @@ import {
 } from "lucide-react"
 
 import { PROTECTED_ROUTES } from "@/constants/routes"
-import { useSidebar } from "@/hooks/useSidebar"
-import { cn } from "@/utils/cn"
 
 interface NavItem {
   path: string
@@ -40,38 +38,22 @@ const ACCOUNT_NAV: NavItem[] = [
 ]
 
 export const AppSidebar = memo(function AppSidebar() {
-  const { isCollapsed } = useSidebar()
-
   return (
-    <aside
-      className={cn(
-        "z-sidebar fixed inset-y-0 left-0 hidden bg-white text-[#000000] transition-[width] duration-200 ease-out md:flex md:flex-col justify-between select-none overflow-hidden",
-        isCollapsed ? "w-16" : "w-[260px]",
-      )}
-    >
-      {/* Right border seam */}
-      <div className="sidebar-glow-seam" />
-
+    <aside className="z-sidebar fixed inset-y-0 left-0 hidden bg-white text-[#000000] w-[260px] md:flex md:flex-col justify-between select-none overflow-hidden border-r border-black/[0.06]">
       {/* Top Section */}
       <div className="flex flex-col">
 
         {/* Brand Header */}
         <div className="h-[64px] flex items-center px-5 border-b border-black/[0.06]">
-          {!isCollapsed ? (
-            <div className="flex items-center gap-2">
-              <div className="w-7 h-7 bg-black rounded-[3px] flex items-center justify-center">
-                <span className="text-white font-mono text-[11px] font-bold tracking-widest">EV</span>
-              </div>
-              <div>
-                <span className="font-mono text-[11px] font-bold tracking-[0.14em] uppercase text-black">EV AI</span>
-                <span className="block font-mono text-[9px] text-[#526E7A] tracking-[0.1em] uppercase">Navigator</span>
-              </div>
+          <div className="flex items-center gap-2">
+            <div className="w-7 h-7 bg-black rounded-[3px] flex items-center justify-center">
+              <span className="text-white font-mono text-[11px] font-bold tracking-widest">EV</span>
             </div>
-          ) : (
-            <div className="w-7 h-7 bg-black rounded-[3px] flex items-center justify-center mx-auto">
-              <span className="text-white font-mono text-[10px] font-bold">EV</span>
+            <div>
+              <span className="font-mono text-[11px] font-bold tracking-[0.14em] uppercase text-black">EV AI</span>
+              <span className="block font-mono text-[9px] text-[#526E7A] tracking-[0.1em] uppercase">Navigator</span>
             </div>
-          )}
+          </div>
         </div>
 
         {/* Primary Navigation */}
@@ -83,29 +65,23 @@ export const AppSidebar = memo(function AppSidebar() {
                 key={item.path}
                 to={item.path}
                 end={item.end}
-                title={isCollapsed ? item.label : undefined}
                 className={({ isActive }) =>
-                  cn(
-                    "flex h-[40px] items-center gap-3 px-3 text-[13px] font-medium transition-all duration-150 outline-none rounded-[4px] group",
-                    isCollapsed && "justify-center px-0",
+                  `flex h-[40px] items-center gap-3 px-3 text-[13px] font-medium transition-all duration-150 outline-none rounded-[4px] group ${
                     isActive
                       ? "bg-[#000000] text-white"
-                      : "text-[#526E7A] hover:bg-black/[0.04] hover:text-[#000000]",
-                  )
+                      : "text-[#526E7A] hover:bg-black/[0.04] hover:text-[#000000]"
+                  }`
                 }
               >
                 {({ isActive }) => (
                   <>
                     <Icon
-                      className={cn(
-                        "size-4 shrink-0",
+                      className={`size-4 shrink-0 ${
                         isActive ? "text-white" : "text-[#526E7A] group-hover:text-[#000000]"
-                      )}
+                      }`}
                       aria-hidden="true"
                     />
-                    <span className={cn("truncate", isCollapsed && "sr-only")}>
-                      {item.label}
-                    </span>
+                    <span className="truncate">{item.label}</span>
                   </>
                 )}
               </NavLink>
@@ -114,11 +90,9 @@ export const AppSidebar = memo(function AppSidebar() {
 
           {/* Account Section */}
           <div className="pt-4 pb-1">
-            {!isCollapsed && (
-              <p className="px-3 label-mono text-[#526E7A] mb-2">
-                ACCOUNT
-              </p>
-            )}
+            <p className="px-3 label-mono text-[#526E7A] mb-2">
+              ACCOUNT
+            </p>
             {ACCOUNT_NAV.map((item) => {
               const Icon = item.icon
               return (
@@ -126,29 +100,23 @@ export const AppSidebar = memo(function AppSidebar() {
                   key={item.path}
                   to={item.path}
                   end={item.end}
-                  title={isCollapsed ? item.label : undefined}
                   className={({ isActive }) =>
-                    cn(
-                      "flex h-[40px] items-center gap-3 px-3 text-[13px] font-medium transition-all duration-150 outline-none rounded-[4px] group",
-                      isCollapsed && "justify-center px-0",
+                    `flex h-[40px] items-center gap-3 px-3 text-[13px] font-medium transition-all duration-150 outline-none rounded-[4px] group ${
                       isActive
                         ? "bg-[#000000] text-white"
-                        : "text-[#526E7A] hover:bg-black/[0.04] hover:text-[#000000]",
-                    )
+                        : "text-[#526E7A] hover:bg-black/[0.04] hover:text-[#000000]"
+                    }`
                   }
                 >
                   {({ isActive }) => (
                     <>
                       <Icon
-                        className={cn(
-                          "size-4 shrink-0",
+                        className={`size-4 shrink-0 ${
                           isActive ? "text-white" : "text-[#526E7A] group-hover:text-[#000000]"
-                        )}
+                        }`}
                         aria-hidden="true"
                       />
-                      <span className={cn("truncate", isCollapsed && "sr-only")}>
-                        {item.label}
-                      </span>
+                      <span className="truncate">{item.label}</span>
                     </>
                   )}
                 </NavLink>
@@ -159,24 +127,22 @@ export const AppSidebar = memo(function AppSidebar() {
       </div>
 
       {/* Bottom Section */}
-      <div className="p-4 space-y-2 border-t border-black/[0.06]">
+      <div className="p-4 border-t border-black/[0.06]">
         {/* EV AI Core Status */}
-        {!isCollapsed && (
-          <div className="rounded-[4px] border border-black/[0.07] bg-[#F5F5F5] p-3 flex items-center justify-between">
-            <div className="flex items-center gap-2.5">
-              <div className="w-8 h-8 bg-black rounded-[3px] flex items-center justify-center shrink-0">
-                <span className="text-white font-mono text-[9px] font-bold tracking-wider">EV</span>
-              </div>
-              <div>
-                <p className="font-mono text-[11px] font-bold tracking-[0.1em] text-black uppercase">EV AI Core</p>
-                <p className="text-[10px] text-[#526E7A]">Your AI companion is ready.</p>
-              </div>
+        <div className="rounded-[4px] border border-black/[0.07] bg-[#F5F5F5] p-3 flex items-center justify-between">
+          <div className="flex items-center gap-2.5">
+            <div className="w-8 h-8 bg-black rounded-[3px] flex items-center justify-center shrink-0">
+              <span className="text-white font-mono text-[9px] font-bold tracking-wider">EV</span>
             </div>
-            <div className="status-online">
-              <span className="status-dot animate-glow-breathe" />
+            <div>
+              <p className="font-mono text-[11px] font-bold tracking-[0.1em] text-black uppercase">EV AI Core</p>
+              <p className="text-[10px] text-[#526E7A]">Your AI companion is ready.</p>
             </div>
           </div>
-        )}
+          <div className="status-online">
+            <span className="status-dot animate-glow-breathe" />
+          </div>
+        </div>
       </div>
     </aside>
   )
