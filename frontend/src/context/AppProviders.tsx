@@ -27,7 +27,7 @@ export function AppProviders({ children }: { readonly children: ReactNode }) {
         <AuthProvider>
           <SidebarProvider>{children}</SidebarProvider>
         </AuthProvider>
-        <Toaster closeButton position="top-right" richColors />
+        <Toaster closeButton position="top-right" />
       </QueryClientProvider>
     </ThemeProvider>
   )

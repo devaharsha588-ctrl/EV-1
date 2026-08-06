@@ -98,94 +98,59 @@
     box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.12);
     outline: none;
   }
-  .input-clean::placeholder {
-    color: #A0A0A0;
-  }
 
-  /* ── Status Indicators ───────────────────────────────────────────── */
-  .status-online {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
+  /* ── Status Badges ───────────────────────────────────────────────── */
+  .status-badge-active {
+    background: rgba(16, 185, 129, 0.1);
+    color: #10B981;
+    border: 1px solid rgba(16, 185, 129, 0.2);
+    border-radius: 3px;
     font-family: var(--font-mono);
     font-size: 10px;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    color: #10B981;
+    font-weight: 700;
+    padding: 2px 8px;
+    letter-spacing: 0.08em;
   }
-  .status-dot {
+
+  .status-badge-idle {
+    background: rgba(82, 110, 122, 0.1);
+    color: #526E7A;
+    border: 1px solid rgba(82, 110, 122, 0.2);
+    border-radius: 3px;
+    font-family: var(--font-mono);
+    font-size: 10px;
+    font-weight: 700;
+    padding: 2px 8px;
+    letter-spacing: 0.08em;
+  }
+
+  /* ── Scrollbars ──────────────────────────────────────────────────── */
+  ::-webkit-scrollbar {
     width: 6px;
     height: 6px;
-    border-radius: 50%;
-    background: #10B981;
-    animation: pulse-dot 2s ease-in-out infinite;
+  }
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: rgba(0, 0, 0, 0.15);
+    border-radius: 3px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: rgba(0, 0, 0, 0.3);
   }
 
-  /* ── Schematic Divider ───────────────────────────────────────────── */
-  .divider-schematic {
-    height: 1px;
-    background: rgba(0,0,0,0.07);
-    position: relative;
-  }
-  .divider-schematic::before {
-    content: '';
-    position: absolute;
-    left: 0;
-    top: 0;
-    height: 100%;
-    width: 48px;
-    background: #3B82F6;
-  }
-
-  /* ── Sidebar Divider ─────────────────────────────────────────────── */
-  .sidebar-glow-seam {
-    position: absolute;
-    top: 0;
-    bottom: 0;
-    right: 0;
-    width: 1px;
-    background: rgba(0, 0, 0, 0.06);
-    pointer-events: none;
-  }
-
-  /* ── Scrollbar ───────────────────────────────────────────────────── */
-  .scrollbar-thin {
-    scrollbar-width: thin;
-    scrollbar-color: rgba(0, 0, 0, 0.08) transparent;
-  }
-  .scrollbar-thin::-webkit-scrollbar { width: 4px; }
-  .scrollbar-thin::-webkit-scrollbar-track { background: transparent; }
-  .scrollbar-thin::-webkit-scrollbar-thumb {
-    background: rgba(0, 0, 0, 0.1);
-    border-radius: 2px;
-  }
-
-  /* ── Active Nav Pill ─────────────────────────────────────────────── */
-  .nav-active {
+  /* ── Code Blocks ─────────────────────────────────────────────────── */
+  .code-block {
+    font-family: var(--font-mono);
     background: #000000;
     color: #FFFFFF;
     border-radius: 4px;
+    padding: 16px;
+    font-size: 12px;
+    line-height: 1.6;
+    overflow-x: auto;
   }
-
-  /* ── Glass Heavy (for auth right panels only) ────────────────────── */
-  .glass-heavy {
-    background: rgba(245, 245, 245, 0.92);
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
-  }
-
-  /* ── Shadow Float ────────────────────────────────────────────────── */
-  .shadow-float {
-    box-shadow: 0 10px 30px -10px rgba(0,0,0,0.12);
-  }
-
-  /* Z-index utilities */
-  .z-sidebar { z-index: var(--z-sidebar); }
-  .z-nav { z-index: var(--z-nav); }
-  .z-mobile { z-index: var(--z-mobile); }
-  .z-modal { z-index: var(--z-modal); }
-  .z-toast { z-index: var(--z-toast); }
-  .z-fab { z-index: var(--z-fab); }
 
   /* ── Metric Display ──────────────────────────────────────────────── */
   .metric-value {
@@ -213,6 +178,60 @@
     transition: background 0.2s ease;
   }
   .exact-suggestion-pill:hover { background: #F0F0F0; }
+}
+
+/* ── EV AI Custom Sonner Toast Styling ───────────────────────────────────── */
+[data-sonner-toaster] {
+  font-family: var(--font-mono) !important;
+}
+
+[data-sonner-toast] {
+  background-color: #000000 !important;
+  color: #FFFFFF !important;
+  border: 1px solid rgba(255, 255, 255, 0.15) !important;
+  border-radius: 4px !important;
+  padding: 12px 16px !important;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.25) !important;
+}
+
+[data-sonner-toast] [data-title] {
+  color: #FFFFFF !important;
+  font-family: var(--font-mono) !important;
+  font-size: 11px !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.05em !important;
+}
+
+[data-sonner-toast] [data-description] {
+  color: rgba(255, 255, 255, 0.7) !important;
+  font-size: 11px !important;
+}
+
+[data-sonner-toast] [data-icon] {
+  color: #10B981 !important;
+}
+
+[data-sonner-toast][data-type="error"] [data-icon] {
+  color: #EF4444 !important;
+}
+
+[data-sonner-toast] [data-close-button] {
+  background: #1A1A1A !important;
+  border: 1px solid rgba(255, 255, 255, 0.2) !important;
+  color: #FFFFFF !important;
+  top: 50% !important;
+  right: 10px !important;
+  left: auto !important;
+  transform: translateY(-50%) !important;
+  width: 20px !important;
+  height: 20px !important;
+  border-radius: 3px !important;
+  transition: all 0.15s ease !important;
+}
+
+[data-sonner-toast] [data-close-button]:hover {
+  background: #333333 !important;
+  color: #FFFFFF !important;
 }
 
 /* ── Animations ─────────────────────────────────────────────────────── */
