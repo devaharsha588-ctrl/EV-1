@@ -42,11 +42,15 @@ const env = {
     geminiApiKey: process.env.GEMINI_API_KEY,
     geminiModel: process.env.GEMINI_MODEL || 'gemini-1.5-flash',
     openaiApiKey: process.env.OPENAI_API_KEY,
+    openaiModel: process.env.OPENAI_MODEL || 'gpt-4o-mini',
     grokApiKey: process.env.GROK_API_KEY,
+    grokModel: process.env.GROK_MODEL || 'grok-4',
     grokBaseUrl: process.env.GROK_BASE_URL || 'https://api.x.ai/v1',
     openrouterApiKey: process.env.OPENROUTER_API_KEY,
+    openrouterModel: process.env.OPENROUTER_MODEL || 'anthropic/claude-3-opus',
     openrouterBaseUrl: process.env.OPENROUTER_BASE_URL || 'https://openrouter.ai/api/v1'
   },
+
   smtp: {
     host: process.env.SMTP_HOST,
     port: Number(process.env.SMTP_PORT || 587),

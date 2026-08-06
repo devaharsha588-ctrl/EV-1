@@ -1,8 +1,21 @@
 node_modules/
 .env
+.env.local
+.env.*.local
 logs/*
 !logs/.gitkeep
 uploads/*
 !uploads/.gitkeep
 npm-debug.log*
 *.log
+
+# Debug/test output files that may contain credentials or tokens
+auth_out.txt
+code.txt
+
+# Secure credentials store (loaded at runtime outside the project)
+.ev-ai-secrets/
+
+# OS artifacts
+.DS_Store
+Thumbs.db

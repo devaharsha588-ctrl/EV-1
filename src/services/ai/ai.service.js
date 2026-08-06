@@ -8,11 +8,12 @@ const AppError = require('../../utils/AppError');
 const { PROMPT_VERSION } = require('../../prompts/personalization.prompt');
 
 const clients = {
-  openai: { client: openaiClient, model: process.env.OPENAI_MODEL || 'gpt-4o-mini', maxContextTokens: 128000 },
-  grok: { client: grokClient, model: process.env.GROK_MODEL || 'grok-4', maxContextTokens: 131072 },
-  gemini: { client: geminiClient, model: process.env.GEMINI_MODEL || 'gemini-1.5-flash', maxContextTokens: 1000000 },
-  openrouter: { client: openrouterClient, model: process.env.OPENROUTER_MODEL || 'anthropic/claude-3-opus', maxContextTokens: 200000 }
+  openai: { client: openaiClient, model: env.ai.openaiModel || 'gpt-4o-mini', maxContextTokens: 128000 },
+  grok: { client: grokClient, model: env.ai.grokModel || 'grok-4', maxContextTokens: 131072 },
+  gemini: { client: geminiClient, model: env.ai.geminiModel || 'gemini-1.5-flash', maxContextTokens: 1000000 },
+  openrouter: { client: openrouterClient, model: env.ai.openrouterModel || 'anthropic/claude-3-opus', maxContextTokens: 200000 }
 };
+
 
 const callProvider = async (provider, prompt, options = {}) => {
   const entry = clients[provider];
