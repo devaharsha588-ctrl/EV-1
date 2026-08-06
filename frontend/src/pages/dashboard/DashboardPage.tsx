@@ -5,9 +5,6 @@ import {
   FileText,
   GitFork,
   Lock,
-  Mic,
-  Zap,
-  ChevronDown,
   Send,
   Sparkles,
   HelpCircle,
@@ -305,32 +302,17 @@ export default function DashboardPage() {
 
         {/* Right Controls */}
         <div className="flex items-center gap-2 shrink-0">
-          {/* Smart Pill Dropdown */}
-          <div className="flex items-center gap-1.5 bg-white/[0.06] hover:bg-white/[0.1] rounded-full px-3.5 py-1.5 text-[14px] text-[#F8FAFC] font-medium cursor-pointer transition-colors">
-            <Zap className="size-4 text-[#F8FAFC] fill-current" />
-            <span>Smart</span>
-            <ChevronDown className="size-3.5 text-[#F8FAFC]" />
-          </div>
-
-          {/* Mic Button */}
-          <button
-            type="button"
-            className="size-[40px] rounded-full bg-white/[0.06] hover:bg-white/[0.1] text-[#F8FAFC] flex items-center justify-center transition-colors"
-            title="Voice input"
-          >
-            <Mic className="size-4 stroke-[2px]" />
-          </button>
-
           {/* Send Button */}
           <Button
             type="submit"
             disabled={!promptText.trim() || isTyping}
             size="icon"
-            className="size-[40px] rounded-full bg-[#7C3AED] hover:bg-[#6D28D9] text-white disabled:opacity-50 transition-opacity"
+            className="size-[40px] rounded-full bg-[#7C3AED] hover:bg-[#6D28D9] text-white disabled:opacity-50 transition-opacity flex items-center justify-center cursor-pointer"
           >
             <Send className="size-4" />
           </Button>
         </div>
+
       </motion.form>
 
       {/* ── 4. Quick Action Chips Row ────────────────────────── */}
