@@ -10,7 +10,10 @@ export function MobileBottomNavigation() {
       aria-label="Mobile primary"
       className="z-mobile fixed inset-x-3 bottom-3 md:hidden"
     >
-      <div className="glass-heavy shadow-float grid grid-cols-5 rounded-2xl p-1.5 backdrop-blur-xl">
+      <div
+        className="bg-white border border-black/[0.08] grid rounded-[6px] p-1.5 shadow-float"
+        style={{ gridTemplateColumns: `repeat(${MOBILE_NAVIGATION.length}, 1fr)` }}
+      >
         {MOBILE_NAVIGATION.map((item) => {
           const Icon = item.icon
 
@@ -21,10 +24,10 @@ export function MobileBottomNavigation() {
               end={item.end}
               className={({ isActive }) =>
                 cn(
-                  "relative flex h-13 flex-col items-center justify-center gap-1 rounded-xl px-1 text-[0.68rem] font-medium transition-colors outline-none",
+                  "relative flex h-12 flex-col items-center justify-center gap-1 rounded-[4px] px-1 text-[0.65rem] font-medium transition-colors outline-none",
                   isActive
-                    ? "text-white font-semibold"
-                    : "text-muted-foreground hover:text-foreground",
+                    ? "text-white"
+                    : "text-[#526E7A] hover:text-[#000000]",
                 )
               }
             >
@@ -33,12 +36,14 @@ export function MobileBottomNavigation() {
                   {isActive && (
                     <motion.div
                       layoutId="mobile-active-pill"
-                      className="ai-gradient absolute inset-0 rounded-xl shadow-soft"
+                      className="absolute inset-0 rounded-[4px] bg-black"
                       transition={{ type: "spring", stiffness: 350, damping: 30 }}
                     />
                   )}
                   <Icon aria-hidden="true" className="relative z-10 size-4 shrink-0" />
-                  <span className="relative z-10 max-w-full truncate">{item.label}</span>
+                  <span className="relative z-10 max-w-full truncate font-mono tracking-wider uppercase" style={{ fontSize: "9px" }}>
+                    {item.label}
+                  </span>
                 </>
               )}
             </NavLink>

@@ -11,7 +11,7 @@ export function ProtectedLayout() {
   const { isCollapsed } = useSidebar()
 
   return (
-    <div className="h-dvh overflow-hidden bg-[#09090B] text-[#F8FAFC]">
+    <div className="h-dvh overflow-hidden bg-[#F5F5F5] text-[#000000]">
       <AppSidebar />
       <div
         className={cn(
@@ -22,7 +22,7 @@ export function ProtectedLayout() {
         <div className="shrink-0">
           <TopNavbar />
         </div>
-        <main className="flex-1 overflow-y-auto pb-20 md:pb-0">
+        <main className="flex-1 overflow-y-auto pb-20 md:pb-0 scrollbar-thin">
           <Outlet />
         </main>
         <MobileBottomNavigation />
@@ -31,3 +31,4 @@ export function ProtectedLayout() {
     </div>
   )
 }
+

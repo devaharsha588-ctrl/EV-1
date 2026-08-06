@@ -1,6 +1,6 @@
 import { useState } from "react"
-import { motion, AnimatePresence } from "framer-motion"
-import { CheckCircle2, Circle, ChevronDown, Lock } from "lucide-react"
+import { AnimatePresence, motion } from "framer-motion"
+import { CheckCircle2, Circle, ChevronDown } from "lucide-react"
 
 import { PageHeader } from "@/components/common/PageHeader"
 import { Card } from "@/components/ui/card"
@@ -19,138 +19,167 @@ export default function RoadmapPage() {
   const targetGoal = profile.primaryGoal || "Software Developer"
 
   return (
-    <div className="space-y-8 pb-12 max-w-4xl mx-auto">
+    <div className="space-y-8 pb-12 max-w-4xl mx-auto px-4 sm:px-6 py-8">
       <PageHeader
-        title="Career Roadmap"
-        description={`Your milestone progression generated for ${targetGoal}.`}
+        label="CAREER ROADMAP"
+        title={targetGoal}
+        description={`Your milestone progression — generated from your profile.`}
       />
 
-      {/* Top Overview Cards */}
+      {/* Overview Row */}
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
-        <Card className="space-y-2 p-5">
-          <span className="text-xs text-[#A7B0C0] font-semibold">OVERALL ROADMAP PROGRESS</span>
-          <p className="font-mono text-3xl font-extrabold text-[#5B7CFA]">{roadmapData.overallProgress}%</p>
-          <div className="w-full bg-white/5 h-1.5 rounded-full overflow-hidden mt-2">
+        {/* Overall Progress */}
+        <Card className="space-y-3 p-5 gap-0">
+          <span className="label-mono">OVERALL PROGRESS</span>
+          <p className="font-mono text-[40px] font-bold text-[#000000] leading-none mt-2">
+            {roadmapData.overallProgress}
+            <span className="text-[20px] font-normal text-[#526E7A]">%</span>
+          </p>
+          <div className="w-full bg-black/[0.06] h-1 rounded-full overflow-hidden mt-3">
             <div
-              className="bg-[#5B7CFA] h-full rounded-full transition-all duration-300"
+              className="bg-[#000000] h-full rounded-full transition-all duration-500"
               style={{ width: `${roadmapData.overallProgress}%` }}
             />
           </div>
         </Card>
 
-        <Card className="space-y-2 p-5">
-          <span className="text-xs text-[#A7B0C0] font-semibold">ACTIVE PHASE</span>
-          <p className="text-base font-semibold text-[#F5F7FA] truncate">{roadmapData.currentPhaseTitle}</p>
-          <span className="font-mono text-xs text-[#32D296]">
-            {roadmapData.finishedMilestonesCount} OF {roadmapData.totalMilestonesCount} MILESTONES FINISHED
+        {/* Active Phase */}
+        <Card className="space-y-2 p-5 gap-0">
+          <span className="label-mono">ACTIVE PHASE</span>
+          <p className="text-[15px] font-semibold text-[#000000] truncate mt-2 leading-snug">
+            {roadmapData.currentPhaseTitle}
+          </p>
+          <span className="label-mono text-[#10B981]">
+            {roadmapData.finishedMilestonesCount} / {roadmapData.totalMilestonesCount} MILESTONES
           </span>
         </Card>
 
-        <Card className="p-5">
-          <span className="font-mono text-xs text-[#5B7CFA] uppercase block mb-1">AI Recommendation</span>
-          <p className="text-xs font-medium text-[#F5F7FA] leading-relaxed">
+        {/* AI Recommendation */}
+        <Card className="p-5 gap-0" aiActive>
+          <span className="label-mono text-[#3B82F6]">AI RECOMMENDATION</span>
+          <p className="text-[13px] font-medium text-[#000000] leading-relaxed mt-2">
             {roadmapData.aiRecommendation}
           </p>
         </Card>
       </div>
 
-      {/* Timeline List */}
-      <div className="space-y-4">
-        {roadmapData.phases.map((phase) => {
+      {/* Timeline */}
+      <div className="space-y-3">
+        {roadmapData.phases.map((phase, phaseIndex) => {
           const isExpanded = expandedPhase === phase.id
           return (
-            <Card
-              key={phase.id}
-              className={`p-0 overflow-hidden transition-all ${
-                phase.status === "current" ? "border-[#5B7CFA]/40 bg-[#1C2230]" : ""
-              }`}
-            >
-              {/* Phase Header Bar */}
-              <button
-                onClick={() => togglePhase(phase.id)}
-                className="flex w-full items-center justify-between p-5 text-left"
-              >
-                <div className="flex items-center gap-4">
-                  {phase.status === "completed" ? (
-                    <CheckCircle2 className="size-5 text-[#32D296] shrink-0" />
-                  ) : phase.status === "current" ? (
-                    <div className="size-3 rounded-full bg-[#5B7CFA] animate-pulse shrink-0" />
-                  ) : (
-                    <Lock className="size-4 text-[#A7B0C0]/40 shrink-0" />
-                  )}
-                  <div>
-                    <h2 className="text-base font-semibold text-[#F5F7FA]">{phase.title}</h2>
-                    <p className="font-mono text-xs text-[#A7B0C0]">
-                      {phase.milestones.length} MILESTONES • {phase.progress}% COMPLETED
-                    </p>
-                  </div>
-                </div>
-
-                <div className="flex items-center gap-3">
-                  <span
-                    className={`rounded-full px-3 py-0.5 font-mono text-[0.7rem] font-semibold ${
-                      phase.status === "completed"
-                        ? "bg-[#32D296]/10 text-[#32D296]"
-                        : phase.status === "current"
-                        ? "bg-[#5B7CFA]/15 text-[#5B7CFA]"
-                        : "bg-white/5 text-[#A7B0C0]"
-                    }`}
-                  >
-                    {phase.status === "completed"
-                      ? "COMPLETED"
+            <div key={phase.id} className="flex gap-4">
+              {/* Timeline Track */}
+              <div className="hidden sm:flex flex-col items-center pt-5">
+                <div
+                  className={`size-3 rounded-full shrink-0 border-2 ${
+                    phase.status === "completed"
+                      ? "bg-[#10B981] border-[#10B981]"
                       : phase.status === "current"
-                      ? "IN PROGRESS"
-                      : "LOCKED"}
-                  </span>
-                  <ChevronDown
-                    className={`size-4 text-[#A7B0C0] transition-transform ${
-                      isExpanded ? "rotate-180" : ""
-                    }`}
-                  />
-                </div>
-              </button>
-
-              {/* Milestones Drawer */}
-              <AnimatePresence>
-                {isExpanded && (
-                  <motion.div
-                    initial={{ opacity: 0, height: 0 }}
-                    animate={{ opacity: 1, height: "auto" }}
-                    exit={{ opacity: 0, height: 0 }}
-                    className="border-t border-white/5 px-5 pb-5 pt-3 space-y-2.5"
-                  >
-                    {phase.milestones.map((m) => (
-                      <div
-                        key={m.id}
-                        className={`flex items-start justify-between rounded-xl p-3.5 border transition-all ${
-                          m.status === "current"
-                            ? "border-[#5B7CFA]/30 bg-[#151922]"
-                            : "bg-[#151922] border-white/5"
-                        }`}
-                      >
-                        <div className="flex items-start gap-3">
-                          {m.status === "completed" ? (
-                            <CheckCircle2 className="size-4 text-[#32D296] shrink-0 mt-0.5" />
-                          ) : m.status === "current" ? (
-                            <div className="size-2.5 rounded-full bg-[#5B7CFA] shrink-0 mt-1.5" />
-                          ) : (
-                            <Circle className="size-4 text-[#A7B0C0]/40 shrink-0 mt-0.5" />
-                          )}
-                          <div>
-                            <p className="text-sm font-medium text-[#F5F7FA]">{m.title}</p>
-                            <p className="text-xs text-[#A7B0C0] mt-0.5">{m.desc}</p>
-                          </div>
-                        </div>
-
-                        <span className="font-mono text-xs text-[#A7B0C0] shrink-0 ml-4">
-                          {m.estimatedTime}
-                        </span>
-                      </div>
-                    ))}
-                  </motion.div>
+                      ? "bg-[#3B82F6] border-[#3B82F6]"
+                      : "bg-white border-black/20"
+                  }`}
+                />
+                {phaseIndex < roadmapData.phases.length - 1 && (
+                  <div className="w-px flex-1 bg-black/[0.08] mt-1" />
                 )}
-              </AnimatePresence>
-            </Card>
+              </div>
+
+              {/* Phase Card */}
+              <Card
+                className={`flex-1 p-0 overflow-hidden transition-all ${
+                  phase.status === "current" ? "border-l-[3px] border-l-[#3B82F6]" : ""
+                }`}
+              >
+                {/* Phase Header */}
+                <button
+                  onClick={() => togglePhase(phase.id)}
+                  className="flex w-full items-center justify-between p-5 text-left hover:bg-black/[0.02] transition-colors"
+                >
+                  <div className="flex items-center gap-3">
+                    <div>
+                      <h2 className="text-[15px] font-semibold text-[#000000]">{phase.title}</h2>
+                      <p className="label-mono text-[#526E7A] mt-1">
+                        {phase.milestones.length} MILESTONES • {phase.progress}% COMPLETE
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-3">
+                    <span
+                      className={`rounded-[3px] px-2.5 py-1 label-mono ${
+                        phase.status === "completed"
+                          ? "bg-[#10B981]/10 text-[#10B981]"
+                          : phase.status === "current"
+                          ? "bg-[#3B82F6]/10 text-[#3B82F6]"
+                          : "bg-black/[0.04] text-[#526E7A]"
+                      }`}
+                    >
+                      {phase.status === "completed"
+                        ? "COMPLETED"
+                        : phase.status === "current"
+                        ? "IN PROGRESS"
+                        : "UPCOMING"}
+                    </span>
+                    <ChevronDown
+                      className={`size-4 text-[#526E7A] transition-transform duration-200 ${
+                        isExpanded ? "rotate-180" : ""
+                      }`}
+                    />
+                  </div>
+                </button>
+
+                {/* Milestones Drawer */}
+                <AnimatePresence>
+                  {isExpanded && (
+                    <motion.div
+                      initial={{ opacity: 0, height: 0 }}
+                      animate={{ opacity: 1, height: "auto" }}
+                      exit={{ opacity: 0, height: 0 }}
+                      transition={{ duration: 0.2, ease: "easeOut" }}
+                      className="border-t border-black/[0.06] px-5 pb-5 pt-4 space-y-2"
+                    >
+                      {phase.milestones.map((m) => (
+                        <div
+                          key={m.id}
+                          className={`flex items-start justify-between rounded-[4px] p-3.5 border transition-all ${
+                            m.status === "current"
+                              ? "border-[#3B82F6]/20 bg-[#3B82F6]/[0.03]"
+                              : m.status === "completed"
+                              ? "border-black/[0.05] bg-[#F5F5F5]"
+                              : "border-black/[0.05] bg-white"
+                          }`}
+                        >
+                          <div className="flex items-start gap-3">
+                            {m.status === "completed" ? (
+                              <CheckCircle2 className="size-4 text-[#10B981] shrink-0 mt-0.5" />
+                            ) : m.status === "current" ? (
+                              <div className="size-2 rounded-full bg-[#3B82F6] shrink-0 mt-1.5 animate-pulse" />
+                            ) : (
+                              <Circle className="size-4 text-[#526E7A]/30 shrink-0 mt-0.5" />
+                            )}
+                            <div>
+                              <p
+                                className={`text-sm font-medium ${
+                                  m.status === "completed" ? "line-through text-[#526E7A]" : "text-[#000000]"
+                                }`}
+                              >
+                                {m.title}
+                              </p>
+                              <p className="text-xs text-[#526E7A] mt-0.5">{m.desc}</p>
+                            </div>
+                          </div>
+
+                          <span className="label-mono text-[#526E7A] shrink-0 ml-4">
+                            {m.estimatedTime}
+                          </span>
+                        </div>
+                      ))}
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </Card>
+            </div>
           )
         })}
       </div>

@@ -4,11 +4,11 @@ import {
   BookOpen,
   FileText,
   GitFork,
-  Lock,
   Send,
   Sparkles,
   HelpCircle,
   Code2,
+  Lock,
 } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
@@ -16,7 +16,7 @@ import { useProfile } from "@/hooks/useProfile"
 import { sendChatMessage } from "@/services/chat.service"
 
 const GithubIcon = (props: React.SVGProps<SVGSVGElement>) => (
-  <svg className="size-4 fill-current text-[#38BDF8]" viewBox="0 0 24 24" {...props}>
+  <svg className="size-4 fill-current" viewBox="0 0 24 24" {...props}>
     <path fillRule="evenodd" clipRule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.53 1.032 1.53 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z" />
   </svg>
 )
@@ -32,17 +32,17 @@ const QUICK_ACTIONS = [
   {
     label: "Explain a concept",
     prompt: "Explain core software engineering concepts simply",
-    icon: (props: React.SVGProps<SVGSVGElement>) => <BookOpen className="size-4 text-[#A78BFA] stroke-[2px]" {...props} />,
+    icon: BookOpen,
   },
   {
     label: "Improve my resume",
     prompt: "Analyze and optimize my resume for ATS scoring and impact",
-    icon: (props: React.SVGProps<SVGSVGElement>) => <FileText className="size-4 text-[#A78BFA] stroke-[2px]" {...props} />,
+    icon: FileText,
   },
   {
     label: "Plan my roadmap",
     prompt: "Create a step-by-step career milestone roadmap for my target role",
-    icon: (props: React.SVGProps<SVGSVGElement>) => <GitFork className="size-4 text-[#F59E0B] stroke-[2px]" {...props} />,
+    icon: GitFork,
   },
   {
     label: "Analyze my GitHub",
@@ -50,14 +50,14 @@ const QUICK_ACTIONS = [
     icon: GithubIcon,
   },
   {
-    label: "Generate interview questions",
+    label: "Mock interview",
     prompt: "Generate technical mock interview questions for my target role",
-    icon: (props: React.SVGProps<SVGSVGElement>) => <HelpCircle className="size-4 text-[#34D399] stroke-[2px]" {...props} />,
+    icon: HelpCircle,
   },
   {
-    label: "Help me learn AI",
+    label: "Learn AI dev",
     prompt: "Guide me through learning practical AI development and modern LLMs",
-    icon: (props: React.SVGProps<SVGSVGElement>) => <Code2 className="size-4 text-[#38BDF8] stroke-[2px]" {...props} />,
+    icon: Code2,
   },
 ]
 
@@ -84,12 +84,8 @@ export default function DashboardPage() {
     else setGreeting("Good evening")
   }, [])
 
-  const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" })
-  }
-
   useEffect(() => {
-    scrollToBottom()
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" })
   }, [messages, isTyping])
 
   const handlePromptSubmit = async (promptToSubmit?: string) => {
@@ -107,7 +103,6 @@ export default function DashboardPage() {
     setPromptText("")
     setIsTyping(true)
 
-    // Call live backend AI API
     try {
       const response = await sendChatMessage(content)
       if (response?.aiMessage) {
@@ -118,7 +113,7 @@ export default function DashboardPage() {
           {
             id: (Date.now() + 1).toString(),
             role: "ai",
-            content: `I'd be glad to assist you with "${content}", ${displayName}! Let's focus on building actionable projects and mastering your core skills for ${profile.primaryGoal || "Career Growth"}.`,
+            content: `I'd be glad to assist with "${content}", ${displayName}! Let's focus on building actionable projects for ${profile.primaryGoal || "Career Growth"}.`,
             timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
           },
         ])
@@ -129,7 +124,7 @@ export default function DashboardPage() {
         {
           id: (Date.now() + 1).toString(),
           role: "ai",
-          content: `I'm EV AI. I've received your query about "${content}" and updated your personalization context.`,
+          content: `I'm EV AI. Query received: "${content}". Your personalization context has been updated.`,
           timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
         },
       ])
@@ -138,107 +133,80 @@ export default function DashboardPage() {
     }
   }
 
-  const handleChipClick = (prompt: string) => {
-    handlePromptSubmit(prompt)
-  }
-
   return (
-    <div className="w-full max-w-4xl mx-auto py-8 px-4 sm:px-6 flex flex-col items-center min-h-[calc(100vh-5rem)] relative stars-bg">
-      {/* ── 1. Hero Greeting Section ────────────────────────── */}
+    <div className="w-full max-w-3xl mx-auto py-12 px-4 sm:px-6 flex flex-col items-center min-h-[calc(100vh-64px)]">
+
+      {/* ── Hero Greeting ──────────────────────────────── */}
       <motion.div
         initial="hidden"
         animate="visible"
         variants={{
           hidden: { opacity: 0 },
-          visible: {
-            opacity: 1,
-            transition: { staggerChildren: 0.08 },
-          },
+          visible: { opacity: 1, transition: { staggerChildren: 0.07 } },
         }}
-        className="w-full max-w-[700px] flex flex-col items-center mx-auto text-center mt-4 mb-6"
+        className="w-full flex flex-col items-center text-center mt-6 mb-10"
       >
-        {/* Diamond Sparkle Icon */}
+        {/* EV AI Mark */}
         <motion.div
-          variants={{ hidden: { opacity: 0, y: 15 }, visible: { opacity: 1, y: 0 } }}
-          className="mb-8 relative flex items-center justify-center"
+          variants={{ hidden: { opacity: 0, y: 12 }, visible: { opacity: 1, y: 0 } }}
+          className="mb-6"
         >
-          <div className="size-16 rounded-full bg-gradient-to-tr from-[#7C3AED] via-[#4F46E5] to-[#34D399] opacity-35 blur-xl absolute inset-0" />
-          <motion.svg
-            animate={{ opacity: [0.85, 1, 0.85], scale: [0.98, 1.02, 0.98] }}
-            transition={{ duration: 2.5, repeat: Infinity, ease: "easeInOut" }}
-            width="36"
-            height="36"
-            viewBox="0 0 36 36"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-            className="relative z-10"
-          >
-            <defs>
-              <linearGradient id="sparkleGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-                <stop offset="0%" stopColor="#7C3AED" />
-                <stop offset="100%" stopColor="#34D399" />
-              </linearGradient>
-            </defs>
-            <path
-              d="M 18 0 Q 18 18 36 18 Q 18 18 18 36 Q 18 18 0 18 Q 18 18 18 0 Z"
-              fill="url(#sparkleGrad)"
-            />
-          </motion.svg>
+          <div className="w-12 h-12 bg-black rounded-[4px] flex items-center justify-center mx-auto mb-4">
+            <span className="text-white font-mono text-[13px] font-bold tracking-widest">EV</span>
+          </div>
+          <span className="label-mono text-[#526E7A] tracking-[0.2em]">AI CAREER NAVIGATOR</span>
         </motion.div>
 
         {/* Greeting Headline */}
         <motion.h1
-          variants={{ hidden: { opacity: 0, y: 15 }, visible: { opacity: 1, y: 0 } }}
-          className="text-[42px] sm:text-[50px] font-semibold tracking-tight text-[#F8FAFC] mb-2 leading-tight"
+          variants={{ hidden: { opacity: 0, y: 12 }, visible: { opacity: 1, y: 0 } }}
+          className="text-[36px] sm:text-[44px] font-light tracking-tighter text-[#000000] mb-2 leading-tight"
         >
           {greeting},{" "}
-          <span className="bg-gradient-to-r from-[#7C3AED] via-[#4F46E5] to-[#34D399] bg-clip-text text-transparent">
-            {displayName}
-          </span>
+          <span className="font-semibold">{displayName}</span>
         </motion.h1>
 
-        {/* Subheadline */}
         <motion.p
-          variants={{ hidden: { opacity: 0, y: 15 }, visible: { opacity: 1, y: 0 } }}
-          className="text-[17px] text-[#94A3B8] mb-8 font-normal"
+          variants={{ hidden: { opacity: 0, y: 12 }, visible: { opacity: 1, y: 0 } }}
+          className="text-[15px] text-[#526E7A] mb-0 font-normal"
         >
           How can I empower your learning journey today?
         </motion.p>
       </motion.div>
 
-      {/* ── 2. Active Conversational Workspace ────────────────────────── */}
+      {/* ── Conversation Messages ───────────────────────── */}
       {messages.length > 0 && (
-        <div className="w-full max-w-3xl space-y-5 mb-8 flex-1 scrollbar-thin overflow-y-auto max-h-[450px] p-2">
+        <div className="w-full space-y-4 mb-8 overflow-y-auto max-h-[420px] scrollbar-thin p-1">
           {messages.map((m) => (
             <motion.div
               key={m.id}
-              initial={{ opacity: 0, y: 10 }}
+              initial={{ opacity: 0, y: 8 }}
               animate={{ opacity: 1, y: 0 }}
-              className={`flex gap-3.5 ${m.role === "user" ? "flex-row-reverse" : "flex-row"}`}
+              className={`flex gap-3 ${m.role === "user" ? "flex-row-reverse" : "flex-row"}`}
             >
+              {/* Avatar */}
               {m.role === "ai" ? (
-                <div className="flex size-8 shrink-0 items-center justify-center rounded-xl bg-gradient-to-r from-[#7C3AED] to-[#4F46E5] text-white text-xs font-bold shadow-md">
+                <div className="flex size-8 shrink-0 items-center justify-center rounded-[4px] bg-black text-white text-[10px] font-mono font-bold">
                   EV
                 </div>
               ) : (
-                <div className="flex size-8 shrink-0 items-center justify-center rounded-xl bg-[#312E81] text-xs font-bold text-white shadow-md">
+                <div className="flex size-8 shrink-0 items-center justify-center rounded-[4px] bg-[#3B82F6] text-white text-[10px] font-mono font-bold">
                   {userInitials}
                 </div>
               )}
 
+              {/* Bubble */}
               <div
-                className={`max-w-2xl space-y-1.5 rounded-2xl px-5 py-3.5 text-sm leading-relaxed ${
+                className={`max-w-2xl rounded-[4px] px-4 py-3 text-sm leading-relaxed ${
                   m.role === "user"
-                    ? "bg-[#5B7CFA] text-white shadow-soft"
-                    : "bg-[#18181B] text-[#F8FAFC] border border-white/10 shadow-lg"
+                    ? "bg-black text-white"
+                    : "bg-white border border-black/[0.07] text-[#000000]"
                 }`}
               >
                 <div className="whitespace-pre-wrap">{m.content}</div>
-                <span
-                  className={`block font-mono text-[0.65rem] ${
-                    m.role === "user" ? "text-white/70 text-right" : "text-[#94A3B8]"
-                  }`}
-                >
+                <span className={`block font-mono text-[9px] mt-1.5 tracking-wider ${
+                  m.role === "user" ? "text-white/50 text-right" : "text-[#526E7A]"
+                }`}>
                   {m.timestamp}
                 </span>
               </div>
@@ -247,16 +215,16 @@ export default function DashboardPage() {
 
           {isTyping && (
             <motion.div
-              initial={{ opacity: 0, y: 10 }}
+              initial={{ opacity: 0, y: 8 }}
               animate={{ opacity: 1, y: 0 }}
               className="flex items-center gap-3"
             >
-              <div className="flex size-8 items-center justify-center rounded-xl bg-gradient-to-r from-[#7C3AED] to-[#4F46E5] text-white text-xs font-bold">
+              <div className="flex size-8 items-center justify-center rounded-[4px] bg-black text-white text-[10px] font-mono font-bold">
                 EV
               </div>
-              <div className="rounded-2xl bg-[#18181B] border border-white/10 px-4 py-3 text-xs text-[#94A3B8] flex items-center gap-2">
-                <Sparkles className="size-3.5 text-[#34D399] animate-spin" />
-                <span className="font-mono">EV AI is generating response...</span>
+              <div className="rounded-[4px] bg-white border border-black/[0.07] px-4 py-3 text-xs text-[#526E7A] flex items-center gap-2">
+                <Sparkles className="size-3 text-[#3B82F6] animate-spin" />
+                <span className="font-mono tracking-wider">GENERATING RESPONSE...</span>
               </div>
             </motion.div>
           )}
@@ -265,76 +233,69 @@ export default function DashboardPage() {
         </div>
       )}
 
-      {/* ── 3. Primary Center AI Input Bar ────────────────────────── */}
+      {/* ── AI Input Bar ────────────────────────────────── */}
       <motion.form
-        initial={{ opacity: 0, y: 15 }}
+        initial={{ opacity: 0, y: 12 }}
         animate={{ opacity: 1, y: 0 }}
         onSubmit={(e) => {
           e.preventDefault()
           handlePromptSubmit()
         }}
-        className="w-full max-w-[700px] h-[64px] exact-pill-input flex items-center gap-3.5 px-6 mb-6 text-left shadow-2xl"
+        className="w-full bg-white border border-black/[0.09] rounded-[4px] flex items-center gap-3 px-5 py-3 mb-5 shadow-float"
       >
-        {/* Sparkle Icon */}
-        <svg width="18" height="18" viewBox="0 0 18 18" fill="none" className="shrink-0">
-          <path
-            d="M 9 0 Q 9 9 18 9 Q 9 9 9 18 Q 9 9 0 9 Q 9 9 9 0 Z"
-            fill="url(#sparkleGrad)"
-          />
-        </svg>
+        {/* EV Mark */}
+        <div className="w-6 h-6 bg-black rounded-[3px] flex items-center justify-center shrink-0">
+          <span className="text-white font-mono text-[8px] font-bold">EV</span>
+        </div>
 
-        {/* Text Input */}
+        {/* Input */}
         <input
           value={promptText}
           onChange={(e) => setPromptText(e.target.value)}
           placeholder="What would you like to achieve today?"
-          className="flex-1 bg-transparent text-[16px] text-[#F8FAFC] placeholder:text-[#64748B] outline-none border-none"
+          className="flex-1 bg-transparent text-[15px] text-[#000000] placeholder:text-[#A0A0A0] outline-none border-none"
         />
 
-        {/* Right Controls */}
-        <div className="flex items-center gap-2 shrink-0">
-          {/* Send Button */}
-          <Button
-            type="submit"
-            disabled={!promptText.trim() || isTyping}
-            size="icon"
-            className="size-[40px] rounded-full bg-[#7C3AED] hover:bg-[#6D28D9] text-white disabled:opacity-50 transition-opacity flex items-center justify-center cursor-pointer"
-          >
-            <Send className="size-4" />
-          </Button>
-        </div>
-
+        {/* Send */}
+        <Button
+          type="submit"
+          disabled={!promptText.trim() || isTyping}
+          size="icon"
+          className="size-9 rounded-[4px] bg-black hover:bg-[#1a1a1a] text-white disabled:opacity-30"
+        >
+          <Send className="size-3.5" />
+        </Button>
       </motion.form>
 
-      {/* ── 4. Quick Action Chips Row ────────────────────────── */}
+      {/* ── Quick Action Chips ───────────────────────────── */}
       <motion.div
-        initial={{ opacity: 0, y: 15 }}
+        initial={{ opacity: 0, y: 12 }}
         animate={{ opacity: 1, y: 0 }}
-        className="flex flex-wrap items-center justify-center gap-[12px] w-full max-w-[700px] mb-8"
+        className="flex flex-wrap items-center justify-center gap-2 w-full mb-10"
       >
         {QUICK_ACTIONS.map((chip) => {
           const Icon = chip.icon
           return (
             <button
               key={chip.label}
-              onClick={() => handleChipClick(chip.prompt)}
-              className="exact-suggestion-pill flex items-center gap-2.5 cursor-pointer hover:border-white/20 transition-all"
+              onClick={() => handlePromptSubmit(chip.prompt)}
+              className="flex items-center gap-2 px-4 py-2 bg-white border border-black/[0.08] rounded-[4px] text-[13px] text-[#526E7A] hover:text-black hover:border-black/20 hover:bg-[#F8F8F8] transition-all duration-150 cursor-pointer"
             >
-              <Icon />
+              <Icon className="size-3.5" />
               <span>{chip.label}</span>
             </button>
           )
         })}
       </motion.div>
 
-      {/* ── 5. Footer Microcopy ────────────────────────── */}
+      {/* ── Footer ──────────────────────────────────────── */}
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        className="flex items-center justify-center gap-2 text-[13px] text-[#64748B] font-normal mt-auto pb-4"
+        className="flex items-center justify-center gap-2 mt-auto pb-6"
       >
-        <Lock className="size-3.5 stroke-[2px]" />
-        <span>Your data is private and secure</span>
+        <Lock className="size-3 text-[#A0A0A0]" />
+        <span className="label-mono text-[#A0A0A0]">YOUR DATA IS PRIVATE AND SECURE</span>
       </motion.div>
     </div>
   )

@@ -1,10 +1,9 @@
 import * as React from "react"
-
 import { cn } from "@/utils/cn"
 
 export interface CardProps extends React.ComponentProps<"div"> {
   readonly size?: "default" | "sm"
-  /** Soft subtle accent highlight border for primary AI card */
+  /** Blue left-border accent for AI/highlight cards */
   readonly aiActive?: boolean
 }
 
@@ -20,8 +19,8 @@ function Card({
       data-slot="card"
       data-size={size}
       className={cn(
-        "clean-card flex flex-col gap-4 p-6 text-sm text-[#F5F7FA]",
-        aiActive && "border-[#5B7CFA]/40 bg-[#1C2230]",
+        "clean-card flex flex-col gap-4 p-6 text-sm text-[#000000]",
+        aiActive && "border-l-[3px] border-l-[#3B82F6] bg-white",
         className,
       )}
       {...props}
@@ -46,7 +45,7 @@ function CardTitle({ className, ...props }: React.ComponentProps<"div">) {
     <div
       data-slot="card-title"
       className={cn(
-        "font-heading text-lg font-semibold tracking-tight text-[#F5F7FA]",
+        "text-base font-semibold tracking-tight text-[#000000]",
         className,
       )}
       {...props}
@@ -58,7 +57,7 @@ function CardDescription({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
       data-slot="card-description"
-      className={cn("text-xs text-[#A7B0C0] leading-relaxed", className)}
+      className={cn("text-xs text-[#526E7A] leading-relaxed", className)}
       {...props}
     />
   )
@@ -78,7 +77,7 @@ function CardFooter({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
       data-slot="card-footer"
-      className={cn("flex items-center pt-3 border-t border-white/5", className)}
+      className={cn("flex items-center pt-3 border-t border-black/5", className)}
       {...props}
     />
   )

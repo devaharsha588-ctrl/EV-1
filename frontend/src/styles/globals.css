@@ -1,35 +1,32 @@
+@import url("https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Inter:wght@300;400;500;600;700&display=swap");
 @import "tailwindcss";
 @import "tw-animate-css";
-@import "@fontsource-variable/geist";
 
 @custom-variant dark (&:is(.dark *));
 
 :root {
-  color-scheme: dark;
+  color-scheme: light;
 
-  /* ── EV Prompt Spec Exact Color Variables ──────────────────────────────── */
-  --background: #09090B;
-  --foreground: #F8FAFC;
-  --sidebar-bg-top: #0F172A;
-  --sidebar-bg-bottom: #09090B;
-  --card-bg: #18181B;
+  /* ── Nothing-Aesthetic Design Tokens ─────────────────────────────── */
+  --background:     #F5F5F5;
+  --surface:        #FFFFFF;
+  --foreground:     #000000;
+  --muted:          #526E7A;
+  --subtle:         #E5E5E5;
 
-  --violet: #7C3AED;
-  --indigo: #4F46E5;
-  --teal: #34D399;
-  --green: #22C55E;
+  --border:         rgba(0, 0, 0, 0.07);
+  --border-strong:  rgba(0, 0, 0, 0.15);
 
-  --text-primary: #F8FAFC;
-  --text-secondary: #94A3B8;
-  --text-muted: #64748B;
+  --accent:         #3B82F6;
+  --accent-hover:   #2563EB;
+  --success:        #10B981;
+  --danger:         #EF4444;
+  --warning:        #F59E0B;
 
-  --border-subtle: rgba(255, 255, 255, 0.08);
+  --font-mono:      "Space Mono", "JetBrains Mono", Consolas, monospace;
+  --font-sans:      "Inter", ui-sans-serif, system-ui, sans-serif;
 
-  --font-heading: "Geist Variable", ui-sans-serif, system-ui, sans-serif;
-  --font-sans: "Inter", "Geist Variable", ui-sans-serif, system-ui, sans-serif;
-  --font-mono: "JetBrains Mono", "SFMono-Regular", Consolas, monospace;
-
-  /* ── Z-index layers ───────────────────────────────────────────────── */
+  /* ── Z-index layers ─────────────────────────────────────────────── */
   --z-sidebar: 40;
   --z-nav: 30;
   --z-mobile: 50;
@@ -38,211 +35,195 @@
   --z-toast: 110;
 }
 
-
 @layer base {
   * {
     box-sizing: border-box;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
   }
 
   html, body, #root {
     height: 100%;
-    background-color: #09090B;
-    color: #F8FAFC;
+    background-color: #F5F5F5;
+    color: #000000;
     font-family: var(--font-sans);
     overflow-x: hidden;
   }
 
   ::selection {
-    background: rgba(124, 58, 237, 0.35);
-    color: #FFFFFF;
+    background: rgba(59, 130, 246, 0.2);
+    color: #000000;
+  }
+
+  :focus-visible {
+    outline: 2px solid #3B82F6;
+    outline-offset: 2px;
   }
 }
 
 @layer utilities {
-  /* Main Canvas Scattered-star particle background field (#09090B near-black) */
-  .stars-bg {
-    background-color: #09090B;
-    background-image:
-      radial-gradient(circle at 20% 20%, rgba(248, 250, 252, 0.15) 1px, transparent 1.5px),
-      radial-gradient(circle at 80% 30%, rgba(248, 250, 252, 0.12) 1px, transparent 1.5px),
-      radial-gradient(circle at 40% 70%, rgba(248, 250, 252, 0.10) 1px, transparent 1.5px),
-      radial-gradient(circle at 70% 85%, rgba(248, 250, 252, 0.14) 1px, transparent 1.5px),
-      radial-gradient(circle at 10% 80%, rgba(248, 250, 252, 0.08) 1px, transparent 1.5px);
-    background-size: 400px 400px, 500px 500px, 350px 350px, 450px 450px, 300px 300px;
+  /* ── Card System ─────────────────────────────────────────────────── */
+  .clean-card {
+    background: #FFFFFF;
+    border: 1px solid rgba(0, 0, 0, 0.07);
+    border-radius: 4px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.04), 0 1px 2px rgba(0,0,0,0.03);
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  }
+  .clean-card:hover {
+    border-color: rgba(0, 0, 0, 0.14);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.06);
   }
 
-  /* Sidebar Particles Texture (~40% density matching main area) */
-  .sidebar-texture {
-    background-image:
-      radial-gradient(circle at 25% 15%, rgba(248, 250, 252, 0.09) 1px, transparent 1.5px),
-      radial-gradient(circle at 75% 45%, rgba(248, 250, 252, 0.07) 1px, transparent 1.5px),
-      radial-gradient(circle at 35% 85%, rgba(248, 250, 252, 0.08) 1px, transparent 1.5px);
-    background-size: 300px 300px, 400px 400px, 350px 350px;
+  /* ── Dot-Matrix Label ────────────────────────────────────────────── */
+  .label-mono {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: #526E7A;
   }
 
-  /* Soft Fading Vertical Seam (replaces hard border line) */
+  /* ── Input System ────────────────────────────────────────────────── */
+  .input-clean {
+    background: #FFFFFF;
+    border: 1px solid rgba(0, 0, 0, 0.12);
+    border-radius: 4px;
+    color: #000000;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  }
+  .input-clean:focus {
+    border-color: #3B82F6;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.12);
+    outline: none;
+  }
+  .input-clean::placeholder {
+    color: #A0A0A0;
+  }
+
+  /* ── Status Indicators ───────────────────────────────────────────── */
+  .status-online {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: #10B981;
+  }
+  .status-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #10B981;
+    animation: pulse-dot 2s ease-in-out infinite;
+  }
+
+  /* ── Schematic Divider ───────────────────────────────────────────── */
+  .divider-schematic {
+    height: 1px;
+    background: rgba(0,0,0,0.07);
+    position: relative;
+  }
+  .divider-schematic::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    height: 100%;
+    width: 48px;
+    background: #3B82F6;
+  }
+
+  /* ── Sidebar Divider ─────────────────────────────────────────────── */
   .sidebar-glow-seam {
     position: absolute;
     top: 0;
     bottom: 0;
     right: 0;
     width: 1px;
-    background: linear-gradient(180deg, transparent 0%, rgba(255, 255, 255, 0.08) 30%, rgba(255, 255, 255, 0.08) 70%, transparent 100%);
+    background: rgba(0, 0, 0, 0.06);
     pointer-events: none;
   }
 
-  /* Soft Fading Horizontal Divider Seam */
-  .divider-glow-seam {
-    height: 1px;
-    width: 100%;
-    background: linear-gradient(90deg, transparent 0%, rgba(255, 255, 255, 0.08) 20%, rgba(255, 255, 255, 0.08) 80%, transparent 100%);
-  }
-
-  /* Home ACTIVE Glass Pill with 1.5px Gradient Border & Layered Glow */
-  .glass-active-pill {
-    position: relative;
-    background: rgba(124, 58, 237, 0.10);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    border-radius: 14px;
-    box-shadow: 0 0 16px rgba(124, 58, 237, 0.25), 0 0 16px rgba(52, 211, 153, 0.15);
-  }
-
-  .glass-active-pill::before {
-    content: "";
-    position: absolute;
-    inset: 0;
-    border-radius: 14px;
-    padding: 1.5px;
-    background: linear-gradient(90deg, #7C3AED 0%, #34D399 100%);
-    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-    -webkit-mask-composite: xor;
-    mask-composite: exclude;
-    pointer-events: none;
-  }
-
-  /* Hero Input Field */
-  .exact-pill-input {
-    position: relative;
-    background: rgba(24, 24, 27, 0.90);
-    backdrop-filter: blur(16px);
-    -webkit-backdrop-filter: blur(16px);
-    border-radius: 999px;
-    box-shadow: 0 0 30px rgba(124, 58, 237, 0.25), 0 0 30px rgba(52, 211, 153, 0.25);
-    transition: transform 200ms ease, box-shadow 200ms ease;
-  }
-
-  .exact-pill-input::before {
-    content: "";
-    position: absolute;
-    inset: -1.5px;
-    border-radius: 999px;
-    padding: 1.5px;
-    background: linear-gradient(90deg, #7C3AED 0%, #34D399 100%);
-    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-    -webkit-mask-composite: xor;
-    mask-composite: exclude;
-    pointer-events: none;
-  }
-
-  .exact-pill-input:focus-within {
-    transform: scale(1.01);
-    box-shadow: 0 0 40px rgba(124, 58, 237, 0.4), 0 0 40px rgba(52, 211, 153, 0.4);
-  }
-
-  /* Suggestion Pill */
-  .exact-suggestion-pill {
-    background: #18181B;
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    border-radius: 999px;
-    padding: 10px 18px;
-    font-size: 14px;
-    color: #F8FAFC;
-    transition: transform 200ms ease, background-color 200ms ease, border-color 200ms ease;
-  }
-
-  .exact-suggestion-pill:hover {
-    transform: translateY(-2px);
-    background-color: #27272A;
-    border-color: rgba(255, 255, 255, 0.2);
-  }
-
-  /* Card base style (referenced by Card component) */
-  .clean-card {
-    background: #151922;
-    border: 1px solid rgba(255, 255, 255, 0.06);
-    border-radius: 16px;
-    transition: border-color 200ms ease, background-color 200ms ease;
-  }
-
-  .clean-card:hover {
-    border-color: rgba(255, 255, 255, 0.12);
-  }
-
-  /* Input base style */
-  .input-clean {
-    background: #151922;
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    border-radius: 12px;
-    transition: border-color 200ms ease, box-shadow 200ms ease;
-  }
-
-  .input-clean:focus {
-    border-color: #5B7CFA;
-    box-shadow: 0 0 0 3px rgba(91, 124, 250, 0.15);
-  }
-
-  /* Glass effects */
-  .glass-heavy {
-    background: rgba(13, 15, 20, 0.85);
-    backdrop-filter: blur(24px);
-    -webkit-backdrop-filter: blur(24px);
-  }
-
-  /* Shadow utilities */
-  .shadow-float {
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4), 0 2px 8px rgba(0, 0, 0, 0.3);
-  }
-
-  /* Scrollbar */
+  /* ── Scrollbar ───────────────────────────────────────────────────── */
   .scrollbar-thin {
     scrollbar-width: thin;
-    scrollbar-color: rgba(255, 255, 255, 0.08) transparent;
+    scrollbar-color: rgba(0, 0, 0, 0.08) transparent;
   }
-  .scrollbar-thin::-webkit-scrollbar {
-    width: 4px;
-  }
-  .scrollbar-thin::-webkit-scrollbar-track {
-    background: transparent;
-  }
+  .scrollbar-thin::-webkit-scrollbar { width: 4px; }
+  .scrollbar-thin::-webkit-scrollbar-track { background: transparent; }
   .scrollbar-thin::-webkit-scrollbar-thumb {
-    background: rgba(255, 255, 255, 0.08);
+    background: rgba(0, 0, 0, 0.1);
     border-radius: 2px;
   }
 
-  /* Z-index utilities (matching CSS variables) */
+  /* ── Active Nav Pill ─────────────────────────────────────────────── */
+  .nav-active {
+    background: #000000;
+    color: #FFFFFF;
+    border-radius: 4px;
+  }
+
+  /* ── Glass Heavy (for auth right panels only) ────────────────────── */
+  .glass-heavy {
+    background: rgba(245, 245, 245, 0.92);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+  }
+
+  /* ── Shadow Float ────────────────────────────────────────────────── */
+  .shadow-float {
+    box-shadow: 0 10px 30px -10px rgba(0,0,0,0.12);
+  }
+
+  /* Z-index utilities */
   .z-sidebar { z-index: var(--z-sidebar); }
   .z-nav { z-index: var(--z-nav); }
   .z-mobile { z-index: var(--z-mobile); }
   .z-modal { z-index: var(--z-modal); }
   .z-toast { z-index: var(--z-toast); }
+  .z-fab { z-index: var(--z-fab); }
 
-  /* AI Gradient */
-  .ai-gradient {
-    background: linear-gradient(135deg, #7C3AED, #4F46E5, #34D399);
+  /* ── Metric Display ──────────────────────────────────────────────── */
+  .metric-value {
+    font-family: var(--font-mono);
+    font-weight: 700;
+    color: #000000;
+    line-height: 1;
   }
-  .ai-gradient-text {
-    background: linear-gradient(135deg, #7C3AED, #4F46E5, #34D399);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
+
+  /* ── Deprecated dark utilities kept for TS migration ─────────────── */
+  .glass-active-pill { background: #000000; border-radius: 4px; }
+  .stars-bg { background-color: #F5F5F5; }
+  .sidebar-texture { background-color: #FFFFFF; }
+  .ai-gradient { background: #3B82F6; }
+  .ai-gradient-text { color: #3B82F6; }
+  .divider-glow-seam { height: 1px; background: rgba(0,0,0,0.07); }
+  .exact-pill-input { background: #FFFFFF; border: 1px solid rgba(0,0,0,0.12); border-radius: 4px; }
+  .exact-suggestion-pill {
+    background: #FFFFFF;
+    border: 1px solid rgba(0,0,0,0.09);
+    border-radius: 24px;
+    padding: 8px 16px;
+    font-size: 13px;
+    color: #333333;
+    transition: background 0.2s ease;
   }
+  .exact-suggestion-pill:hover { background: #F0F0F0; }
 }
 
-/* ── Keyframe Animations ─────────────────────────────────────────── */
+/* ── Animations ─────────────────────────────────────────────────────── */
+@keyframes pulse-dot {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.6; transform: scale(0.85); }
+}
+
 @keyframes pulse-halo {
-  0%, 100% { transform: translate(-50%, -50%) scale(1); opacity: 0.6; }
-  50% { transform: translate(-50%, -50%) scale(1.15); opacity: 0.3; }
+  0%, 100% { transform: translate(-50%, -50%) scale(1); opacity: 0.4; }
+  50% { transform: translate(-50%, -50%) scale(1.15); opacity: 0.2; }
 }
 
 @keyframes orbit-spin {
@@ -251,10 +232,10 @@
 }
 
 @keyframes glow-breathe {
-  0%, 100% { opacity: 0.4; transform: scale(1); }
-  50% { opacity: 0.7; transform: scale(1.08); }
+  0%, 100% { opacity: 0.6; }
+  50% { opacity: 1; }
 }
 
 .animate-glow-breathe {
-  animation: glow-breathe 3s ease-in-out infinite;
+  animation: glow-breathe 2.5s ease-in-out infinite;
 }
