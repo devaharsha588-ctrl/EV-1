@@ -57,10 +57,16 @@ export const generatorService = {
       skillLevel: profile.skillLevel || "Intermediate",
       interests: profile.interests.length > 0 ? profile.interests : ["Full Stack Development"],
       careerScore: calculatedScore,
-      streakDays: Math.min(30, Math.max(3, knownCount * 2 + 5)),
-      resumeScore: profile.resumeUrl ? 84 : 72,
-      githubStars: profile.githubUrl ? 124 : 45,
-      githubContributions: Math.min(4500, Math.max(120, knownCount * 180 + hours * 25)),
+      streakDays: Math.min(60, Math.max(1, knownCount * 3 + Math.floor(hours / 2))),
+      resumeScore: profile.resumeUrl
+        ? Math.min(98, 70 + knownCount * 3 + (profile.linkedinUrl ? 5 : 0))
+        : Math.min(80, 55 + knownCount * 2),
+      githubStars: profile.githubUrl
+        ? Math.min(500, Math.max(10, knownCount * 20 + hours * 5))
+        : 0,
+      githubContributions: profile.githubUrl
+        ? Math.min(4500, Math.max(120, knownCount * 180 + hours * 25))
+        : 0,
       skillVelocity,
       aiSummary: `Welcome ${displayName}! You are currently tracking toward your goal: "${goal}". Based on your target velocity of ${hours} hours/week, EV AI has optimized your focus on ${mainInterest}.`,
       todayPriority: `Master core ${mainInterest} fundamentals & build targeted portfolio items for "${goal}".`,
@@ -175,12 +181,17 @@ export const generatorService = {
       },
     ]
 
+    const completedMilestones = phases.flatMap(p => p.milestones).filter(m => m.status === "completed").length
+    const totalMilestones = phases.flatMap(p => p.milestones).length
+    const overallProgress = Math.round((completedMilestones / totalMilestones) * 100)
+    const currentPhase = phases.find(p => p.status === "current") || phases[0]
+
     return {
-      overallProgress: 55,
-      currentPhaseTitle: `Phase 2: Advanced ${goal} Architecture`,
-      finishedMilestonesCount: 3,
-      totalMilestonesCount: 7,
-      aiRecommendation: `Invest ${profile.weeklyHours || 10} hours this week in Phase 2 project building to remain on target for ${goal}.`,
+      overallProgress,
+      currentPhaseTitle: currentPhase.title,
+      finishedMilestonesCount: completedMilestones,
+      totalMilestonesCount: totalMilestones,
+      aiRecommendation: `Invest ${profile.weeklyHours || 10} hours this week in ${currentPhase.title} to remain on target for ${goal}.`,
       phases,
     }
   },
@@ -216,30 +227,45 @@ export const generatorService = {
       ? profile.githubUrl.replace(/https?:\/\/(www\.)?github\.com\/?/, "")
       : (profile.name || "learner").toLowerCase().replace(/\s+/g, "")
 
+    const techs = profile.knownTechnologies
+    const hours = profile.weeklyHours || 10
+    const repoCount = Math.max(2, techs.length + 1)
+    const weeklyCommits = Math.round(hours * 1.5)
+    const colors = ["#8B5CF6", "#4338CA", "#10B981", "#F59E0B", "#EF4444", "#3B82F6"]
+
+    // Build last 6 months dynamic from current month
+    const months = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"]
+    const now = new Date()
+    const activityData = Array.from({ length: 6 }, (_, i) => {
+      const monthIdx = (now.getMonth() - 5 + i + 12) % 12
+      const base = Math.round(weeklyCommits * 4 * (0.6 + Math.random() * 0.8))
+      return { month: months[monthIdx], contributions: Math.max(10, base) }
+    })
+
+    const langData = techs.length > 0
+      ? [
+          ...techs.slice(0, 3).map((t, i) => ({ name: t, value: Math.round(70 / (i + 1) * (i === 0 ? 1 : 0.6)), color: colors[i] })),
+          { name: "Other", value: 10, color: colors[3] },
+        ]
+      : [
+          { name: "JavaScript", value: 45, color: colors[0] },
+          { name: "HTML/CSS", value: 25, color: colors[1] },
+          { name: "Other", value: 30, color: colors[2] },
+        ]
+
     return {
       githubUrl: profile.githubUrl || `https://github.com/${githubHandle}`,
-      syncedTime: "2h ago",
-      repositoriesCount: Math.max(3, profile.knownTechnologies.length + 2),
-      totalStars: profile.githubUrl ? 124 : 45,
-      contributions: Math.max(150, profile.knownTechnologies.length * 120 + profile.weeklyHours * 15),
-      longestStreak: 18,
-      activityData: [
-        { month: "Mar", contributions: 45 },
-        { month: "Apr", contributions: 78 },
-        { month: "May", contributions: 92 },
-        { month: "Jun", contributions: 67 },
-        { month: "Jul", contributions: 134 },
-        { month: "Aug", contributions: 89 },
-      ],
-      langData: [
-        { name: profile.knownTechnologies[0] || "TypeScript", value: 45, color: "#8B5CF6" },
-        { name: profile.knownTechnologies[1] || "JavaScript", value: 25, color: "#4338CA" },
-        { name: profile.knownTechnologies[2] || "HTML/CSS", value: 20, color: "#10B981" },
-        { name: "Other", value: 10, color: "#F59E0B" },
-      ],
+      syncedTime: "Just now",
+      repositoriesCount: repoCount,
+      totalStars: profile.githubUrl ? Math.max(5, repoCount * Math.round(hours * 0.8)) : 0,
+      contributions: profile.githubUrl ? Math.max(50, techs.length * 120 + hours * 15) : 0,
+      longestStreak: Math.max(3, Math.round(hours * 1.2)),
+      activityData,
+      langData,
       aiInsights: [
-        `Pin your top projects related to ${profile.primaryGoal || "your target role"} to increase profile visibility.`,
-        `Maintain a consistent commit cadence matching your ${profile.weeklyHours || 10}h/week goal.`,
+        `Pin your top ${techs[0] || "projects"} repositories to showcase your skills for "${profile.primaryGoal || "your goal"}".`,
+        `Commit ${weeklyCommits}+ times/week to match your ${hours}h/week study goal and build a strong contribution graph.`,
+        techs.length > 1 ? `Your ${techs[1]} skills are in high demand — highlight them in your repo descriptions.` : "Add README files to all repositories to increase profile engagement.",
       ],
     }
   },
@@ -248,23 +274,44 @@ export const generatorService = {
     const hours = profile.weeklyHours || 10
     const knownCount = profile.knownTechnologies.length
 
+    // Weekly hours directly drives learning hours shown (hours * weeks active)
+    const weeksActive = Math.max(1, Math.min(12, knownCount + 2))
+    const totalLearningHours = hours * weeksActive
+    const modulesFinished = Math.max(1, Math.floor(knownCount * 1.5) + Math.floor(hours / 5))
+    const streakDays = Math.max(1, Math.min(90, knownCount * 4 + Math.floor(hours / 2)))
+
+    // Score history grows from a baseline relative to skill level
+    const baseScore = profile.skillLevel === "Expert" ? 70
+      : profile.skillLevel === "Advanced" ? 58
+      : profile.skillLevel === "Intermediate" ? 45
+      : 30
+    const scoreHistory = Array.from({ length: 5 }, (_, i) => ({
+      week: `W${i + 1}`,
+      score: Math.min(98, baseScore + Math.round(i * (hours * 0.8 + knownCount * 0.5))),
+    }))
+
+    const techs = profile.knownTechnologies.length > 0
+      ? profile.knownTechnologies
+      : profile.interests.length > 0
+      ? profile.interests
+      : ["Core Engineering"]
+
+    // Skill breakdown: first skill is strongest, descending by usage order
+    const skillBreakdown = techs.slice(0, 6).map((skill, i) => ({
+      skill,
+      progress: Math.min(96, Math.max(20, 90 - i * 12 + Math.floor(hours * 0.5))),
+    }))
+
+    const weeksToGoal = Math.max(2, Math.round((120 - knownCount * 8) / hours))
+
     return {
-      learningHours: hours * 4,
-      modulesFinished: Math.max(2, Math.floor(knownCount * 1.5)),
+      learningHours: totalLearningHours,
+      modulesFinished,
       skillsLeveledCount: Math.max(1, knownCount),
-      studyStreakDays: 14,
-      scoreHistory: [
-        { week: "W1", score: 42 },
-        { week: "W2", score: 51 },
-        { week: "W3", score: 58 },
-        { week: "W4", score: 65 },
-        { week: "W5", score: 78 },
-      ],
-      skillBreakdown: (profile.knownTechnologies.length > 0 ? profile.knownTechnologies : ["React", "TypeScript", "Node"]).map((skill, i) => ({
-        skill,
-        progress: Math.min(95, 85 - i * 10),
-      })),
-      aiSummary: `At your target commitment of ${hours} hours/week, you are on track to achieve your goal of "${profile.primaryGoal || "Career Evolution"}" in estimated ${Math.max(4, Math.round(40 / hours))} weeks.`,
+      studyStreakDays: streakDays,
+      scoreHistory,
+      skillBreakdown,
+      aiSummary: `At your ${hours}h/week commitment with ${knownCount} indexed skill${knownCount !== 1 ? "s" : ""}, you are projected to achieve "${profile.primaryGoal || "your goal"}" in ~${weeksToGoal} weeks. Keep your study streak active to accelerate velocity.`,
     }
   },
 }
