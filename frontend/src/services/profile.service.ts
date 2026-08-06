@@ -46,22 +46,25 @@ export const profileService = {
         .single()
 
       if (!error && data) {
+        const latestLocal = this.getProfile()
         const remoteProfile: UserProfile = {
-          name: data.full_name || data.name || local.name,
-          nickname: data.nickname || local.nickname,
-          avatarUrl: data.avatar_url || local.avatarUrl,
-          userType: data.user_type || local.userType,
-          interests: Array.isArray(data.interests) ? data.interests : local.interests,
-          skillLevel: data.skill_level || local.skillLevel,
-          primaryGoal: data.primary_goal || local.primaryGoal,
-          weeklyHours: typeof data.weekly_hours === "number" ? data.weekly_hours : local.weeklyHours,
-          knownTechnologies: Array.isArray(data.known_technologies) ? data.known_technologies : local.knownTechnologies,
-          resumeUrl: data.resume_url || local.resumeUrl,
-          githubUrl: data.github_url || local.githubUrl,
-          linkedinUrl: data.linkedin_url || local.linkedinUrl,
-          portfolioUrl: data.portfolio_url || local.portfolioUrl,
-          learningStyle: data.learning_style || local.learningStyle,
-          isOnboardingCompleted: Boolean(data.is_onboarding_completed || local.isOnboardingCompleted),
+          name: data.full_name || data.name || latestLocal.name || local.name,
+          nickname: data.nickname || latestLocal.nickname || local.nickname,
+          avatarUrl: data.avatar_url || latestLocal.avatarUrl || local.avatarUrl,
+          userType: data.user_type || latestLocal.userType || local.userType,
+          interests: Array.isArray(data.interests) && data.interests.length > 0 ? data.interests : latestLocal.interests,
+          skillLevel: data.skill_level || latestLocal.skillLevel || local.skillLevel,
+          primaryGoal: data.primary_goal || latestLocal.primaryGoal || local.primaryGoal,
+          weeklyHours: typeof data.weekly_hours === "number" ? data.weekly_hours : latestLocal.weeklyHours,
+          knownTechnologies: Array.isArray(data.known_technologies) && data.known_technologies.length > 0 ? data.known_technologies : latestLocal.knownTechnologies,
+          resumeUrl: data.resume_url || latestLocal.resumeUrl || local.resumeUrl,
+          githubUrl: data.github_url || latestLocal.githubUrl || local.githubUrl,
+          linkedinUrl: data.linkedin_url || latestLocal.linkedinUrl || local.linkedinUrl,
+          portfolioUrl: data.portfolio_url || latestLocal.portfolioUrl || local.portfolioUrl,
+          learningStyle: data.learning_style || latestLocal.learningStyle || local.learningStyle,
+          isOnboardingCompleted: Boolean(
+            data.is_onboarding_completed || latestLocal.isOnboardingCompleted || local.isOnboardingCompleted,
+          ),
         }
         this.saveProfileToStorage(remoteProfile)
         return remoteProfile
@@ -70,7 +73,7 @@ export const profileService = {
       // Use local state if remote fetch fails
     }
 
-    return local
+    return this.getProfile()
   },
 
   saveProfileToStorage(profile: UserProfile): void {
