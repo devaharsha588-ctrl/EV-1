@@ -23,7 +23,13 @@ app.use(cors({
     if (!origin) return callback(null, true);
     if (!env.isProduction) return callback(null, true);
     const allowed = [env.clientUrl, 'http://localhost:5173', 'http://localhost:3000', 'http://127.0.0.1:5173'];
-    if (allowed.includes(origin) || origin.startsWith('http://localhost:') || origin.startsWith('http://127.0.0.1:')) {
+    if (
+      allowed.includes(origin) ||
+      origin.startsWith('http://localhost:') ||
+      origin.startsWith('http://127.0.0.1:') ||
+      origin.endsWith('.vercel.app') ||
+      origin.includes('vercel.app')
+    ) {
       return callback(null, true);
     }
     return callback(null, false);

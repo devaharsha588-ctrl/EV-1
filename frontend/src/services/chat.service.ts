@@ -84,21 +84,23 @@ export async function sendChatMessage(content: string, conversationId?: string, 
     }
   } catch (err: any) {
     console.error("[Backend API Error]:", err?.response?.data || err.message)
-    // Return friendly error response instead of crashing or showing raw Supabase schema error
-    const errorMsg = err?.response?.data?.message || "Unable to reach EV AI service. Please check backend connection."
+    const errorMsg =
+      err?.response?.data?.message ||
+      "EV AI backend is starting up or temporarily unreachable. Please ensure VITE_API_BASE_URL points to your live Render backend."
+
     return {
       userMessage: {
         id: Date.now().toString(),
         role: "user" as const,
         content,
-        timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })
+        timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
       },
       aiMessage: {
         id: (Date.now() + 1).toString(),
         role: "ai" as const,
         content: `⚠️ ${errorMsg}`,
-        timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })
-      }
+        timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+      },
     }
   }
 
