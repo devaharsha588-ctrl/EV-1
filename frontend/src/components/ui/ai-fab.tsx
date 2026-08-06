@@ -1,5 +1,6 @@
 import { memo, useState } from "react"
 import { AnimatePresence, motion } from "framer-motion"
+import { useNavigate } from "react-router-dom"
 
 import { Pulse } from "@/components/ui/pulse"
 import { cn } from "@/utils/cn"
@@ -8,15 +9,9 @@ interface AIFabProps {
   readonly className?: string
 }
 
-/**
- * AIFab — Floating AI Assistant entry point.
- *
- * Appears bottom-right on all protected pages. Uses EV Pulse branding.
- * Opens a placeholder panel — backend logic to be wired later.
- * Hidden on mobile (users use bottom nav or chat page directly).
- */
 export const AIFab = memo(function AIFab({ className }: AIFabProps) {
   const [expanded, setExpanded] = useState(false)
+  const navigate = useNavigate()
 
   return (
     <div
@@ -59,8 +54,8 @@ export const AIFab = memo(function AIFab({ className }: AIFabProps) {
                   className="w-full rounded-lg px-3 py-2 text-left text-sm transition-colors hover:bg-primary/8 hover:text-foreground text-muted-foreground"
                   aria-label={`Ask: ${prompt}`}
                   onClick={() => {
-                    /* TODO(backend): Open chat with pre-filled prompt */
                     setExpanded(false)
+                    navigate("/chat", { state: { initialPrompt: prompt } })
                   }}
                 >
                   {prompt}
@@ -68,17 +63,19 @@ export const AIFab = memo(function AIFab({ className }: AIFabProps) {
               ))}
             </div>
 
-            {/* Coming soon footer */}
+            {/* Panel footer */}
             <div className="border-border/40 border-t px-4 py-2.5">
               <p className="text-muted-foreground text-xs">
                 Full AI chat available in the{" "}
-                <a
-                  href="/chat"
-                  className="text-primary underline-offset-2 hover:underline"
-                  onClick={() => setExpanded(false)}
+                <button
+                  onClick={() => {
+                    setExpanded(false)
+                    navigate("/chat")
+                  }}
+                  className="text-primary underline-offset-2 hover:underline font-medium"
                 >
-                  Chat page
-                </a>
+                  Chat workspace
+                </button>
               </p>
             </div>
           </motion.div>

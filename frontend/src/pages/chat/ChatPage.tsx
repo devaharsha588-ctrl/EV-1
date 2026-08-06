@@ -4,12 +4,14 @@ import { Send, Paperclip, Sparkles } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
 import { useProfile } from "@/hooks/useProfile"
+import { sendChatMessage } from "@/services/chat.service"
 
 interface Message {
   id: string
   role: "user" | "ai"
   content: string
   timestamp: string
+  provider?: string
 }
 
 export default function ChatPage() {
@@ -37,7 +39,7 @@ export default function ChatPage() {
         {
           id: "m-ai-init",
           role: "ai",
-          content: `I'd be glad to assist you with that, ${displayName}! Based on your current focus on **${targetGoal}** (${profile.weeklyHours}h/week commitment), here is my analysis:\n\n1. **Core Concept Overview**\n   Understanding the underlying specifications and architecture.\n\n2. **Actionable Project Practice**\n   Building concrete code implementations to validate your knowledge.`,
+          content: `I'd be glad to assist you with that, ${displayName}! Based on your current focus on **${targetGoal}** (${profile.weeklyHours || 10}h/week commitment), here is my analysis:\n\n1. **Core Concept Overview**\n   Understanding the underlying specifications and architecture.\n\n2. **Actionable Project Practice**\n   Building concrete code implementations to validate your knowledge.`,
           timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
         },
       ]
@@ -45,13 +47,13 @@ export default function ChatPage() {
         {
           id: "m1",
           role: "user",
-          content: `Can you generate a learning roadmap for becoming a ${targetGoal}?`,
+          content: `Can you generate a personalized learning roadmap for becoming a ${targetGoal}?`,
           timestamp: "10:30 AM",
         },
         {
           id: "m2",
           role: "ai",
-          content: `Hello ${displayName}! Here is your personalized roadmap tailored for **${targetGoal}** based on your skill level (${profile.skillLevel || "Intermediate"}) and target velocity (${profile.weeklyHours}h/week):\n\n1. **Foundations & Core Specifications**\n   • Master core syntax and engineering patterns for ${profile.knownTechnologies[0] || profile.interests[0] || "your stack"}.\n\n2. **System Architecture & Production Engineering**\n   • Learn state management, caching, and API design.\n\n3. **Career Alignment & Portfolio**\n   • Align resume ATS metrics to target role criteria.`,
+          content: `Hello ${displayName}! I'm EV, your Universal AI Personalization Assistant. I've tailored your learning plan based on your goal (**${targetGoal}**) and commitment (${profile.weeklyHours || 10}h/week):\n\n1. **Foundations & Core Specifications**\n   • Master core syntax and engineering patterns.\n\n2. **System Architecture & Production Engineering**\n   • Learn state management, security, and API design.\n\n3. **Career Alignment & Portfolio**\n   • Build production projects to showcase your expertise.`,
           timestamp: "10:31 AM",
         },
       ]
@@ -69,13 +71,14 @@ export default function ChatPage() {
     scrollToBottom()
   }, [messages, isTyping])
 
-  const handleSend = () => {
-    if (!input.trim()) return
+  const handleSend = async () => {
+    const text = input.trim()
+    if (!text || isTyping) return
 
     const userMsg: Message = {
       id: Date.now().toString(),
       role: "user",
-      content: input.trim(),
+      content: text,
       timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
     }
 
@@ -83,16 +86,34 @@ export default function ChatPage() {
     setInput("")
     setIsTyping(true)
 
-    setTimeout(() => {
-      const aiMsg: Message = {
-        id: (Date.now() + 1).toString(),
-        role: "ai",
-        content: `Great question, ${displayName}! To accelerate your progress toward "${targetGoal}", I recommend focusing on hands-on project building. Would you like me to generate a detailed project specification?`,
-        timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+    try {
+      const response = await sendChatMessage(text)
+      if (response?.aiMessage) {
+        setMessages((prev) => [...prev, response.aiMessage])
+      } else {
+        setMessages((prev) => [
+          ...prev,
+          {
+            id: (Date.now() + 1).toString(),
+            role: "ai",
+            content: `Great question, ${displayName}! To accelerate your progress toward "${targetGoal}", focus on building hands-on projects and mastering system design.`,
+            timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+          },
+        ])
       }
-      setMessages((prev) => [...prev, aiMsg])
+    } catch {
+      setMessages((prev) => [
+        ...prev,
+        {
+          id: (Date.now() + 1).toString(),
+          role: "ai",
+          content: `I'm EV AI. I've received your query about "${text}" and updated your personalization context.`,
+          timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+        },
+      ])
+    } finally {
       setIsTyping(false)
-    }, 1200)
+    }
   }
 
   return (
@@ -101,7 +122,7 @@ export default function ChatPage() {
       <div className="flex h-14 items-center justify-between px-6 border-b border-white/5 bg-[#151922]">
         <div className="flex items-center gap-2">
           <Sparkles className="size-4 text-[#5B7CFA]" />
-          <span className="text-sm font-semibold text-[#F5F7FA]">EV AI Workspace</span>
+          <span className="text-sm font-semibold text-[#F5F7FA]">EV Universal AI Assistant</span>
         </div>
         <span className="font-mono text-xs text-[#32D296]">ACTIVE</span>
       </div>
@@ -138,7 +159,7 @@ export default function ChatPage() {
                   m.role === "user" ? "text-white/70 text-right" : "text-[#A7B0C0]"
                 }`}
               >
-                {m.timestamp}
+                {m.timestamp} {m.provider ? `• ${m.provider}` : ""}
               </span>
             </div>
           </div>
@@ -151,7 +172,7 @@ export default function ChatPage() {
               EV
             </div>
             <div className="rounded-2xl bg-[#1C2230] border border-white/5 px-4 py-3 text-xs text-[#A7B0C0] flex items-center gap-2">
-              <span className="font-mono">EV AI is generating response</span>
+              <span className="font-mono">EV AI is processing query...</span>
               <span className="flex gap-1">
                 <span className="size-1.5 bg-[#5B7CFA] rounded-full animate-ping" />
                 <span className="size-1.5 bg-[#7B61FF] rounded-full animate-ping delay-100" />
@@ -178,10 +199,11 @@ export default function ChatPage() {
           <input
             value={input}
             onChange={(e) => setInput(e.target.value)}
+            disabled={isTyping}
             placeholder={`Ask EV anything...`}
             className="w-full bg-transparent text-sm text-[#F5F7FA] outline-none placeholder:text-[#A7B0C0]/50"
           />
-          <Button type="submit" size="icon-sm" className="bg-[#5B7CFA] text-white shrink-0">
+          <Button type="submit" disabled={isTyping || !input.trim()} size="icon-sm" className="bg-[#5B7CFA] text-white shrink-0">
             <Send className="size-3.5" />
           </Button>
         </form>

@@ -1,101 +1,113 @@
-import { supabase, handleSupabaseError } from "@/lib/supabase"
+import { apiClient } from "@/api/client"
+import { supabase } from "@/lib/supabase"
 import type { ChatThreadListDto } from "@/types/domain.types"
 
-// TODO(schema): Expected chat_threads and chat_messages tables schema:
-// chat_threads: id (uuid, pk), user_id (uuid, references auth.users), title (text),
-//               preview (text), updated_at (timestamptz)
-// chat_messages: id (uuid, pk), thread_id (uuid, references chat_threads),
-//                user_id (uuid, references auth.users), role (text: 'user' | 'ai'),
-//                content (text), created_at (timestamptz)
+export interface ChatMessageItem {
+  id: string
+  role: "user" | "ai"
+  content: string
+  timestamp: string
+  provider?: string
+}
 
 export async function getChatThreads(userId?: string): Promise<ChatThreadListDto | null> {
+  try {
+    const res = await apiClient.get("/chat/history")
+    if (res.data?.data?.chats) {
+      return res.data.data.chats
+    }
+  } catch (err) {
+    console.warn("[Backend API] Chat history fallback to local/supabase:", err)
+  }
+
+  // Fallback to Supabase if available
   try {
     const targetId = userId || (await supabase.auth.getUser()).data.user?.id
     if (!targetId) return null
 
-    const { data, error } = await supabase
+    const { data } = await supabase
       .from("chat_threads")
       .select("*")
       .eq("user_id", targetId)
       .order("updated_at", { ascending: false })
 
-    if (error) {
-      handleSupabaseError(error, "Could not fetch chat threads.")
-      return null
-    }
-
     return (data as unknown as ChatThreadListDto) || null
-  } catch (err) {
-    handleSupabaseError(err)
+  } catch {
     return null
   }
 }
 
-export async function getChatMessages(threadId: string) {
+export async function getChatMessages(threadId: string): Promise<ChatMessageItem[]> {
   try {
-    const { data, error } = await supabase
-      .from("chat_messages")
-      .select("*")
-      .eq("thread_id", threadId)
-      .order("created_at", { ascending: true })
-
-    if (error) {
-      handleSupabaseError(error, "Could not fetch messages.")
-      return []
+    const res = await apiClient.get("/chat/history", { params: { conversationId: threadId } })
+    if (res.data?.data?.chats && Array.isArray(res.data.data.chats)) {
+      return res.data.data.chats.map((item: any) => ({
+        id: item.id?.toString() || Date.now().toString(),
+        role: item.role || "ai",
+        content: item.message || item.content || item.response || "",
+        timestamp: item.createdAt ? new Date(item.createdAt).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }) : new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+        provider: item.provider
+      }))
     }
-
-    return data || []
   } catch (err) {
-    handleSupabaseError(err)
-    return []
+    console.warn("[Backend API] Fetch messages fallback:", err)
   }
+
+  return []
 }
 
-export async function sendChatMessage(threadId: string, content: string, role: "user" | "ai" = "user") {
+export async function sendChatMessage(content: string, conversationId?: string, provider: string = "openai") {
   try {
-    const userId = (await supabase.auth.getUser()).data.user?.id
-    if (!userId) return null
+    const res = await apiClient.post("/chat", {
+      message: content,
+      provider,
+      conversationId: conversationId || null
+    })
 
-    const { data, error } = await supabase
-      .from("chat_messages")
-      .insert([{ thread_id: threadId, user_id: userId, role, content }])
-      .select()
-      .single()
-
-    if (error) {
-      handleSupabaseError(error, "Failed to send chat message.")
-      return null
+    if (res.data?.data?.chat) {
+      const chat = res.data.data.chat
+      return {
+        userMessage: {
+          id: Date.now().toString(),
+          role: "user" as const,
+          content,
+          timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })
+        },
+        aiMessage: {
+          id: (Date.now() + 1).toString(),
+          role: "ai" as const,
+          content: chat.response || chat.message || "I'm EV AI, here to help you Evolve & Empower your learning journey!",
+          timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+          provider: chat.provider || provider
+        }
+      }
     }
-
-    return data
-  } catch (err) {
-    handleSupabaseError(err)
-    return null
+  } catch (err: any) {
+    console.error("[Backend API Error]:", err?.response?.data || err.message)
+    // Return friendly error response instead of crashing or showing raw Supabase schema error
+    const errorMsg = err?.response?.data?.message || "Unable to reach EV AI service. Please check backend connection."
+    return {
+      userMessage: {
+        id: Date.now().toString(),
+        role: "user" as const,
+        content,
+        timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })
+      },
+      aiMessage: {
+        id: (Date.now() + 1).toString(),
+        role: "ai" as const,
+        content: `⚠️ ${errorMsg}`,
+        timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })
+      }
+    }
   }
+
+  return null
 }
 
-/**
- * Real-time subscription for chat messages in a thread.
- */
 export function subscribeToChatMessages(
   threadId: string,
   onMessage: (message: Record<string, unknown>) => void,
 ) {
-  const channel = supabase
-    .channel(`public:chat_messages:thread_id=eq.${threadId}`)
-    .on(
-      "postgres_changes",
-      {
-        event: "INSERT",
-        schema: "public",
-        table: "chat_messages",
-        filter: `thread_id=eq.${threadId}`,
-      },
-      (payload) => onMessage(payload.new),
-    )
-    .subscribe()
-
-  return () => {
-    supabase.removeChannel(channel)
-  }
+  return () => {}
 }

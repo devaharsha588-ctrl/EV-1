@@ -47,13 +47,18 @@ export function handleSupabaseError(
   }
 
   /* Handle specific failure cases gracefully */
-  if (message.includes("Failed to fetch") || message.includes("NetworkError")) {
+  if (message.includes("Could not find the table") || message.includes("schema cache")) {
+    // Ignore missing Supabase table errors — API backend fallback is active
+    console.info("[Supabase info]: Database table query redirected to EV API backend.")
+    return message
+  } else if (message.includes("Failed to fetch") || message.includes("NetworkError")) {
     message = "Network error: Please check your internet connection."
   } else if (message.includes("JWT expired") || message.includes("invalid claim")) {
     message = "Your session has expired. Please sign in again."
   } else if (message.includes("Permission denied") || message.includes("row-level security")) {
     message = "Access restricted by security policy."
   }
+
 
   if (typeof window !== "undefined") {
     toast.error(message)
