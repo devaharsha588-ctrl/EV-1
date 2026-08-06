@@ -13,8 +13,15 @@ const { getDatabaseHealth } = require('./services/database.service');
 const app = express();
 
 app.use(helmet());
+const allowedOrigins = [env.clientUrl, 'http://localhost:5173', 'http://localhost:3000', 'http://127.0.0.1:5173'].filter(Boolean);
 app.use(cors({
-  origin: env.clientUrl,
+  origin: (origin, callback) => {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(null, true);
+    }
+  },
   credentials: true
 }));
 app.use(express.json({ limit: '1mb' }));
