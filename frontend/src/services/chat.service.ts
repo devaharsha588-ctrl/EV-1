@@ -56,11 +56,11 @@ export async function getChatMessages(threadId: string): Promise<ChatMessageItem
   return []
 }
 
-export async function sendChatMessage(content: string, conversationId?: string, provider: string = "openai") {
+export async function sendChatMessage(content: string, conversationId?: string, provider?: string) {
   try {
     const res = await apiClient.post("/chat", {
       message: content,
-      provider,
+      provider: provider || undefined,
       conversationId: conversationId || null
     })
 

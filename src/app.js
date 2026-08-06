@@ -11,27 +11,22 @@ const { requireDatabase } = require('./middleware/database.middleware');
 
 const app = express();
 
-// Security headers — strict production config
+// Security headers
 app.use(helmet({
-  contentSecurityPolicy: env.isProduction ? undefined : false,
+  contentSecurityPolicy: false,
   crossOriginEmbedderPolicy: false
 }));
 
-// CORS — only allow explicitly listed origins (reject all others in production)
-const allowedOrigins = [
-  env.clientUrl,
-  'http://localhost:5173',
-  'http://localhost:3000',
-  'http://127.0.0.1:5173'
-].filter(Boolean);
-
+// CORS Configuration — seamless local dev and production support
 app.use(cors({
   origin: (origin, callback) => {
-    // Allow same-origin (no origin header) and server-to-server in development
     if (!origin) return callback(null, true);
-    if (allowedOrigins.includes(origin)) return callback(null, true);
-    // Reject unknown origins — do NOT silently allow them
-    callback(new Error(`CORS policy: origin ${origin} is not allowed`));
+    if (!env.isProduction) return callback(null, true);
+    const allowed = [env.clientUrl, 'http://localhost:5173', 'http://localhost:3000', 'http://127.0.0.1:5173'];
+    if (allowed.includes(origin) || origin.startsWith('http://localhost:') || origin.startsWith('http://127.0.0.1:')) {
+      return callback(null, true);
+    }
+    return callback(null, false);
   },
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
@@ -39,19 +34,19 @@ app.use(cors({
 }));
 
 // Body parsers with payload size limits
-app.use(express.json({ limit: '512kb' }));           // Reduced from 1mb — reject oversized JSON
-app.use(express.urlencoded({ extended: true, limit: '256kb' }));
+app.use(express.json({ limit: '2mb' }));
+app.use(express.urlencoded({ extended: true, limit: '1mb' }));
 app.use(cookieParser(env.cookieSecret));
 app.use(requestLogger);
 
 // Global rate limiting on all /api/* routes
 app.use('/api', apiLimiter);
 
-// Root informational endpoint (no secrets exposed)
+// Root informational endpoint
 app.get('/', (req, res) => {
   res.json({
     success: true,
-    message: 'EV AI API is running',
+    message: 'EV AI API backend is running',
     version: '1.0.0'
   });
 });
