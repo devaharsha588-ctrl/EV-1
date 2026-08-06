@@ -69,7 +69,9 @@ export function useProfile() {
     isLoading,
     updateProfile,
     completeOnboarding,
-    isOnboardingCompleted: Boolean(profile.isOnboardingCompleted),
+    isOnboardingCompleted: Boolean(
+      profile.isOnboardingCompleted || (typeof window !== "undefined" && localStorage.getItem("ev_onboarding_completed_flag") === "true"),
+    ),
     dashboardData,
     roadmapData,
     resumeData,

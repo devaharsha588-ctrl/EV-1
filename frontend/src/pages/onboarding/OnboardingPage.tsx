@@ -169,17 +169,26 @@ export default function OnboardingPage() {
     )
   }
 
+  const handleSkipOnboarding = async () => {
+    await completeOnboarding({
+      name: name.trim() || profile.name || "Learner",
+      nickname: nickname.trim() || profile.nickname || "",
+      isOnboardingCompleted: true,
+    })
+    navigate(PROTECTED_ROUTES.dashboard)
+  }
+
   const handleStartGeneration = () => {
     setStep(10)
     const finalGoal = selectedGoal === "Custom Goal" ? customGoal.trim() || "Career Growth" : selectedGoal
 
-    setTimeout(() => setGenerationStep(1), 1000)
-    setTimeout(() => setGenerationStep(2), 2200)
-    setTimeout(() => setGenerationStep(3), 3400)
+    setTimeout(() => setGenerationStep(1), 300)
+    setTimeout(() => setGenerationStep(2), 600)
+    setTimeout(() => setGenerationStep(3), 900)
 
     setTimeout(async () => {
       await completeOnboarding({
-        name: name.trim() || "Learner",
+        name: name.trim() || profile.name || "Learner",
         nickname: nickname.trim(),
         avatarUrl: profile.avatarUrl || "",
         userType,
@@ -192,9 +201,10 @@ export default function OnboardingPage() {
         linkedinUrl: linkedinUrl.trim(),
         portfolioUrl: profile.portfolioUrl || "",
         learningStyle,
+        isOnboardingCompleted: true,
       })
       navigate(PROTECTED_ROUTES.dashboard)
-    }, 4200)
+    }, 1200)
   }
 
   return (
@@ -202,8 +212,14 @@ export default function OnboardingPage() {
       <div className="w-full max-w-xl space-y-6">
         {/* Subtle Progress Bar */}
         <div className="space-y-1.5">
-          <div className="flex justify-between font-mono text-[0.7rem] text-[#A7B0C0]">
+          <div className="flex justify-between items-center font-mono text-[0.7rem] text-[#A7B0C0]">
             <span>STEP {step} OF 10</span>
+            <button
+              onClick={handleSkipOnboarding}
+              className="text-[#5B7CFA] hover:underline font-sans text-xs flex items-center gap-1 font-semibold"
+            >
+              Skip Onboarding & Go to Dashboard →
+            </button>
             <span>{step * 10}%</span>
           </div>
           <div className="w-full bg-white/5 h-1 rounded-full overflow-hidden">

@@ -58,7 +58,9 @@ app.get('/', (req, res) => {
 });
 
 app.use('/health', require('./routes/health.routes'));
+app.use('/api/health', require('./routes/health.routes'));
 app.use('/api/v1', requireDatabase, routes);
+app.use('/api', requireDatabase, routes);
 app.use(notFound);
 app.use(errorHandler);
 
